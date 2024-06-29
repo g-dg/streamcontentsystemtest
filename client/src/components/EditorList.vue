@@ -1,15 +1,30 @@
 <script setup lang="ts">
-import clone from "@/helpers/clone";
-import { ref, watch } from "vue";
+import { computed } from "vue";
 
 const props = defineProps<{
   textKeys: string[];
-  lineCounts: Record<string, number>;
-  charCounts: Record<string, number>;
 }>();
 const emit = defineEmits(["update"]);
 
 const model = defineModel<Record<string, string>>();
+
+const lineCounts = computed(() =>
+  Object.fromEntries(
+    props.textKeys.map((key) => [key, model.value?.[key].split("\n").length])
+  )
+);
+
+const charCounts = computed(() =>
+  Object.fromEntries(
+    props.textKeys.map((key) => [key, model.value?.[key].length])
+  )
+);
+
+async function clear(key: string) {
+  if (model.value != undefined) {
+    model.value[key] = "";
+  }
+}
 </script>
 
 <template>
@@ -21,7 +36,8 @@ const model = defineModel<Record<string, string>>();
         :rows="lineCounts[key]"
         style="width: 100%"
       ></textarea>
-      {{ lineCounts[key] }} {{ charCounts[key] }}
+      <button @click="clear(key)">Clear</button>
+      Lines: {{ lineCounts[key] }} Chars: {{ charCounts[key] }}
     </div>
   </form>
 </template>
