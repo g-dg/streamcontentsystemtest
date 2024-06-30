@@ -121,8 +121,8 @@ async function exportText() {
         <span v-if="unsaved" class="large-font"
           ><em><strong> Unsaved Changes! </strong></em></span
         >
-        <button @click="save" class="large-font">Save</button>
-        <button @click="loadAll" class="large-font">Reload</button>
+        <button @click="save" class="large-font">Set Content</button>
+        <button @click="loadAll" class="large-font">Reset</button>
         <button @click="importText" class="large-font">Import</button>
         <button @click="exportText" class="large-font">Export</button>
       </span>
