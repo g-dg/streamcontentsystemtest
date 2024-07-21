@@ -76,7 +76,7 @@ async function save() {
       <div
         style="
           flex: 1;
-          height: calc(50vh - (var(--header-footer-size) / 2));
+          height: calc(50vh - (var(--main-header-footer-size) / 2));
           overflow: auto;
         "
       >
@@ -88,7 +88,7 @@ async function save() {
       <div
         style="
           flex: 1;
-          height: calc(50vh - (var(--header-footer-size) / 2));
+          height: calc(50vh - (var(--main-header-footer-size) / 2));
           overflow: auto;
         "
       >

@@ -40,14 +40,14 @@ const filteredSongTitles = computed(() => {
   <form @submit.prevent class="root">
     <div style="position: sticky; top: 0px">
       <span style="display: inline-block">
-        <button @click="songStore.loadSongs()">Reload All Songs</button>
+        <button @click="songStore.loadSongs()">Reload</button>
         <input v-model="search" type="search" placeholder="Search" />
         <button @click="search = ''">Clear Search</button>
       </span>
     </div>
     <div
       style="
-        height: calc(50vh - (var(--header-footer-size) / 2));
+        height: calc(50vh - (var(--main-header-footer-size) / 2));
         overflow: auto;
       "
     >

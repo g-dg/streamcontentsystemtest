@@ -7,6 +7,9 @@ const router = createRouter({
       name: "home",
       path: "/",
       component: () => import("@/views/HomeView.vue"),
+      meta: {
+        showHeaderFooter: false,
+      },
     },
     {
       name: "about",

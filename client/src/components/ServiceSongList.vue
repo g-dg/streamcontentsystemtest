@@ -16,7 +16,7 @@ function selectIndex(index: number) {
       <span style="display: inline-block">
         <button @click="serviceStore.importService()">Load Service</button>
         <button @click="serviceStore.exportService()">Save Service</button>
-        <button @click="serviceStore.clearService()">Clear</button>
+        <button @click="serviceStore.clearService()">Clear Service</button>
         <span v-if="serviceStore.unsavedChanges">
           <em><strong> Unsaved Changes! </strong></em>
         </span>
@@ -24,7 +24,7 @@ function selectIndex(index: number) {
     </div>
     <div
       style="
-        height: calc(50vh - (var(--header-footer-size) / 2));
+        height: calc(50vh - (var(--main-header-footer-size) / 2));
         overflow: auto;
       "
     >

@@ -15,6 +15,10 @@ const lineCount = computed(() => model.value?.split("\n").length ?? 1);
 
 const charCount = computed(() => model.value?.length ?? 0);
 
+const longestLineCharCount = computed(() =>
+  model.value?.split("\n").reduce((acc, line) => Math.max(acc, line.length), 0)
+);
+
 const copySupported = computed(() => typeof document.execCommand == "function");
 async function copy() {
   textAreaElement.value?.focus();
@@ -46,7 +50,8 @@ const titleWithoutExtension = computed(() =>
       Copy
     </button>
     <button @click="clear">Clear</button>
-    Lines: {{ lineCount }} Chars: {{ charCount }}
+    Lines: {{ lineCount }} | Chars: {{ charCount }} | Longest Line:
+    {{ longestLineCharCount }}
   </div>
 </template>
 

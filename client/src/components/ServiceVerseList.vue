@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useServiceStore } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
+import { computed, ref, watch, type Ref } from "vue";
 
 const emit = defineEmits<{ (e: "setVerse", content: string): void }>();
 
@@ -18,6 +19,19 @@ function selectVerse(verse: string) {
 function blankScreen() {
   emit("setVerse", "");
 }
+
+const topScrollElement: Ref<HTMLDivElement | undefined> = ref();
+function scrollToTop() {
+  topScrollElement.value?.scrollIntoView();
+}
+watch(
+  computed(() => ({
+    song: serviceStore.selectedSong,
+    index: serviceStore.selectedSongIndex,
+  })),
+  scrollToTop,
+  { deep: true }
+);
 </script>
 
 <template>
@@ -28,8 +42,12 @@ function blankScreen() {
       </span>
     </div>
     <div
-      style="height: calc(50vh - (var(--header-footer-size) / 2)); overflow: auto"
+      style="
+        height: calc(50vh - (var(--main-header-footer-size) / 2));
+        overflow: auto;
+      "
     >
+      <div ref="topScrollElement"></div>
       <div
         v-for="(verseContent, verseName) in serviceStore.selectedSong"
         :key="verseName"
@@ -44,7 +62,7 @@ function blankScreen() {
           :value="verseName"
           type="radio"
         />
-        {{ verseName }}
+        <strong style="font-size: 125%; font-weight: bold">{{ verseName }}</strong>
         <pre>{{ verseContent }}</pre>
         <hr />
       </div>

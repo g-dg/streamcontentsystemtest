@@ -19,6 +19,9 @@ onMounted(stateStore.connect);
 function setVerse(content: string) {
   stateStore.setState(content);
 }
+
+const appFullName = __APP_NAME_FULL__;
+const appCopyright = __APP_COPYRIGHT__;
 </script>
 
 <template>
@@ -41,9 +44,14 @@ function setVerse(content: string) {
     <div style="flex: 1; display: flex">
       <div style="flex: 1; padding-right: 8px">
         <iframe
-          src="/display/preview?font-size=20"
-          style="border: none; width: 100%; height: 100%"
+          src="/display/preview?font-size=16"
+          style="border: none; width: 100%; height: calc(100% - 2em)"
         ></iframe>
+        <footer>
+          {{ appFullName }}
+          {{ appCopyright }}
+          (<RouterLink :to="{ name: 'about' }">About</RouterLink>)
+        </footer>
       </div>
       <div style="flex: 2">
         <MultitextEditorSplit />
