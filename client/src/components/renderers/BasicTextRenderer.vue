@@ -28,7 +28,7 @@ const currentContent = computed(() => stateStore.currentState.content);
 .text {
   white-space: pre-wrap;
   font-family: "Ubuntu", "Liberation Sans", "Arial", sans-serif;
-  font-size: 48pt;
+  font-size: 40pt;
   overflow: auto;
   max-height: 100vh;
   max-width: 100vw;

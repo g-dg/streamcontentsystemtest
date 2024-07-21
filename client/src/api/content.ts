@@ -6,7 +6,7 @@ export class ContentClient {
   }
 
   static async getContent(filename: string): Promise<string> {
-    filename = encodeURIComponent(filename.replaceAll(/[^ 0-9A-Za-z-]/g, "_"));
+    filename = encodeURIComponent(filename);
     return await api(`content/${filename}`, "GET", undefined, {
       returnType: "text",
     });

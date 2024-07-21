@@ -16,6 +16,7 @@ function selectIndex(index: number) {
       <span style="display: inline-block">
         <button @click="serviceStore.importService()">Load Service</button>
         <button @click="serviceStore.exportService()">Save Service</button>
+        <button @click="serviceStore.clearService()">Clear</button>
       </span>
     </div>
     <div

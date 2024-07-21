@@ -49,14 +49,31 @@ export const useServiceStore = defineStore("service", () => {
   }
 
   function removeSong(index: number) {
+    if (index == selectedSongIndex.value) {
+      selectedVerseName.value = null;
+      selectedSongIndex.value = null;
+    }
     serviceSongs.value.splice(index, 1);
   }
 
   function moveSong(index: number, direction: number) {
     const value = serviceSongs.value[index];
     const swapValue = serviceSongs.value[index + direction];
+    
     serviceSongs.value[index + direction] = value;
     serviceSongs.value[index] = swapValue;
+
+    if (index == selectedSongIndex.value) {
+      selectedSongIndex.value = index + direction;
+    } else if (index + direction == selectedSongIndex.value) {
+      selectedSongIndex.value = index;
+    } 
+  }
+
+  function clearService() {
+    selectedVerseName.value = null;
+    selectedSongIndex.value = null;
+    serviceSongs.value = [];
   }
 
   let importFileInput: HTMLInputElement;
@@ -123,6 +140,7 @@ export const useServiceStore = defineStore("service", () => {
     addSong,
     removeSong,
     moveSong,
+    clearService,
     importService,
     exportService,
   };

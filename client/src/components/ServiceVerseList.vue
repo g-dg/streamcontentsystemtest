@@ -15,7 +15,7 @@ function selectVerse(verse: string) {
   }
 }
 
-function blank() {
+function blankScreen() {
   emit("setVerse", "");
 }
 </script>
@@ -24,7 +24,7 @@ function blank() {
   <form @submit.prevent class="root">
     <div style="position: sticky; top: 0px">
       <span style="display: inline-block">
-        <button @click="blank">Blank</button>
+        <button @click="blankScreen">Blank Screen</button>
       </span>
     </div>
     <div
@@ -48,7 +48,7 @@ function blank() {
         <pre>{{ verseContent }}</pre>
         <hr />
       </div>
-      <div v-if="serviceStore.selectedSong == null">
+      <div v-if="serviceStore.selectedSong == null" style="text-align: center">
         <em> No song is selected </em>
       </div>
       <div
