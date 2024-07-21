@@ -14,7 +14,7 @@ export default defineConfig({
   },
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
-    __APP_NAME_FULL__: JSON.stringify("Simple Multiple Text Editor"),
+    __APP_NAME_FULL__: JSON.stringify("Simple Song Words Program"),
     __APP_COPYRIGHT__: JSON.stringify("Copyright © 2024 Garnet DeGelder"),
   },
   build: {

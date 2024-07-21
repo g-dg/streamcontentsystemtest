@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import EditorSplit from "@/components/EditorSplit.vue";
+import SongWordsMain from "../components/SongWordsMain.vue";
 </script>
 
 <template>
   <div>
-    <EditorSplit />
+    <SongWordsMain />
   </div>
 </template>
 

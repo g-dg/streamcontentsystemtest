@@ -25,7 +25,7 @@ const clientVersion = __APP_VERSION__;
   <main>
     <h1>StreamSys</h1>
 
-    <h2><em> Garnet DeGelder's Simple Multitext Editor </em></h2>
+    <h2><em> Garnet DeGelder's Simple Song Words Program </em></h2>
 
     <h2>Version:</h2>
     <dl>

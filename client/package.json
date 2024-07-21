@@ -1,6 +1,6 @@
 {
-  "name": "garnetdg_multitext_client",
-  "version": "1.2.0",
+  "name": "garnetdg_songwords_client",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {

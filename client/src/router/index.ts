@@ -13,6 +13,15 @@ const router = createRouter({
       path: "/about",
       component: () => import("@/views/AboutView.vue"),
     },
+    {
+      name: "renderer",
+      path: "/display/:displayName",
+      component: () => import("@/views/RenderView.vue"),
+      props: true,
+      meta: {
+        showHeaderFooter: false,
+      },
+    },
   ],
 });
 

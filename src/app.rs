@@ -22,11 +22,12 @@ use tower_http::{
     set_header::SetResponseHeaderLayer,
 };
 
-use crate::{api, config::file::AppConfig};
+use crate::{api, config::file::AppConfig, state::service::StateService};
 
 pub struct AppServices {
     pub config: AppConfig,
     pub shutdown_token: CancellationToken,
+    pub state_service: StateService,
 }
 
 pub struct App {
@@ -43,6 +44,7 @@ impl App {
         let state = Arc::new(AppServices {
             config: config.clone(),
             shutdown_token: shutdown_token.clone(),
+            state_service: StateService::new(),
         });
 
         let host_address = SocketAddr::from((

@@ -3,7 +3,7 @@ use std::{collections::HashMap, fs, path, sync::Arc};
 use axum::{
     extract::{Path, State},
     response::IntoResponse,
-    routing::{get, put},
+    routing::get,
     Json, Router,
 };
 use reqwest::StatusCode;
@@ -12,13 +12,12 @@ use crate::app::AppServices;
 
 pub fn route() -> Router<Arc<AppServices>> {
     Router::new()
-        .route("/", get(list_text))
-        .route("/:filename", get(get_text))
-        .route("/:filename", put(set_text))
+        .route("/", get(list_content))
+        .route("/:filename", get(get_content))
 }
 
-pub async fn list_text(State(state): State<Arc<AppServices>>) -> impl IntoResponse {
-    let Ok(dir) = fs::read_dir(state.config.edit_directory.clone()) else {
+pub async fn list_content(State(state): State<Arc<AppServices>>) -> impl IntoResponse {
+    let Ok(dir) = fs::read_dir(state.config.song_directory.clone()) else {
         return StatusCode::INTERNAL_SERVER_ERROR.into_response();
     };
 
@@ -48,13 +47,13 @@ pub async fn list_text(State(state): State<Arc<AppServices>>) -> impl IntoRespon
     Json(files).into_response()
 }
 
-pub async fn get_text(
+pub async fn get_content(
     State(state): State<Arc<AppServices>>,
     Path(filename): Path<String>,
 ) -> impl IntoResponse {
     let filename = sanitize_filename(&filename);
 
-    let mut path = path::PathBuf::from(&state.config.edit_directory.clone());
+    let mut path = path::PathBuf::from(&state.config.song_directory.clone());
     path.push(&filename);
 
     if !path.is_file() {
@@ -68,27 +67,6 @@ pub async fn get_text(
     contents.into_response()
 }
 
-pub async fn set_text(
-    State(state): State<Arc<AppServices>>,
-    Path(filename): Path<String>,
-    text: String,
-) -> impl IntoResponse {
-    let filename = sanitize_filename(&filename);
-
-    let mut path = path::PathBuf::from(&state.config.edit_directory.clone());
-    path.push(&filename);
-
-    if !path.is_file() {
-        return StatusCode::NOT_FOUND.into_response();
-    }
-
-    if fs::write(path, text).is_err() {
-        return StatusCode::INTERNAL_SERVER_ERROR.into_response();
-    }
-
-    StatusCode::NO_CONTENT.into_response()
-}
-
 pub fn sanitize_filename(filename: &str) -> String {
     filename
         .chars()
@@ -98,6 +76,10 @@ pub fn sanitize_filename(filename: &str) -> String {
             '0'..='9' => char,
             'A'..='Z' => char,
             'a'..='z' => char,
+            '_' => char,
+            ',' => char,
+            '\'' => char,
+            '!' => char,
             _ => '_',
         })
         .collect()

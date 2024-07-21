@@ -1,6 +1,6 @@
 [package]
-name = "garnetdg_multitext"
-version = "1.0.1"
+name = "garnetdg_songwords"
+version = "1.0.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -20,6 +20,7 @@ tokio-util = { version = "0.7" }
 tower = { version = "0.4", features = ["full"] }
 tower-http = { version = "0.5", features = ["full"] }
 webbrowser = { version = "1.0" }
+uuid = { version = "1.10", features = ["v4", "fast-rng", "serde"] }
 
 [profile.release]
 codegen-units = 1

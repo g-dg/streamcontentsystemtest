@@ -7,15 +7,15 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Debug executable 'garnetdg_multitext'",
+			"name": "Debug executable 'garnetdg_songwords'",
 			"cargo": {
 				"args": [
 					"build",
-					"--bin=garnetdg_multitext",
-					"--package=garnetdg_multitext"
+					"--bin=garnetdg_songwords",
+					"--package=garnetdg_songwords"
 				],
 				"filter": {
-					"name": "garnetdg_multitext",
+					"name": "garnetdg_songwords",
 					"kind": "bin"
 				}
 			},
@@ -25,16 +25,16 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Debug unit tests in executable 'garnetdg_multitext'",
+			"name": "Debug unit tests in executable 'garnetdg_songwords'",
 			"cargo": {
 				"args": [
 					"test",
 					"--no-run",
-					"--bin=garnetdg_multitext",
-					"--package=garnetdg_multitext"
+					"--bin=garnetdg_songwords",
+					"--package=garnetdg_songwords"
 				],
 				"filter": {
-					"name": "garnetdg_multitext",
+					"name": "garnetdg_songwords",
 					"kind": "bin"
 				}
 			},

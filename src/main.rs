@@ -3,8 +3,9 @@
 pub mod api;
 pub mod app;
 pub mod config;
+pub mod content;
 pub mod helpers;
-pub mod text;
+pub mod state;
 
 use std::time::Duration;
 
