@@ -46,7 +46,10 @@ const filteredSongTitles = computed(() => {
       </span>
     </div>
     <div
-      style="height: calc(100vh - var(--header-footer-size)); overflow: auto"
+      style="
+        height: calc(50vh - (var(--header-footer-size) / 2));
+        overflow: auto;
+      "
     >
       <div v-for="song in filteredSongTitles" :key="song">
         <button @click="addToService(song)">Add</button>
@@ -56,8 +59,4 @@ const filteredSongTitles = computed(() => {
   </form>
 </template>
 
-<style lang="scss" scoped>
-.root {
-  --header-footer-size: 7.5em;
-}
-</style>
+<style lang="scss" scoped></style>

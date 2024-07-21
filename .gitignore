@@ -9,7 +9,9 @@
 
 /Cargo.lock
 
-/files/
+/songs/
+/text_content/
+
 /certs/
 
 /dist/

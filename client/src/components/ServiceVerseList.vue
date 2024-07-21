@@ -28,7 +28,7 @@ function blankScreen() {
       </span>
     </div>
     <div
-      style="height: calc(100vh - var(--header-footer-size)); overflow: auto"
+      style="height: calc(50vh - (var(--header-footer-size) / 2)); overflow: auto"
     >
       <div
         v-for="(verseContent, verseName) in serviceStore.selectedSong"
@@ -62,10 +62,6 @@ function blankScreen() {
 </template>
 
 <style lang="scss" scoped>
-.root {
-  --header-footer-size: 7.5em;
-}
-
 .selected-song {
   background-color: black;
   color: white;

@@ -31,6 +31,6 @@ const appCopyright = __APP_COPYRIGHT__;
 
 <style lang="scss" scoped>
 footer {
-  margin-top: 2em;
+  margin-top: 1.5em;
 }
 </style>

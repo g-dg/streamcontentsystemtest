@@ -7,15 +7,15 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Debug executable 'garnetdg_songwords'",
+			"name": "Debug executable 'garnetdg_simplestreamingstuff'",
 			"cargo": {
 				"args": [
 					"build",
-					"--bin=garnetdg_songwords",
-					"--package=garnetdg_songwords"
+					"--bin=garnetdg_simplestreamingstuff",
+					"--package=garnetdg_simplestreamingstuff"
 				],
 				"filter": {
-					"name": "garnetdg_songwords",
+					"name": "garnetdg_simplestreamingstuff",
 					"kind": "bin"
 				}
 			},
@@ -25,16 +25,16 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Debug unit tests in executable 'garnetdg_songwords'",
+			"name": "Debug unit tests in executable 'garnetdg_simplestreamingstuff'",
 			"cargo": {
 				"args": [
 					"test",
 					"--no-run",
-					"--bin=garnetdg_songwords",
-					"--package=garnetdg_songwords"
+					"--bin=garnetdg_simplestreamingstuff",
+					"--package=garnetdg_simplestreamingstuff"
 				],
 				"filter": {
-					"name": "garnetdg_songwords",
+					"name": "garnetdg_simplestreamingstuff",
 					"kind": "bin"
 				}
 			},

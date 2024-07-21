@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import SongWordsMain from "../components/SongWordsMain.vue";
+import AppMain from "../components/AppMain.vue";
 </script>
 
 <template>
   <div>
-    <SongWordsMain />
+    <AppMain />
   </div>
 </template>
 

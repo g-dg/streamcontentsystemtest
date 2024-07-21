@@ -4,16 +4,6 @@ import { natcasecmp } from "@/helpers/sort";
 import { defineStore } from "pinia";
 import { computed, ref, type ComputedRef, type Ref } from "vue";
 
-export interface CurrentState {
-  id: string;
-  display: DisplayState;
-}
-
-export interface DisplayState {
-  content: Record<string, string>;
-  slide_type_id: string | null;
-}
-
 export const useSongStore = defineStore("song", () => {
   const songs = ref<Record<string, Record<string, string>>>({});
 

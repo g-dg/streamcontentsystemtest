@@ -1,21 +1,25 @@
 import { defineStore } from "pinia";
-import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
+import {
+  computed,
+  nextTick,
+  ref,
+  watch,
+  type ComputedRef,
+  type Ref,
+} from "vue";
 import { useSongStore } from "./song";
 
-export interface CurrentState {
-  id: string;
-  display: DisplayState;
-}
-
-export interface DisplayState {
-  content: Record<string, string>;
-  slide_type_id: string | null;
+export interface ServiceData {
+  songs: Array<{ song: string; verses: Array<string> }>;
+  textContent: Record<string, string>;
 }
 
 export const useServiceStore = defineStore("service", () => {
   const songStore = useSongStore();
 
-  const serviceSongs = ref<Array<{ song: string; verses: Array<string> }>>([]);
+  const unsavedChanges = ref(false);
+  const serviceData: Ref<ServiceData> = ref({ songs: [], textContent: {} });
+  //TODO: add checks for unsaved changes
 
   const selectedSongIndex = ref<number | null>(null);
   const selectedVerseName = ref<string | null>(null);
@@ -30,7 +34,7 @@ export const useServiceStore = defineStore("service", () => {
 
   const selectedSongTitle = computed(() =>
     selectedSongIndex.value != null
-      ? serviceSongs.value[selectedSongIndex.value]?.song
+      ? serviceData.value.songs[selectedSongIndex.value]?.song
       : null
   );
   const selectedSong = computed(() =>
@@ -45,7 +49,7 @@ export const useServiceStore = defineStore("service", () => {
   );
 
   function addSong(songTitle: string) {
-    serviceSongs.value.push({ song: songTitle, verses: [] });
+    serviceData.value.songs.push({ song: songTitle, verses: [] });
   }
 
   function removeSong(index: number) {
@@ -53,27 +57,27 @@ export const useServiceStore = defineStore("service", () => {
       selectedVerseName.value = null;
       selectedSongIndex.value = null;
     }
-    serviceSongs.value.splice(index, 1);
+    serviceData.value.songs.splice(index, 1);
   }
 
   function moveSong(index: number, direction: number) {
-    const value = serviceSongs.value[index];
-    const swapValue = serviceSongs.value[index + direction];
-    
-    serviceSongs.value[index + direction] = value;
-    serviceSongs.value[index] = swapValue;
+    const value = serviceData.value.songs[index];
+    const swapValue = serviceData.value.songs[index + direction];
+
+    serviceData.value.songs[index + direction] = value;
+    serviceData.value.songs[index] = swapValue;
 
     if (index == selectedSongIndex.value) {
       selectedSongIndex.value = index + direction;
     } else if (index + direction == selectedSongIndex.value) {
       selectedSongIndex.value = index;
-    } 
+    }
   }
 
   function clearService() {
     selectedVerseName.value = null;
     selectedSongIndex.value = null;
-    serviceSongs.value = [];
+    serviceData.value.songs = [];
   }
 
   let importFileInput: HTMLInputElement;
@@ -98,7 +102,9 @@ export const useServiceStore = defineStore("service", () => {
         return;
       }
 
-      serviceSongs.value = fileContent;
+      serviceData.value = fileContent;
+
+      nextTick(() => (unsavedChanges.value = false));
     } catch (e) {
       console.error(e);
       alert("An error occurred importing the file. (Is it a valid format?)");
@@ -115,7 +121,7 @@ export const useServiceStore = defineStore("service", () => {
       }.json`;
 
       const objectURL = URL.createObjectURL(
-        new Blob([JSON.stringify(serviceSongs.value)], {
+        new Blob([JSON.stringify(serviceData.value)], {
           type: "application/json",
         })
       );
@@ -124,6 +130,7 @@ export const useServiceStore = defineStore("service", () => {
       fileLink.setAttribute("download", filename);
       fileLink.click();
       window.setTimeout(() => URL.revokeObjectURL(objectURL), 1000 * 60 * 60);
+      nextTick(() => (unsavedChanges.value = false));
     } catch (e) {
       console.error(e);
       alert("An error occurred exporting the file.");
@@ -131,7 +138,8 @@ export const useServiceStore = defineStore("service", () => {
   }
 
   return {
-    serviceSongs,
+    unsavedChanges: computed(() => unsavedChanges.value),
+    serviceData,
     selectedSongIndex,
     selectedVerseName,
     selectedSongTitle,

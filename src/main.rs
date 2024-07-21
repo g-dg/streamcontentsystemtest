@@ -6,6 +6,7 @@ pub mod config;
 pub mod content;
 pub mod helpers;
 pub mod state;
+pub mod text;
 
 use std::time::Duration;
 

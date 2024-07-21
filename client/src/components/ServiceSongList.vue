@@ -17,13 +17,19 @@ function selectIndex(index: number) {
         <button @click="serviceStore.importService()">Load Service</button>
         <button @click="serviceStore.exportService()">Save Service</button>
         <button @click="serviceStore.clearService()">Clear</button>
+        <span v-if="serviceStore.unsavedChanges">
+          <em><strong> Unsaved Changes! </strong></em>
+        </span>
       </span>
     </div>
     <div
-      style="height: calc(100vh - var(--header-footer-size)); overflow: auto"
+      style="
+        height: calc(50vh - (var(--header-footer-size) / 2));
+        overflow: auto;
+      "
     >
       <div
-        v-for="(song, index) in serviceStore.serviceSongs"
+        v-for="(song, index) in serviceStore.serviceData.songs"
         :key="song.song"
         @click="selectIndex(index)"
         :class="{ 'selected-song': serviceStore.selectedSongIndex == index }"
@@ -37,7 +43,7 @@ function selectIndex(index: number) {
         </button>
         <button
           @click.stop="serviceStore.moveSong(index, 1)"
-          :disabled="index + 1 == serviceStore.serviceSongs.length"
+          :disabled="index + 1 == serviceStore.serviceData.songs.length"
         >
           Dn
         </button>
@@ -49,7 +55,7 @@ function selectIndex(index: number) {
         {{ song.song }}
       </div>
       <div
-        v-if="serviceStore.serviceSongs.length == 0"
+        v-if="serviceStore.serviceData.songs.length == 0"
         style="text-align: center"
       >
         <em> This service has no songs </em>
@@ -59,10 +65,6 @@ function selectIndex(index: number) {
 </template>
 
 <style lang="scss" scoped>
-.root {
-  --header-footer-size: 7.5em;
-}
-
 .selected-song {
   background-color: black;
   color: white;
