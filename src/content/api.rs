@@ -68,19 +68,8 @@ pub async fn get_content(
 }
 
 pub fn sanitize_filename(filename: &str) -> String {
-    filename
-        .chars()
-        .map(|char| match char {
-            ' ' => char,
-            '-' => char,
-            '0'..='9' => char,
-            'A'..='Z' => char,
-            'a'..='z' => char,
-            '_' => char,
-            ',' => char,
-            '\'' => char,
-            '!' => char,
-            _ => '_',
-        })
-        .collect()
+    String::from(match filename {
+        ".." => ".",
+        _ => filename,
+    })
 }

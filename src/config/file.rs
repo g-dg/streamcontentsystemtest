@@ -75,5 +75,5 @@ fn default_static_file_index() -> String {
     String::from("index.html")
 }
 fn default_http_caching_max_age() -> u64 {
-    60 * 60 * 24
+    60 * 60
 }
