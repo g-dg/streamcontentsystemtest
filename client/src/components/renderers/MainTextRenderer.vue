@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
-import { useStateStore } from "@/stores/state";
+import { type StateContent } from "@/stores/state";
 
-const stateStore = useStateStore();
-const currentContent = computed(() => stateStore.currentState.content);
-
-const props = defineProps<{ fontSize: string }>();
+const props = defineProps<{ content: StateContent; fontSize: string }>();
 </script>
 
 <template>
-  <div v-if="currentContent.mainText != undefined" class="renderer">
+  <div v-if="content.mainText != undefined" class="renderer">
     <div
       style="
         display: flex;
@@ -19,7 +15,7 @@ const props = defineProps<{ fontSize: string }>();
       "
     >
       <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
-        {{ currentContent.mainText }}
+        {{ content.mainText }}
       </div>
     </div>
   </div>
