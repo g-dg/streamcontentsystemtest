@@ -17,11 +17,8 @@ pub struct AppConfig {
     #[serde(default = "default_client_proxy_url")]
     pub client_proxy_url: Option<String>,
 
-    #[serde(default = "default_edit_directory")]
-    pub edit_directory: String,
-
-    #[serde(default = "default_song_directory")]
-    pub song_directory: String,
+    #[serde(default = "default_content_directory")]
+    pub content_directory: String,
 
     #[serde(default = "default_static_file_root")]
     pub static_file_root: String,
@@ -68,11 +65,8 @@ fn default_cors_allowed_origins() -> Vec<String> {
 fn default_client_proxy_url() -> Option<String> {
     None
 }
-fn default_edit_directory() -> String {
-    String::from("./text_content")
-}
-fn default_song_directory() -> String {
-    String::from("./songs")
+fn default_content_directory() -> String {
+    String::from("./content")
 }
 fn default_static_file_root() -> String {
     String::from("./client/dist/")

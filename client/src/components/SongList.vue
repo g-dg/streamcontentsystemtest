@@ -37,23 +37,24 @@ const filteredSongTitles = computed(() => {
 </script>
 
 <template>
-  <form @submit.prevent class="root">
-    <div style="position: sticky; top: 0px">
+  <form
+    @submit.prevent
+    class="root"
+    style="height: 100%; display: flex; flex-direction: column"
+  >
+    <div style="flex: 0; position: sticky; top: 0px">
       <span style="display: inline-block">
         <button @click="songStore.loadSongs()">Reload</button>
         <input v-model="search" type="search" placeholder="Search" />
         <button @click="search = ''">Clear Search</button>
       </span>
     </div>
-    <div
-      style="
-        height: calc(50vh - (var(--main-header-footer-size) / 2));
-        overflow: auto;
-      "
-    >
-      <div v-for="song in filteredSongTitles" :key="song">
-        <button @click="addToService(song)">Add</button>
-        {{ song }}
+    <div style="flex: 1 1 auto; height: 2lh">
+      <div style="height: 100%; overflow: auto">
+        <div v-for="song in filteredSongTitles" :key="song">
+          <button @click="addToService(song)">Add</button>
+          {{ song }}
+        </div>
       </div>
     </div>
   </form>

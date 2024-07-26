@@ -3,10 +3,10 @@ import { useSongStore } from "@/stores/song";
 import { onMounted } from "vue";
 import { useServiceStore } from "@/stores/service";
 import { useStateStore } from "@/stores/state";
-import SongList from "../components/SongList.vue";
-import ServiceSongList from "./ServiceSongList.vue";
-import ServiceVerseList from "./ServiceVerseList.vue";
-import MultitextEditorSplit from "./MultitextEditorSplit.vue";
+import PreviewIFrame from "./PreviewIFrame.vue";
+import SongList from "./SongList.vue";
+import ServiceItemList from "./ServiceItemList.vue";
+import ServiceItemContentList from "./ServiceItemContentList.vue";
 
 const songStore = useSongStore();
 const serviceStore = useServiceStore();
@@ -16,7 +16,7 @@ onMounted(songStore.loadSongs);
 
 onMounted(stateStore.connect);
 
-function setVerse(content: string) {
+function setContent(content: string) {
   stateStore.setState(content);
 }
 
@@ -25,36 +25,39 @@ const appCopyright = __APP_COPYRIGHT__;
 </script>
 
 <template>
-  <div style="display: flex; flex-direction: column">
+  <div
+    style="display: flex; flex-direction: column; height: calc(100vh - 16px)"
+  >
     <div style="flex: 1; display: flex">
-      <div style="flex: 1">
-        All Songs:
-        <SongList />
+      <div style="flex: 1; display: flex; flex-direction: column">
+        <div style="flex: 1; display: flex; flex-direction: column">
+          <div style="flex: 0">All Songs:</div>
+          <div style="flex: 1">
+            <SongList />
+          </div>
+        </div>
+        <div style="flex: 0 auto; display: flex; flex-direction: column">
+          <div style="flex: 1">
+            <PreviewIFrame />
+          </div>
+          <footer style="flex: auto">
+            {{ appFullName }}
+            {{ appCopyright }}
+            (<RouterLink :to="{ name: 'about' }">About</RouterLink>)
+          </footer>
+        </div>
       </div>
-      <div style="flex: 1">
-        Service:
-        <ServiceSongList />
+      <div style="flex: 1; display: flex; flex-direction: column">
+        <div style="flex: 0">Service:</div>
+        <div style="flex: 1">
+          <ServiceItemList />
+        </div>
       </div>
-      <div style="flex: 1">
-        Verses:
-        <ServiceVerseList @set-verse="setVerse" />
-      </div>
-    </div>
-    <div><hr /></div>
-    <div style="flex: 1; display: flex">
-      <div style="flex: 1; padding-right: 8px">
-        <iframe
-          src="/display/preview?font-size=16"
-          style="border: none; width: 100%; height: calc(100% - 2em)"
-        ></iframe>
-        <footer>
-          {{ appFullName }}
-          {{ appCopyright }}
-          (<RouterLink :to="{ name: 'about' }">About</RouterLink>)
-        </footer>
-      </div>
-      <div style="flex: 2">
-        <MultitextEditorSplit />
+      <div style="flex: 1; display: flex; flex-direction: column">
+        <div style="flex: 0">Verses:</div>
+        <div style="flex: 1">
+          <ServiceItemContentList @set-verse="setContent" />
+        </div>
       </div>
     </div>
   </div>

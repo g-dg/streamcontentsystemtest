@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 use axum::Router;
 
-use crate::{app::AppServices, content, state, text};
+use crate::{app::AppServices, content, state};
 
 pub fn route() -> Router<Arc<AppServices>> {
     Router::new()
@@ -13,5 +13,4 @@ pub fn route() -> Router<Arc<AppServices>> {
         .nest("/shutdown", shutdown::route())
         .nest("/content", content::api::route())
         .nest("/state", state::api::route())
-        .nest("/text", text::api::route())
 }

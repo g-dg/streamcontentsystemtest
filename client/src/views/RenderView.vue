@@ -1,9 +1,22 @@
 <script setup lang="ts">
 import BasicTextRenderer from "@/components/renderers/BasicTextRenderer.vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+
+const DEFAULT_FONT_SIZE = "40pt";
+
+const fontSize = computed(() => {
+  const size_query = (route.query["font-size"] as string) ?? null;
+  const size =
+    size_query.match(/^\d+(\.\d+)$/)?.[0] ?? size_query ?? DEFAULT_FONT_SIZE;
+  return size;
+});
 </script>
 
 <template>
-  <div class="renderer">
+  <div class="renderer" :style="{ 'font-size': `${fontSize}pt` }">
     <BasicTextRenderer />
   </div>
 </template>
@@ -13,6 +26,7 @@ import BasicTextRenderer from "@/components/renderers/BasicTextRenderer.vue";
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  font-family: "Ubuntu", "Liberation Sans", "Arial", sans-serif;
 }
 </style>
 

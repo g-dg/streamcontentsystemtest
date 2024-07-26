@@ -17,7 +17,7 @@ pub fn route() -> Router<Arc<AppServices>> {
 }
 
 pub async fn list_content(State(state): State<Arc<AppServices>>) -> impl IntoResponse {
-    let Ok(dir) = fs::read_dir(state.config.song_directory.clone()) else {
+    let Ok(dir) = fs::read_dir(state.config.content_directory.clone()) else {
         return StatusCode::INTERNAL_SERVER_ERROR.into_response();
     };
 
@@ -53,7 +53,7 @@ pub async fn get_content(
 ) -> impl IntoResponse {
     let filename = sanitize_filename(&filename);
 
-    let mut path = path::PathBuf::from(&state.config.song_directory.clone());
+    let mut path = path::PathBuf::from(&state.config.content_directory.clone());
     path.push(&filename);
 
     if !path.is_file() {
