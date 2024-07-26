@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useSongStore } from "@/stores/song";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useServiceStore } from "@/stores/service";
 import { useStateStore, type StateContent } from "@/stores/state";
 import PreviewIFrame from "./PreviewIFrame.vue";
 import SongList from "./SongList.vue";
 import ServiceItemList from "./ServiceItemList.vue";
 import ServiceItemContentList from "./ServiceItemContentList.vue";
+import ScratchpadEditor from "./ScratchpadEditor.vue";
 
 const songStore = useSongStore();
 const serviceStore = useServiceStore();
@@ -43,14 +44,19 @@ const appCopyright = __APP_COPYRIGHT__;
           <footer style="flex: auto">
             {{ appFullName }}
             {{ appCopyright }}
-            (<RouterLink :to="{ name: 'about' }">About</RouterLink>)
+            (<RouterLink :to="{ name: 'about' }" target="_blank"
+              >About</RouterLink
+            >)
           </footer>
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
         <div style="flex: 0">Service:</div>
-        <div style="flex: 1">
+        <div style="flex: 3">
           <ServiceItemList />
+        </div>
+        <div style="flex: 1">
+          <ScratchpadEditor />
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">

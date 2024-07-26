@@ -12,6 +12,7 @@ import { uuid } from "@/helpers/random";
 
 export interface ServiceData {
   serviceItems: Array<ServiceItem>;
+  scratchpad?: string;
 }
 
 export interface ServiceItem {

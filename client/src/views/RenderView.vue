@@ -46,14 +46,6 @@ const textShadow = computed(() =>
           }),
     }"
   >
-    <SongRenderer
-      :font-size="fontSize"
-      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
-    />
-    <SongTitleRenderer
-      :font-size="fontSize"
-      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
-    />
     <SmallTextRenderer
       :font-size="fontSize"
       style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
@@ -63,6 +55,14 @@ const textShadow = computed(() =>
       style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
     />
     <MainTextRenderer
+      :font-size="fontSize"
+      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
+    />
+    <SongTitleRenderer
+      :font-size="fontSize"
+      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
+    />
+    <SongRenderer
       :font-size="fontSize"
       style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
     />
@@ -82,14 +82,5 @@ const textShadow = computed(() =>
 <style lang="scss">
 body {
   margin: 0px;
-}
-</style>
-
-<style lang="scss">
-@font-face {
-  font-family: "Ubuntu";
-  font-display: swap;
-  src: local("Ubuntu"),
-    url(@/assets/ubuntu-font-family/Ubuntu-R.ttf) format("truetype");
 }
 </style>

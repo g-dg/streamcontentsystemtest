@@ -19,12 +19,13 @@ async function loadVersion() {
 onMounted(loadVersion);
 
 const clientVersion = __APP_VERSION__;
+const appName = __APP_NAME__;
 const appFullName = __APP_NAME_FULL__;
 </script>
 
 <template>
   <main>
-    <h1>StreamSys</h1>
+    <h1>{{ appName }}</h1>
 
     <h2>
       <em> {{ appFullName }} </em>

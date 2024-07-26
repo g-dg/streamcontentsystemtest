@@ -1,0 +1,29 @@
+@font-face {
+  font-family: "Ubuntu";
+  font-weight: normal;
+  font-display: swap;
+  src: local("Ubuntu"),
+    url(@/assets/ubuntu-font-family/Ubuntu-R.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Ubuntu";
+  font-style: italic;
+  font-display: swap;
+  src: local("Ubuntu-Italic"),
+    url(@/assets/ubuntu-font-family/Ubuntu-RI.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Ubuntu";
+  font-weight: bold;
+  font-display: swap;
+  src: local("Ubuntu-Bold"),
+    url(@/assets/ubuntu-font-family/Ubuntu-B.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Ubuntu";
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+  src: local("Ubuntu-BoldItalic"),
+    url(@/assets/ubuntu-font-family/Ubuntu-BI.ttf) format("truetype");
+}
