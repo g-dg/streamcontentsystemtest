@@ -32,7 +32,6 @@ const appCopyright = __APP_COPYRIGHT__;
     <div style="flex: 1; display: flex">
       <div style="flex: 1; display: flex; flex-direction: column">
         <div style="flex: 1; display: flex; flex-direction: column">
-          <div style="flex: 0">All Songs:</div>
           <div style="flex: 1">
             <SongList />
           </div>
@@ -51,7 +50,6 @@ const appCopyright = __APP_COPYRIGHT__;
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
-        <div style="flex: 0">Service:</div>
         <div style="flex: 3">
           <ServiceItemList />
         </div>
@@ -60,7 +58,6 @@ const appCopyright = __APP_COPYRIGHT__;
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
-        <div style="flex: 0">Items:</div>
         <div style="flex: 1">
           <ServiceItemContentList @set-content="setContent" />
         </div>

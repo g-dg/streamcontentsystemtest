@@ -147,6 +147,9 @@ export const useServiceStore = defineStore("service", () => {
 
       serviceData.value = fileContent;
 
+      selectedItemIndex.value = null;
+      selectedSubItemIndex.value = null;
+
       nextTick(() => (unsavedChanges.value = false));
     } catch (e) {
       console.error(e);

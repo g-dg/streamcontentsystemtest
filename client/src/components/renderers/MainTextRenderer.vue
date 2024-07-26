@@ -10,8 +10,17 @@ const props = defineProps<{ fontSize: string }>();
 
 <template>
   <div v-if="currentContent.mainText != undefined" class="renderer">
-    <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
-      {{ currentContent.mainText }}
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      "
+    >
+      <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
+        {{ currentContent.mainText }}
+      </div>
     </div>
   </div>
 </template>
@@ -26,11 +35,11 @@ const props = defineProps<{ fontSize: string }>();
   padding: 3.5vh 3.5vw;
 }
 .text {
-  text-align: center;
+  text-align: left;
   white-space: pre-wrap;
   overflow: auto;
   max-height: calc(100vh - 7vh);
-  width: calc(100vw - 7vw);
+  max-width: calc(100vw - 7vw);
   font-weight: bold;
 }
 </style>

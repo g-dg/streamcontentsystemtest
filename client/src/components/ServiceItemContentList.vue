@@ -37,7 +37,10 @@ function selectContent(id: number | string) {
         emit("setContent", {
           background: true,
           song: verseContent,
-          songTitle: serviceStore.selectedItem?.text ?? undefined,
+          songTitle:
+            (serviceStore.selectedItem?.text ?? "") != ""
+              ? serviceStore.selectedItem?.text
+              : serviceStore.selectedItem?.song?.title ?? "",
         });
       }
       break;
