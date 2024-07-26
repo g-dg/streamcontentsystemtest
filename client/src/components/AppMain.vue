@@ -2,7 +2,7 @@
 import { useSongStore } from "@/stores/song";
 import { onMounted } from "vue";
 import { useServiceStore } from "@/stores/service";
-import { useStateStore } from "@/stores/state";
+import { useStateStore, type StateContent } from "@/stores/state";
 import PreviewIFrame from "./PreviewIFrame.vue";
 import SongList from "./SongList.vue";
 import ServiceItemList from "./ServiceItemList.vue";
@@ -16,7 +16,7 @@ onMounted(songStore.loadSongs);
 
 onMounted(stateStore.connect);
 
-function setContent(content: string) {
+function setContent(content: StateContent) {
   stateStore.setState(content);
 }
 
@@ -38,7 +38,7 @@ const appCopyright = __APP_COPYRIGHT__;
         </div>
         <div style="flex: 0 auto; display: flex; flex-direction: column">
           <div style="flex: 1">
-            <PreviewIFrame />
+            <PreviewIFrame border :scale="1 / 3" />
           </div>
           <footer style="flex: auto">
             {{ appFullName }}
@@ -54,9 +54,9 @@ const appCopyright = __APP_COPYRIGHT__;
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
-        <div style="flex: 0">Verses:</div>
+        <div style="flex: 0">Items:</div>
         <div style="flex: 1">
-          <ServiceItemContentList @set-verse="setContent" />
+          <ServiceItemContentList @set-content="setContent" />
         </div>
       </div>
     </div>

@@ -8,76 +8,118 @@ import {
   type Ref,
 } from "vue";
 import { useSongStore } from "./song";
+import { uuid } from "@/helpers/random";
 
 export interface ServiceData {
-  songs: Array<{ song: string; verses: Array<string> }>;
-  textContent: Record<string, string>;
+  serviceItems: Array<ServiceItem>;
+}
+
+export interface ServiceItem {
+  id: string;
+  type: "empty" | "song" | "mainText" | "subText" | "smallText";
+  song?: ServiceSong;
+  text?: string;
+  comment?: string;
+}
+
+export interface ServiceSong {
+  title: string;
+  verses: Array<string>;
 }
 
 export const useServiceStore = defineStore("service", () => {
   const songStore = useSongStore();
 
   const unsavedChanges = ref(false);
-  const serviceData: Ref<ServiceData> = ref({ songs: [], textContent: {} });
+  const serviceData: Ref<ServiceData> = ref({ serviceItems: [] });
   //TODO: add checks for unsaved changes
 
-  const selectedSongIndex = ref<number | null>(null);
-  const selectedVerseName = ref<string | null>(null);
+  const selectedItemIndex = ref<number | null>(null);
+  const selectedSubItemIndex = ref<number | string | null>(null);
   watch(
-    selectedSongIndex,
-    (newSongIndex: number | null, oldSongIndex: number | null) => {
-      if (newSongIndex != null && newSongIndex != oldSongIndex) {
-        selectedVerseName.value = null;
+    selectedItemIndex,
+    (newIndex: number | null, oldIndex: number | null) => {
+      if (newIndex != null && newIndex != oldIndex) {
+        selectedSubItemIndex.value = null;
       }
     }
   );
 
-  const selectedSongTitle = computed(() =>
-    selectedSongIndex.value != null
-      ? serviceData.value.songs[selectedSongIndex.value]?.song
+  const selectedItem = computed(() =>
+    selectedItemIndex.value != null
+      ? serviceData.value.serviceItems[selectedItemIndex.value]
       : null
   );
-  const selectedSong = computed(() =>
-    selectedSongTitle.value != null
-      ? songStore.songs[selectedSongTitle.value]
-      : null
-  );
-  const selectedVerseContent = computed(() =>
-    selectedVerseName.value != null
-      ? selectedSong.value?.[selectedVerseName.value]
-      : null
-  );
+
+  function addEmpty() {
+    addItem(
+      {
+        id: uuid(),
+        type: "empty",
+      },
+      true
+    );
+  }
 
   function addSong(songTitle: string) {
-    serviceData.value.songs.push({ song: songTitle, verses: [] });
+    addItem(
+      {
+        id: uuid(),
+        type: "song",
+        song: { title: songTitle, verses: [] },
+      },
+      true
+    );
   }
 
-  function removeSong(index: number) {
-    if (index == selectedSongIndex.value) {
-      selectedVerseName.value = null;
-      selectedSongIndex.value = null;
+  function addText(type: "mainText" | "subText" | "smallText", text: string) {
+    addItem(
+      {
+        id: uuid(),
+        type,
+        text,
+      },
+      true
+    );
+  }
+
+  function addItem(item: ServiceItem, select: boolean = true) {
+    const index =
+      selectedItemIndex.value != null
+        ? selectedItemIndex.value + 1
+        : serviceData.value.serviceItems.length;
+    serviceData.value.serviceItems.splice(index, 0, item);
+    if (select) {
+      selectedItemIndex.value = index;
     }
-    serviceData.value.songs.splice(index, 1);
   }
 
-  function moveSong(index: number, direction: number) {
-    const value = serviceData.value.songs[index];
-    const swapValue = serviceData.value.songs[index + direction];
+  function removeItem(index: number) {
+    if (index == selectedItemIndex.value) {
+      selectedSubItemIndex.value = null;
+      selectedItemIndex.value = null;
+    }
+    serviceData.value.serviceItems.splice(index, 1);
+  }
 
-    serviceData.value.songs[index + direction] = value;
-    serviceData.value.songs[index] = swapValue;
+  function moveItem(index: number, direction: number) {
+    const value = serviceData.value.serviceItems[index];
+    const swapValue = serviceData.value.serviceItems[index + direction];
 
-    if (index == selectedSongIndex.value) {
-      selectedSongIndex.value = index + direction;
-    } else if (index + direction == selectedSongIndex.value) {
-      selectedSongIndex.value = index;
+    serviceData.value.serviceItems[index + direction] = value;
+    serviceData.value.serviceItems[index] = swapValue;
+
+    if (index == selectedItemIndex.value) {
+      selectedItemIndex.value = index + direction;
+    } else if (index + direction == selectedItemIndex.value) {
+      selectedItemIndex.value = index;
     }
   }
 
   function clearService() {
-    selectedVerseName.value = null;
-    selectedSongIndex.value = null;
-    serviceData.value.songs = [];
+    selectedSubItemIndex.value = null;
+    selectedItemIndex.value = null;
+    serviceData.value.serviceItems = [];
   }
 
   let importFileInput: HTMLInputElement;
@@ -140,14 +182,15 @@ export const useServiceStore = defineStore("service", () => {
   return {
     unsavedChanges: computed(() => unsavedChanges.value),
     serviceData,
-    selectedSongIndex,
-    selectedVerseName,
-    selectedSongTitle,
-    selectedSong,
-    selectedVerseContent,
+    selectedItemIndex,
+    selectedSubItemIndex,
+    selectedItem,
+    addEmpty,
     addSong,
-    removeSong,
-    moveSong,
+    addText,
+    addItem,
+    removeItem,
+    moveItem,
     clearService,
     importService,
     exportService,

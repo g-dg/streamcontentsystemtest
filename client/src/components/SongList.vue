@@ -28,7 +28,11 @@ const filteredSongTitles = computed(() => {
         .some((titleTerm) => {
           titleTerm = titleTerm.toUpperCase();
           if (titleTerm == "") return false;
-          if (titleTerm.match(/^\d+/) != null) return titleTerm == searchTerm;
+          if (titleTerm.match(/^\d+$/) != null) return titleTerm == searchTerm;
+          if (titleTerm.match(/^\d+/) != null)
+            return (
+              titleTerm.match(/^\d+/)?.[0] == searchTerm.match(/^\d+/)?.[0]
+            );
           return titleTerm.includes(searchTerm);
         });
     })

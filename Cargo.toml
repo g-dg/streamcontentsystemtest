@@ -1,5 +1,5 @@
 [package]
-name = "garnetdg_simplestreamingstuff"
+name = "garnetdg_streamcontentsystemtest"
 version = "3.0.0"
 edition = "2021"
 

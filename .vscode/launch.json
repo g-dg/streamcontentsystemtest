@@ -7,15 +7,15 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Debug executable 'garnetdg_simplestreamingstuff'",
+			"name": "Debug executable 'garnetdg_streamcontentsystemtest'",
 			"cargo": {
 				"args": [
 					"build",
-					"--bin=garnetdg_simplestreamingstuff",
-					"--package=garnetdg_simplestreamingstuff"
+					"--bin=garnetdg_streamcontentsystemtest",
+					"--package=garnetdg_streamcontentsystemtest"
 				],
 				"filter": {
-					"name": "garnetdg_simplestreamingstuff",
+					"name": "garnetdg_streamcontentsystemtest",
 					"kind": "bin"
 				}
 			},
@@ -25,16 +25,16 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Debug unit tests in executable 'garnetdg_simplestreamingstuff'",
+			"name": "Debug unit tests in executable 'garnetdg_streamcontentsystemtest'",
 			"cargo": {
 				"args": [
 					"test",
 					"--no-run",
-					"--bin=garnetdg_simplestreamingstuff",
-					"--package=garnetdg_simplestreamingstuff"
+					"--bin=garnetdg_streamcontentsystemtest",
+					"--package=garnetdg_streamcontentsystemtest"
 				],
 				"filter": {
-					"name": "garnetdg_simplestreamingstuff",
+					"name": "garnetdg_streamcontentsystemtest",
 					"kind": "bin"
 				}
 			},

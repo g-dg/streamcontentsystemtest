@@ -3,15 +3,15 @@ import { computed, onMounted } from "vue";
 import { useStateStore } from "@/stores/state";
 
 const stateStore = useStateStore();
-onMounted(stateStore.connect);
-
 const currentContent = computed(() => stateStore.currentState.content);
+
+const props = defineProps<{ fontSize: string }>();
 </script>
 
 <template>
-  <div class="renderer">
-    <div class="text">
-      {{ currentContent }}
+  <div v-if="currentContent.subText != undefined" class="renderer">
+    <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
+      {{ currentContent.subText }}
     </div>
   </div>
 </template>
@@ -21,16 +21,16 @@ const currentContent = computed(() => stateStore.currentState.content);
   width: 100vw;
   height: 100vh;
   overflow: auto;
-  background-color: #000;
-  color: #fff;
   display: flex;
-  align-items: center;
+  align-items: end;
   padding: 3.5vh 3.5vw;
 }
 .text {
+  text-align: center;
   white-space: pre-wrap;
   overflow: auto;
-  max-height: 100vh;
-  max-width: 100vw;
+  max-height: calc(100vh - 7vh);
+  width: calc(100vw - 7vw);
+  font-weight: bold;
 }
 </style>

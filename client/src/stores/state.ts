@@ -6,7 +6,16 @@ import { randomString } from "@/helpers/random";
 
 export interface CurrentState {
   id: string;
-  content: any;
+  content: StateContent;
+}
+
+export interface StateContent {
+  background: boolean;
+  song?: string;
+  songTitle?: string;
+  mainText?: string;
+  subText?: string;
+  smallText?: string;
 }
 
 export const useStateStore = defineStore("state", () => {
@@ -20,7 +29,9 @@ export const useStateStore = defineStore("state", () => {
 
   const _currentState: Ref<CurrentState> = ref({
     id: "",
-    content: undefined,
+    content: {
+      background: false,
+    },
   });
 
   let _messageListener: ((evt: MessageEvent<any>) => void) | null = null;
