@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 
 import { uuid } from "@/helpers/random";
-import clone from "@/helpers/clone";
 
 /** Service data */
 export interface ServiceData {
@@ -30,10 +29,12 @@ export const useServiceStore = defineStore("service", () => {
   /** Service data */
   const serviceData = ref<ServiceData>({ serviceItems: [] });
 
-  //TODO: add checks for unsaved changes
-  const savedServiceData = ref<ServiceData>({ serviceItems: [] });
+  /** Copy of service data used to detect unsaved changes */
+  const savedServiceData = ref<string>(JSON.stringify(serviceData.value));
   /** Whether there are unexported changes */
-  const unsavedChanges = computed(() => false);
+  const unsavedChanges = computed(
+    () => JSON.stringify(serviceData.value) != savedServiceData.value
+  );
 
   /** Selected item index */
   const selectedItemIndex = ref<number | null>(null);
@@ -168,7 +169,7 @@ export const useServiceStore = defineStore("service", () => {
           selectedSubItemId.value = null;
 
           // set serviceData
-          savedServiceData.value = clone(fileContent);
+          savedServiceData.value = JSON.stringify(fileContent);
           serviceData.value = fileContent;
         } catch (e) {
           console.error(e);
@@ -209,6 +210,8 @@ export const useServiceStore = defineStore("service", () => {
       fileLink.setAttribute("href", objectURL);
       fileLink.setAttribute("download", filename);
       fileLink.click();
+
+      savedServiceData.value = JSON.stringify(serviceData.value);
 
       // schedule object url revocation
       window.setTimeout(() => URL.revokeObjectURL(objectURL), 1000 * 60 * 60);
