@@ -53,7 +53,7 @@ const filteredSongTitles = computed(() => {
         <button @click="search = ''">Clear Search</button>
       </span>
     </div>
-    <div style="flex: 1 1 auto; height: 2lh">
+    <div style="flex: 1 1 auto; height: 4lh">
       <div style="height: 100%; overflow: auto">
         <div v-for="song in filteredSongTitles" :key="song">
           <button @click="addToService(song)">Add</button>

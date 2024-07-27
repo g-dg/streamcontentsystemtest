@@ -45,7 +45,7 @@ function clearService() {
         </span>
       </span>
     </div>
-    <div style="flex: 1 1 auto; height: 2lh">
+    <div style="flex: 1 1 auto; height: 4lh">
       <div style="height: 100%; overflow: auto">
         <div ref="topScrollElement"></div>
         <div

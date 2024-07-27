@@ -215,7 +215,7 @@ function clearText() {
       <hr />
     </div>
 
-    <div style="flex: 1 1 auto; height: 2lh">
+    <div style="flex: 1 1 auto; height: 4lh">
       <div style="height: 100%; overflow: auto">
         <div ref="topScrollElement"></div>
 
