@@ -40,18 +40,35 @@ const appCopyright = __APP_COPYRIGHT__;
           <div style="flex: 1">
             <PreviewIFrame border :scale="1 / 3" />
           </div>
-          <footer style="flex: auto">
-            {{ appFullName }}
-            {{ appCopyright }}
-            (<RouterLink :to="{ name: 'about' }" target="_blank"
-              >About</RouterLink
-            >)
-          </footer>
+          <div style="flex: 0">
+            <footer>
+              {{ appFullName }}
+              {{ appCopyright }}
+              (<RouterLink :to="{ name: 'about' }" target="_blank"
+                >About</RouterLink
+              >)
+            </footer>
+          </div>
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
         <div style="flex: 3">
           <ServiceItemList />
+        </div>
+        <div style="flex: 0">
+          <div
+            :style="{
+              visibility: stateStore.connected ? 'hidden' : 'visible',
+              textAlign: 'center',
+            }"
+          >
+            <strong style="color: red">
+              <em>
+                &gt;&gt;&gt;&gt;&gt;&gt;&gt; DISCONNECTED FROM SERVER!!!
+                &lt;&lt;&lt;&lt;&lt;&lt;&lt;
+              </em>
+            </strong>
+          </div>
         </div>
         <div style="flex: 1">
           <ScratchpadEditor />
