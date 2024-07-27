@@ -2,6 +2,7 @@
 
 pub mod api;
 pub mod app;
+pub mod client_options;
 pub mod config;
 pub mod content;
 pub mod helpers;

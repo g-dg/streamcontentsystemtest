@@ -1,6 +1,7 @@
 use std::io::ErrorKind;
 
 use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
 use tokio::fs;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -28,6 +29,9 @@ pub struct AppConfig {
 
     #[serde(default = "default_http_caching_max_age")]
     pub http_caching_max_age: u64,
+
+    #[serde(default = "default_client_options")]
+    pub client_options: Value,
 }
 
 impl AppConfig {
@@ -76,4 +80,7 @@ fn default_static_file_index() -> String {
 }
 fn default_http_caching_max_age() -> u64 {
     60 * 60
+}
+fn default_client_options() -> Value {
+    json!({})
 }

@@ -2,11 +2,11 @@ use std::{collections::HashMap, fs, path, sync::Arc};
 
 use axum::{
     extract::{Path, State},
+    http::StatusCode,
     response::IntoResponse,
     routing::get,
     Json, Router,
 };
-use reqwest::StatusCode;
 
 use crate::app::AppServices;
 
