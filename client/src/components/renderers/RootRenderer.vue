@@ -9,7 +9,7 @@ import SubTextRenderer from "@/components/renderers/SubTextRenderer.vue";
 
 import type { StateContent } from "@/stores/state";
 
-const props = defineProps<{ content: StateContent; fontSize: string }>();
+const props = defineProps<{ content: StateContent | null; fontSize: string }>();
 
 const TEXT_SHADOW_LAYERS = 8;
 const textShadow = computed(() =>

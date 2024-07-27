@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { type StateContent } from "@/stores/state";
 
-const props = defineProps<{ content: StateContent; fontSize: string }>();
+const props = defineProps<{ content: StateContent | null; fontSize: string }>();
 </script>
 
 <template>
-  <div v-if="content.song != undefined" class="renderer">
+  <div v-if="content?.song != undefined" class="renderer">
     <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
       {{ content.song }}
     </div>
