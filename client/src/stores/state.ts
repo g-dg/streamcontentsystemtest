@@ -4,6 +4,7 @@ import { computed, ref } from "vue";
 import { API_URI } from "@/api/api";
 import { sleep } from "@/helpers/sleep";
 import { randomString } from "@/helpers/random";
+import { clone } from "@/helpers/clone";
 
 /** State object */
 export interface CurrentState {
@@ -168,7 +169,7 @@ export const useStateStore = defineStore("state", () => {
 
     _isConnected.value = true;
 
-    const existingState = currentState.value;
+    const existingState = clone(currentState.value);
 
     // set up message listener
     _messageListener = async (evt: MessageEvent<any>) => {
@@ -214,6 +215,11 @@ export const useStateStore = defineStore("state", () => {
     // get latest value
     await refresh();
 
+    // set state if state on server side is not set (i.e. if the server restarted)
+    if (currentState.value.id == "" && existingState.id != "") {
+      await _setRawState(existingState);
+    }
+
     _startPingLoop();
 
     _isConnecting = false;
@@ -245,18 +251,9 @@ export const useStateStore = defineStore("state", () => {
    */
   const currentState = computed<CurrentState>(() => _currentState.value);
 
-  /**
-   * Sets a new state
-   * @param state State to set
-   */
-  async function setState(state: any): Promise<CurrentState> {
-    const id = randomString(STATE_ID_LENGTH);
-
+  async function _setRawState(state: CurrentState): Promise<CurrentState> {
     const request = JSON.stringify({
-      state: {
-        id,
-        content: state,
-      },
+      state,
     });
 
     const setPromise = _waitForMessage((message) => message.state);
@@ -264,6 +261,19 @@ export const useStateStore = defineStore("state", () => {
     _ws?.send(request);
 
     return await setPromise;
+  }
+
+  /**
+   * Sets a new state
+   * @param state State to set
+   */
+  async function setState(state: any): Promise<CurrentState> {
+    const id = randomString(STATE_ID_LENGTH);
+
+    return await _setRawState({
+      id,
+      content: state,
+    });
   }
 
   /**
