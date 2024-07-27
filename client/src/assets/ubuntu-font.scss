@@ -4,8 +4,7 @@
   font-display: swap;
   src: local("Ubuntu"),
     url(@/assets/ubuntu-font-family/Ubuntu-R.woff2) format("woff2"),
-    url(@/assets/ubuntu-font-family/Ubuntu-R.woff) format("woff"),
-    url(@/assets/ubuntu-font-family/Ubuntu-R.ttf) format("truetype");
+    url(@/assets/ubuntu-font-family/Ubuntu-R.woff) format("woff");
 }
 @font-face {
   font-family: "Ubuntu";
@@ -13,8 +12,7 @@
   font-display: swap;
   src: local("Ubuntu-Italic"),
     url(@/assets/ubuntu-font-family/Ubuntu-RI.woff2) format("woff2"),
-    url(@/assets/ubuntu-font-family/Ubuntu-RI.woff) format("woff"),
-    url(@/assets/ubuntu-font-family/Ubuntu-RI.ttf) format("truetype");
+    url(@/assets/ubuntu-font-family/Ubuntu-RI.woff) format("woff");
 }
 @font-face {
   font-family: "Ubuntu";
@@ -22,8 +20,7 @@
   font-display: swap;
   src: local("Ubuntu-Bold"),
     url(@/assets/ubuntu-font-family/Ubuntu-B.woff2) format("woff2"),
-    url(@/assets/ubuntu-font-family/Ubuntu-B.woff) format("woff"),
-    url(@/assets/ubuntu-font-family/Ubuntu-B.ttf) format("truetype");
+    url(@/assets/ubuntu-font-family/Ubuntu-B.woff) format("woff");
 }
 @font-face {
   font-family: "Ubuntu";
@@ -32,6 +29,5 @@
   font-display: swap;
   src: local("Ubuntu-BoldItalic"),
     url(@/assets/ubuntu-font-family/Ubuntu-BI.woff2) format("woff2"),
-    url(@/assets/ubuntu-font-family/Ubuntu-BI.woff) format("woff"),
-    url(@/assets/ubuntu-font-family/Ubuntu-BI.ttf) format("truetype");
+    url(@/assets/ubuntu-font-family/Ubuntu-BI.woff) format("woff");
 }
