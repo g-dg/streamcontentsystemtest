@@ -39,7 +39,7 @@ export const useStateStore = defineStore("state", () => {
   let _errorListener: ((evt: Event) => void) | null = null;
 
   let _isConnecting: boolean = false;
-  let _isConnected: boolean = false;
+  let _isConnected: Ref<boolean> = ref(false);
   let _isDisconnecting: boolean = false;
   let _isAuthenticated: boolean = false;
 
@@ -163,7 +163,7 @@ export const useStateStore = defineStore("state", () => {
       throw new Error("Could not connect to state websocket");
     }
 
-    _isConnected = true;
+    _isConnected.value = true;
 
     const existingState = currentState.value;
 
@@ -221,7 +221,7 @@ export const useStateStore = defineStore("state", () => {
    */
   async function disconnect(): Promise<void> {
     _isDisconnecting = true;
-    _isConnected = false;
+    _isConnected.value = false;
     _isConnecting = false;
     _isAuthenticated = false;
 
@@ -236,7 +236,7 @@ export const useStateStore = defineStore("state", () => {
   /**
    * Whether the websocket is connected
    */
-  const connected: ComputedRef<boolean> = computed(() => _isConnected);
+  const connected: ComputedRef<boolean> = computed(() => _isConnected.value);
 
   /**
    * The current state
