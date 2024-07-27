@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
 import { computed } from "vue";
+
 import router from "./router";
 
 const showHeaderFooter = computed(
@@ -31,6 +32,6 @@ const appCopyright = __APP_COPYRIGHT__;
 
 <style lang="scss" scoped>
 footer {
-  margin-top: 1.5em;
+  margin-top: 1lh;
 }
 </style>

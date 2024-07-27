@@ -7,6 +7,7 @@ use axum::Router;
 
 use crate::{app::AppServices, client_options, content, state};
 
+/// API routes
 pub fn route() -> Router<Arc<AppServices>> {
     Router::new()
         .nest("/server-info", server_info::route())

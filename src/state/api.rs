@@ -17,10 +17,12 @@ use crate::app::AppServices;
 
 use super::models::CurrentState;
 
+/// State routes
 pub fn route() -> Router<Arc<AppServices>> {
     Router::new().route("/", get(handler))
 }
 
+/// State requests from the client
 #[derive(Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum StateRequest {
@@ -30,6 +32,7 @@ pub enum StateRequest {
     Pong { pong: String },
 }
 
+/// State responses from the server
 #[derive(Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum StateResponse {
@@ -38,10 +41,12 @@ pub enum StateResponse {
     Pong { pong: String },
 }
 
+/// Handles the connection and upgrades to websockets
 pub async fn handler(State(state): State<Arc<AppServices>>, ws: WebSocketUpgrade) -> Response {
     ws.on_upgrade(|socket| websocket_handler(socket, state))
 }
 
+/// Websocket handler
 pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
     let (mut ws_send, mut ws_recv) = socket.split();
 
@@ -63,6 +68,7 @@ pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
         let mut watch_recv = r_state.state_service.watch_recv.clone();
         let watch_send = r_state.state_service.watch_send.clone();
 
+        // sends a response
         async fn send_response(
             response: &StateResponse,
             queue_send: &mpsc::Sender<String>,
@@ -74,6 +80,7 @@ pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
             Ok(())
         }
 
+        // sends the current state
         async fn send_current_state(
             watch_recv: &mut watch::Receiver<CurrentState>,
             queue_send: &mpsc::Sender<String>,
@@ -83,13 +90,17 @@ pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
             send_response(&response, queue_send).await
         }
 
+        // handle messages
         while let Some(Ok(msg)) = ws_recv.next().await {
             match msg {
+                // all messages are text-based
                 Message::Text(msg) => {
+                    // parse request
                     let request: StateRequest =
                         serde_json::from_str(&msg).expect("Failed to parse state request");
 
                     match request {
+                        // request to get current state
                         StateRequest::Get { get: _ } => {
                             // respond with current state
                             if send_current_state(&mut watch_recv, &r_queue_send)
@@ -100,6 +111,7 @@ pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
                             }
                         }
 
+                        // request to set new state
                         StateRequest::Set { state } => {
                             // set state (will trigger response)
                             if watch_send.send(state).is_err() {
@@ -107,6 +119,7 @@ pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
                             }
                         }
 
+                        // ping request
                         StateRequest::Ping { ping } => {
                             let send_result =
                                 send_response(&StateResponse::Pong { pong: ping }, &r_queue_send)
@@ -116,6 +129,7 @@ pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
                             }
                         }
 
+                        // pong request
                         StateRequest::Pong { pong: _ } => {}
                     }
                 }

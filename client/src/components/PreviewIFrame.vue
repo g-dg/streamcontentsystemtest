@@ -3,9 +3,9 @@ import { computed } from "vue";
 
 const props = defineProps<{ border?: boolean; scale?: number }>();
 
-const DEFAULT_REGULAR_FONT_SIZE = 40;
+const DEFAULT_NORMAL_FONT_SIZE = 40;
 const scaledFontSize = computed(
-  () => DEFAULT_REGULAR_FONT_SIZE * (props.scale ?? 1)
+  () => DEFAULT_NORMAL_FONT_SIZE * (props.scale ?? 1)
 );
 </script>
 

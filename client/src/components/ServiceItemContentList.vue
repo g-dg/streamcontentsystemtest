@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { computed, ref, watch } from "vue";
+
 import { natcasecmp } from "@/helpers/sort";
 import { useServiceStore } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
 import { type StateContent } from "@/stores/state";
-import { computed, ref, watch, type Ref } from "vue";
 
 const emit = defineEmits<{ (e: "setContent", content: StateContent): void }>();
 
@@ -23,7 +24,7 @@ const songVerses = computed(() =>
 );
 
 function selectContent(id: number | string) {
-  serviceStore.selectedSubItemIndex = id;
+  serviceStore.selectedSubItemId = id;
 
   switch (itemType.value) {
     case "empty":
@@ -78,7 +79,7 @@ function blackScreen() {
   emit("setContent", { background: true });
 }
 
-const topScrollElement: Ref<HTMLDivElement | undefined> = ref();
+const topScrollElement = ref<HTMLDivElement>();
 function scrollToTop() {
   topScrollElement.value?.scrollIntoView();
 }
@@ -162,6 +163,7 @@ function clearText() {
         <em v-if="itemType == 'subText'"> Sub Text </em>
         <em v-if="itemType == 'smallText'"> Small Text </em>
       </span>
+
       <div>
         <input
           v-if="
@@ -180,6 +182,7 @@ function clearText() {
           placeholder="Song Verses"
           style="width: 100%"
         />
+
         <template
           v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(itemType) &&
             serviceStore.selectedItemIndex != null &&
@@ -208,6 +211,7 @@ function clearText() {
             Copy
           </button>
           <button @click="clearText">Clear</button>
+
           Chars: {{ textCharCount }} Lines: {{ textLineCount }} Longest Line:
           {{ textLongestLine }}
         </template>
@@ -225,12 +229,12 @@ function clearText() {
           :key="verseName"
           @click="selectContent(verseName)"
           :class="{
-            'selected-item': serviceStore.selectedSubItemIndex === verseName,
+            'selected-item': serviceStore.selectedSubItemId === verseName,
           }"
           style="margin: 1em 0"
         >
           <input
-            v-model="serviceStore.selectedSubItemIndex"
+            v-model="serviceStore.selectedSubItemId"
             :value="verseName"
             type="radio"
           />
@@ -245,11 +249,11 @@ function clearText() {
           v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(itemType)"
           @click="selectContent(0)"
           :class="{
-            'selected-item': serviceStore.selectedSubItemIndex == 0,
+            'selected-item': serviceStore.selectedSubItemId == 0,
           }"
         >
           <input
-            v-model="serviceStore.selectedSubItemIndex"
+            v-model="serviceStore.selectedSubItemId"
             :value="0"
             type="radio"
           />
@@ -268,11 +272,11 @@ function clearText() {
           v-if="itemType == 'empty'"
           @click="selectContent(0)"
           :class="{
-            'selected-item': serviceStore.selectedSubItemIndex == 0,
+            'selected-item': serviceStore.selectedSubItemId == 0,
           }"
         >
           <input
-            v-model="serviceStore.selectedSubItemIndex"
+            v-model="serviceStore.selectedSubItemId"
             :value="0"
             type="radio"
           />

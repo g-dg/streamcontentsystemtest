@@ -12,12 +12,15 @@ export interface DisplayConfig {
   font_size?: string;
 }
 
+/** Config store */
 export const useConfigStore = defineStore("config", () => {
   const _config = ref<Config>({});
+  /** Client config from server */
   const config = computed(() => _config.value);
 
   let loadPromise: Promise<void> | null = null;
 
+  /** Loads config from server */
   async function _loadConfig() {
     try {
       _config.value = await ConfigClient.getConfig();
@@ -29,6 +32,7 @@ export const useConfigStore = defineStore("config", () => {
     }
   }
 
+  /** Load config from server. If we're already loading the config, wait for it to finish */
   function loadConfig() {
     if (loadPromise == null) {
       loadPromise = _loadConfig();

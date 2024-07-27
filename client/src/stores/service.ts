@@ -1,20 +1,16 @@
 import { defineStore } from "pinia";
-import {
-  computed,
-  nextTick,
-  ref,
-  watch,
-  type ComputedRef,
-  type Ref,
-} from "vue";
-import { useSongStore } from "./song";
-import { uuid } from "@/helpers/random";
+import { computed, ref, watch } from "vue";
 
+import { uuid } from "@/helpers/random";
+import clone from "@/helpers/clone";
+
+/** Service data */
 export interface ServiceData {
   serviceItems: Array<ServiceItem>;
   scratchpad?: string;
 }
 
+/** Service item */
 export interface ServiceItem {
   id: string;
   type: "empty" | "song" | "mainText" | "subText" | "smallText";
@@ -23,35 +19,45 @@ export interface ServiceItem {
   comment?: string;
 }
 
+/** Service song */
 export interface ServiceSong {
   title: string;
   verses: Array<string>;
 }
 
+/** Service store */
 export const useServiceStore = defineStore("service", () => {
-  const songStore = useSongStore();
+  /** Service data */
+  const serviceData = ref<ServiceData>({ serviceItems: [] });
 
-  const unsavedChanges = ref(false);
-  const serviceData: Ref<ServiceData> = ref({ serviceItems: [] });
   //TODO: add checks for unsaved changes
+  const savedServiceData = ref<ServiceData>({ serviceItems: [] });
+  /** Whether there are unexported changes */
+  const unsavedChanges = computed(() => false);
 
+  /** Selected item index */
   const selectedItemIndex = ref<number | null>(null);
-  const selectedSubItemIndex = ref<number | string | null>(null);
+  /** Selected sub item id */
+  const selectedSubItemId = ref<number | string | null>(null);
+
   watch(
     selectedItemIndex,
     (newIndex: number | null, oldIndex: number | null) => {
+      // unselect sub item if different item is selected
       if (newIndex != null && newIndex != oldIndex) {
-        selectedSubItemIndex.value = null;
+        selectedSubItemId.value = null;
       }
     }
   );
 
+  /** Selected item */
   const selectedItem = computed(() =>
     selectedItemIndex.value != null
       ? serviceData.value.serviceItems[selectedItemIndex.value]
       : null
   );
 
+  /** Add empty item */
   function addEmpty() {
     addItem(
       {
@@ -62,6 +68,7 @@ export const useServiceStore = defineStore("service", () => {
     );
   }
 
+  /** Add selected song */
   function addSong(songTitle: string) {
     addItem(
       {
@@ -73,6 +80,7 @@ export const useServiceStore = defineStore("service", () => {
     );
   }
 
+  /** Add text item */
   function addText(type: "mainText" | "subText" | "smallText", text: string) {
     addItem(
       {
@@ -84,6 +92,7 @@ export const useServiceStore = defineStore("service", () => {
     );
   }
 
+  /** Add item */
   function addItem(item: ServiceItem, select: boolean = true) {
     const index =
       selectedItemIndex.value != null
@@ -95,21 +104,25 @@ export const useServiceStore = defineStore("service", () => {
     }
   }
 
+  /** Remove item by index */
   function removeItem(index: number) {
     if (index == selectedItemIndex.value) {
-      selectedSubItemIndex.value = null;
+      selectedSubItemId.value = null;
       selectedItemIndex.value = null;
     }
     serviceData.value.serviceItems.splice(index, 1);
   }
 
+  /** Swap item by id with relative position */
   function moveItem(index: number, direction: number) {
     const value = serviceData.value.serviceItems[index];
     const swapValue = serviceData.value.serviceItems[index + direction];
 
+    // swap items
     serviceData.value.serviceItems[index + direction] = value;
     serviceData.value.serviceItems[index] = swapValue;
 
+    // update selected index to move with moved item
     if (index == selectedItemIndex.value) {
       selectedItemIndex.value = index + direction;
     } else if (index + direction == selectedItemIndex.value) {
@@ -117,48 +130,66 @@ export const useServiceStore = defineStore("service", () => {
     }
   }
 
+  /** Remove all items from service */
   function clearService() {
-    selectedSubItemIndex.value = null;
+    selectedSubItemId.value = null;
     selectedItemIndex.value = null;
     serviceData.value.serviceItems = [];
   }
 
-  let importFileInput: HTMLInputElement;
+  /** Import service from file */
   async function importService() {
     try {
-      importFileInput = document.createElement("input");
+      // create file dialog
+      const importFileInput = document.createElement("input");
       importFileInput.setAttribute("type", "file");
-      importFileInput.addEventListener("change", processImport);
+
+      // handle file selection
+      importFileInput.addEventListener("change", async () => {
+        try {
+          const rawFileContent =
+            (await importFileInput.files?.[0].text()) ?? "{}";
+
+          const fileContent = JSON.parse(rawFileContent);
+
+          // basic validation
+          if (
+            typeof fileContent != "object" ||
+            fileContent == null ||
+            typeof fileContent.serviceItems != "object" ||
+            !Array.isArray(fileContent.serviceItems)
+          ) {
+            alert("Invalid file format");
+            return;
+          }
+
+          // unselect everything
+          selectedItemIndex.value = null;
+          selectedSubItemId.value = null;
+
+          // set serviceData
+          savedServiceData.value = clone(fileContent);
+          serviceData.value = fileContent;
+        } catch (e) {
+          console.error(e);
+          alert(
+            "An error occurred importing the file. (Is it a valid format?)"
+          );
+        }
+      });
+
+      // open file dialog
       importFileInput.click();
     } catch (e) {
       console.error(e);
       alert("An error occurred preparing for file import.");
     }
   }
-  async function processImport() {
-    try {
-      const rawFileContent = (await importFileInput.files?.[0].text()) ?? "{}";
 
-      const fileContent = JSON.parse(rawFileContent);
-
-      if (typeof fileContent != "object" || fileContent == null) {
-        return;
-      }
-
-      serviceData.value = fileContent;
-
-      selectedItemIndex.value = null;
-      selectedSubItemIndex.value = null;
-
-      nextTick(() => (unsavedChanges.value = false));
-    } catch (e) {
-      console.error(e);
-      alert("An error occurred importing the file. (Is it a valid format?)");
-    }
-  }
-
+  /** Export service to file */
   async function exportService() {
     try {
+      // build filename
       const now = new Date();
       const filename = `${now.getFullYear()}-${String(
         now.getMonth() + 1
@@ -166,17 +197,21 @@ export const useServiceStore = defineStore("service", () => {
         now.getHours() < 12 ? "AM" : "PM"
       }.json`;
 
+      // create object url
       const objectURL = URL.createObjectURL(
         new Blob([JSON.stringify(serviceData.value)], {
           type: "application/json",
         })
       );
+
+      // create link
       const fileLink = document.createElement("a");
       fileLink.setAttribute("href", objectURL);
       fileLink.setAttribute("download", filename);
       fileLink.click();
+
+      // schedule object url revocation
       window.setTimeout(() => URL.revokeObjectURL(objectURL), 1000 * 60 * 60);
-      nextTick(() => (unsavedChanges.value = false));
     } catch (e) {
       console.error(e);
       alert("An error occurred exporting the file.");
@@ -184,10 +219,10 @@ export const useServiceStore = defineStore("service", () => {
   }
 
   return {
-    unsavedChanges: computed(() => unsavedChanges.value),
+    unsavedChanges,
     serviceData,
     selectedItemIndex,
-    selectedSubItemIndex,
+    selectedSubItemId,
     selectedItem,
     addEmpty,
     addSong,

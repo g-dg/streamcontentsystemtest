@@ -2,6 +2,7 @@ use tokio::sync::watch;
 
 use super::models::CurrentState;
 
+/// State service
 pub struct StateService {
     pub watch_send: watch::Sender<CurrentState>,
     pub watch_recv: watch::Receiver<CurrentState>,

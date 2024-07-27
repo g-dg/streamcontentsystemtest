@@ -1,6 +1,7 @@
-const ALPHANUMERIC =
+export const ALPHANUMERIC =
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
+/** Generate a random string */
 export function randomString(length: number, chars?: string): string {
   const useChars = chars ?? ALPHANUMERIC;
   return Array.from({ length }, () =>
@@ -8,6 +9,7 @@ export function randomString(length: number, chars?: string): string {
   ).join("");
 }
 
+/** Generate a UUID */
 export function uuid(): string {
   if (crypto.randomUUID != undefined) {
     return crypto.randomUUID();

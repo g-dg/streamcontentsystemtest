@@ -2,6 +2,7 @@ use std::{error::Error, fmt::Display};
 
 use axum::http::StatusCode;
 
+/// Generic error used to return a HTTP status code
 #[derive(Debug)]
 pub struct GenericError(u16);
 

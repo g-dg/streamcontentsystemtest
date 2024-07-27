@@ -1,14 +1,17 @@
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+
 import { API_URI } from "@/api/api";
 import { sleep } from "@/helpers/sleep";
-import { defineStore } from "pinia";
-import { computed, ref, type ComputedRef, type Ref } from "vue";
 import { randomString } from "@/helpers/random";
 
+/** State object */
 export interface CurrentState {
   id: string;
   content: StateContent;
 }
 
+/** App-specific state */
 export interface StateContent {
   background: boolean;
   song?: string;
@@ -18,7 +21,10 @@ export interface StateContent {
   smallText?: string;
 }
 
+/** State store */
 export const useStateStore = defineStore("state", () => {
+  // Taken from my Rust-Vue state system with authentication removed
+
   const WS_PATH = "api/state";
   const RECONNECT_DELAY = 1000;
   const DEFAULT_PING_DELAY = 1000;
@@ -27,7 +33,7 @@ export const useStateStore = defineStore("state", () => {
 
   let _ws: WebSocket | null = null;
 
-  const _currentState: Ref<CurrentState> = ref({
+  const _currentState = ref<CurrentState>({
     id: "",
     content: {
       background: false,
@@ -39,9 +45,8 @@ export const useStateStore = defineStore("state", () => {
   let _errorListener: ((evt: Event) => void) | null = null;
 
   let _isConnecting: boolean = false;
-  let _isConnected: Ref<boolean> = ref(false);
+  let _isConnected = ref<boolean>(false);
   let _isDisconnecting: boolean = false;
-  let _isAuthenticated: boolean = false;
 
   let _debug: boolean = true;
 
@@ -136,8 +141,6 @@ export const useStateStore = defineStore("state", () => {
     }
     _isConnecting = true;
 
-    _isAuthenticated = false;
-
     // disconnect (if connected)
     await disconnect();
     _isDisconnecting = false;
@@ -223,7 +226,6 @@ export const useStateStore = defineStore("state", () => {
     _isDisconnecting = true;
     _isConnected.value = false;
     _isConnecting = false;
-    _isAuthenticated = false;
 
     _endPingLoop();
     _ws?.removeEventListener("message", _messageListener!);
@@ -236,14 +238,12 @@ export const useStateStore = defineStore("state", () => {
   /**
    * Whether the websocket is connected
    */
-  const connected: ComputedRef<boolean> = computed(() => _isConnected.value);
+  const connected = computed<boolean>(() => _isConnected.value);
 
   /**
    * The current state
    */
-  const currentState: ComputedRef<CurrentState> = computed(
-    () => _currentState.value
-  );
+  const currentState = computed<CurrentState>(() => _currentState.value);
 
   /**
    * Sets a new state

@@ -10,12 +10,14 @@ use axum::{
 
 use crate::app::AppServices;
 
+/// Content routes
 pub fn route() -> Router<Arc<AppServices>> {
     Router::new()
         .route("/", get(list_content))
         .route("/:filename", get(get_content))
 }
 
+/// Lists all the content files and their contents
 pub async fn list_content(State(state): State<Arc<AppServices>>) -> impl IntoResponse {
     let Ok(dir) = fs::read_dir(state.config.content_directory.clone()) else {
         return StatusCode::INTERNAL_SERVER_ERROR.into_response();
@@ -47,6 +49,7 @@ pub async fn list_content(State(state): State<Arc<AppServices>>) -> impl IntoRes
     Json(files).into_response()
 }
 
+/// Gets the value of a single content file
 pub async fn get_content(
     State(state): State<Arc<AppServices>>,
     Path(filename): Path<String>,
@@ -67,6 +70,8 @@ pub async fn get_content(
     contents.into_response()
 }
 
+/// Sanitized the filenames passed into the client endpoints.
+/// TODO: Make this more secure.
 pub fn sanitize_filename(filename: &str) -> String {
     String::from(match filename {
         ".." => ".",

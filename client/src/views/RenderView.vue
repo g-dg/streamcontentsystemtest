@@ -10,12 +10,16 @@ import { useConfigStore } from "@/stores/config";
 const props = defineProps<{ displayName?: string }>();
 
 const configStore = useConfigStore();
+// load config
 onMounted(configStore.loadConfig);
+
+/** display config for current display */
 const displayConfig = computed(
   () => configStore.config.displays?.[props.displayName ?? ""] ?? null
 );
 
 const stateStore = useStateStore();
+// connect to state
 onMounted(stateStore.connect);
 
 const currentContent = computed(() => stateStore.currentState.content);
@@ -24,6 +28,7 @@ const route = useRoute();
 
 const DEFAULT_FONT_SIZE = "40pt";
 
+/** Font size from "font-size" query parameter or display config or default font size */
 const fontSize = computed(() => {
   const size_raw = (route.query["font-size"] as string) ?? null;
   const number_size = size_raw?.match(/^\d+(\.\d+)?$/)?.[0];
@@ -36,17 +41,21 @@ const fontSize = computed(() => {
 });
 
 const DEFAULT_RENDER_DELAY = 0;
+/** Render delay from display config */
 const renderDelay = computed(
   () => displayConfig.value?.render_delay ?? DEFAULT_RENDER_DELAY
 );
 
 const delayedContent = ref<StateContent>(currentContent.value);
 
+// schedule content update after render delay
 watch(currentContent, (content) =>
   window.setTimeout(() => {
     delayedContent.value = content;
   }, renderDelay.value)
 );
+
+//TODO: figure out transitions (starting with simple fade)
 </script>
 
 <template>

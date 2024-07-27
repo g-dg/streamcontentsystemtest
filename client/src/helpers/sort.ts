@@ -1,3 +1,7 @@
+/**
+ * Natural case-sensitive comparison function.
+ * Each parameter is an array of the first and second string to compare
+ */
 export function natcasecmp(
   ...values: [string | null | undefined, string | null | undefined][]
 ): number {

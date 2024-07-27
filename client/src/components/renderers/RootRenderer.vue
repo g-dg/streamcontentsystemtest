@@ -1,16 +1,17 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
+import type { StateContent } from "@/stores/state";
+
 import MainTextRenderer from "@/components/renderers/MainTextRenderer.vue";
 import SmallTextRenderer from "@/components/renderers/SmallTextRenderer.vue";
 import SongRenderer from "@/components/renderers/SongRenderer.vue";
 import SongTitleRenderer from "@/components/renderers/SongTitleRenderer.vue";
 import SubTextRenderer from "@/components/renderers/SubTextRenderer.vue";
 
-import type { StateContent } from "@/stores/state";
-
 const props = defineProps<{ content: StateContent | null; fontSize: string }>();
 
+// Text shadow is built up by layering multiple shadows over eachother
 const TEXT_SHADOW_LAYERS = 8;
 const textShadow = computed(() =>
   [...Array(TEXT_SHADOW_LAYERS).keys()]
@@ -26,11 +27,7 @@ const textShadow = computed(() =>
       'font-size': fontSize,
       'background-color':
         content?.background ?? false ? '#000' : 'rgba(0,0,0,0)',
-      ...((content?.background ?? false) && false
-        ? {}
-        : {
-            'text-shadow': textShadow,
-          }),
+      'text-shadow': textShadow,
     }"
   >
     <SmallTextRenderer

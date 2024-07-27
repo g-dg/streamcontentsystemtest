@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { computed, ref } from "vue";
+
 import { useServiceStore } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
-import { computed, ref } from "vue";
 
 const songStore = useSongStore();
 const serviceStore = useServiceStore();
@@ -12,7 +13,14 @@ function addToService(songTitle: string) {
 
 const search = ref("");
 
+/** Song titles filtered by search */
 const filteredSongTitles = computed(() => {
+  /*
+    Search splits (on spaces) the search string and each song title into terms.
+    Items are returned if every search term is included in a title term.
+    Title terms that start with numbers must match only the number part completely 
+    to prevent "1" from matching "11", but allow "1" to match "1a".
+  */
   if (search.value.trim() == "") {
     return songStore.songTitlesSorted;
   }
@@ -53,6 +61,7 @@ const filteredSongTitles = computed(() => {
         <button @click="search = ''">Clear Search</button>
       </span>
     </div>
+
     <div style="flex: 1 1 auto; height: 4lh">
       <div style="height: 100%; overflow: auto">
         <div v-for="song in filteredSongTitles" :key="song">

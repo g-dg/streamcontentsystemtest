@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useServiceStore } from "@/stores/service";
-import { useSongStore } from "@/stores/song";
+import { ref } from "vue";
 
-const songStore = useSongStore();
+import { useServiceStore } from "@/stores/service";
+
 const serviceStore = useServiceStore();
 
 function selectIndex(index: number) {
@@ -15,7 +15,13 @@ function clearService() {
     confirm("Really clear service?")
   ) {
     serviceStore.clearService();
+    scrollToTop();
   }
+}
+
+const topScrollElement = ref<HTMLDivElement>();
+function scrollToTop() {
+  topScrollElement.value?.scrollIntoView();
 }
 </script>
 
@@ -45,9 +51,11 @@ function clearService() {
         </span>
       </span>
     </div>
+
     <div style="flex: 1 1 auto; height: 4lh">
       <div style="height: 100%; overflow: auto">
         <div ref="topScrollElement"></div>
+
         <div
           v-for="(item, index) in serviceStore.serviceData.serviceItems"
           :key="item.id"
@@ -55,12 +63,14 @@ function clearService() {
           :class="{ 'selected-item': serviceStore.selectedItemIndex == index }"
         >
           <button @click.stop="serviceStore.removeItem(index)">Del</button>
+
           <button
             @click.stop="serviceStore.moveItem(index, -1)"
             :disabled="index == 0"
           >
             Up
           </button>
+
           <button
             @click.stop="serviceStore.moveItem(index, 1)"
             :disabled="
@@ -69,29 +79,32 @@ function clearService() {
           >
             Dn
           </button>
+
           <input
             v-model="serviceStore.selectedItemIndex"
             :value="index"
             type="radio"
           />
+
           <template v-if="item.comment">
             {{ item.comment }}
           </template>
+
           <template v-else-if="item.type == 'song'">
-            {{
-              (item.comment ?? "") != ""
-                ? item.comment
-                : (item.text ?? "") != ""
-                ? item.text
-                : item.song?.title
-            }}
+            {{ (item.text ?? "") != "" ? item.text : item.song?.title }}
           </template>
+
           <em v-else-if="item.type == 'empty'"> &lt; Empty &gt; </em>
+
           <em v-else-if="item.type == 'mainText'"> &lt; Main Text &gt; </em>
+
           <em v-else-if="item.type == 'subText'"> &lt; Sub Text &gt; </em>
+
           <em v-else-if="item.type == 'smallText'"> &lt; Small Text &gt; </em>
+
           <em v-else> &lt; Unknown &gt; </em>
         </div>
+
         <div
           v-if="serviceStore.serviceData.serviceItems.length == 0"
           style="text-align: center"

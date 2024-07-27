@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { api } from "@/api/api";
 import { onMounted, ref } from "vue";
 
+import { api } from "@/api/api";
+
 const license = ref<string>();
+/** Get license from server */
 async function loadLicense() {
   license.value = await api("server-info/license", "GET", undefined, {
     returnType: "text",
@@ -11,6 +13,7 @@ async function loadLicense() {
 onMounted(loadLicense);
 
 const serverVersion = ref<string>();
+/** Get server version from server */
 async function loadVersion() {
   serverVersion.value = await api("server-info/version", "GET", undefined, {
     returnType: "text",
@@ -18,6 +21,7 @@ async function loadVersion() {
 }
 onMounted(loadVersion);
 
+// access constants in template
 const clientVersion = __APP_VERSION__;
 const appName = __APP_NAME__;
 const appFullName = __APP_NAME_FULL__;

@@ -2,12 +2,14 @@ export const API_URI =
   (import.meta.env.VITE_API as string | undefined) ??
   `${window.location.protocol}//${window.location.host}/`;
 
+/** API function options */
 interface ApiOptions {
   bodyJson?: boolean;
   returnType?: "json" | "text" | "blob" | "response";
   redirectOnUnauthorized?: boolean;
 }
 
+/** Function for making API requests */
 export async function api(
   endpoint: string,
   method: "GET" | "POST" | "PUT" | "DELETE",

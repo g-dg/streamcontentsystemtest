@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { onMounted } from "vue";
+
 import { useSongStore } from "@/stores/song";
-import { onMounted, ref } from "vue";
-import { useServiceStore } from "@/stores/service";
 import { useStateStore, type StateContent } from "@/stores/state";
+
 import PreviewIFrame from "./PreviewIFrame.vue";
 import SongList from "./SongList.vue";
 import ServiceItemList from "./ServiceItemList.vue";
@@ -10,13 +11,13 @@ import ServiceItemContentList from "./ServiceItemContentList.vue";
 import ScratchpadEditor from "./ScratchpadEditor.vue";
 
 const songStore = useSongStore();
-const serviceStore = useServiceStore();
 const stateStore = useStateStore();
 
 onMounted(songStore.loadSongs);
 
 onMounted(stateStore.connect);
 
+/** Set content to server */
 function setContent(content: StateContent) {
   stateStore.setState(content);
 }

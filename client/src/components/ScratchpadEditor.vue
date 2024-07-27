@@ -17,6 +17,7 @@ function clearScratchpad() {
         placeholder="Scratchpad"
       ></textarea>
     </div>
+
     <div style="flex: 0">
       <button @click="clearScratchpad">Clear</button>
     </div>

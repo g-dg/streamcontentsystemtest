@@ -24,12 +24,14 @@ use tower_http::{
 
 use crate::{api, config::file::AppConfig, state::service::StateService};
 
+/// Services that are passed to each endpoint as the state
 pub struct AppServices {
     pub config: AppConfig,
     pub shutdown_token: CancellationToken,
     pub state_service: StateService,
 }
 
+/// All the requirements to serve the app
 pub struct App {
     pub services: Arc<AppServices>,
     pub router: Router,
@@ -38,15 +40,18 @@ pub struct App {
 }
 
 impl App {
+    /// Sets up the app services
     pub async fn build(config: &AppConfig) -> Result<Self, &'static str> {
         let shutdown_token = CancellationToken::new();
 
+        // build state object
         let state = Arc::new(AppServices {
             config: config.clone(),
             shutdown_token: shutdown_token.clone(),
             state_service: StateService::new(),
         });
 
+        // create TCP listener
         let host_address = SocketAddr::from((
             state
                 .config
@@ -58,10 +63,10 @@ impl App {
         let Ok(listener) = TcpListener::bind(host_address).await else {
             return Err("Server address already in use");
         };
-
         let static_file_index =
             Path::new(&state.config.static_file_root).join(state.config.static_file_index.clone());
 
+        // get CORS origins from config
         let cors_origins: Vec<_> = state
             .config
             .cors_allowed_origins
@@ -69,6 +74,7 @@ impl App {
             .map(|x| x.parse().unwrap())
             .collect();
 
+        // router for development client proxy
         let client_router = if config.client_proxy_url.is_some() {
             async fn client_proxy_handler(
                 State(state): State<Arc<AppServices>>,
@@ -90,6 +96,7 @@ impl App {
 
                 let uri = format!("{}{}", client_uri_root, request_path_query);
 
+                // get resource from client server
                 let response = reqwest::get(uri).await.unwrap();
 
                 (
@@ -111,6 +118,7 @@ impl App {
                 .route("/", get(client_proxy_handler))
                 .route("/*path", get(client_proxy_handler))
         } else {
+            // Serve the static files from the client
             Router::new()
                 .route_service("/", ServeFile::new(&static_file_index))
                 .route_service(
@@ -130,6 +138,7 @@ impl App {
 
         let router = Router::new()
             .nest("/", client_router)
+            // API routes
             .nest(
                 "/api",
                 api::route().layer(SetResponseHeaderLayer::if_not_present(
@@ -141,6 +150,7 @@ impl App {
             )
             .layer(
                 ServiceBuilder::new()
+                    // Support CORS
                     .layer(
                         CorsLayer::new()
                             .allow_origin(cors_origins)
@@ -154,7 +164,9 @@ impl App {
                                 Method::DELETE,
                             ]),
                     )
+                    // Handle panics by sending HTTP 500
                     .layer(CatchPanicLayer::new())
+                    // Compress responses using default settings
                     .layer(CompressionLayer::new()),
             )
             .with_state(state.clone());
