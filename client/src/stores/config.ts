@@ -5,10 +5,12 @@ import { ConfigClient } from "@/api/config";
 
 export interface Config {
   displays?: Record<string, DisplayConfig>;
+  display_default?: DisplayConfig;
 }
 
 export interface DisplayConfig {
   render_delay?: number;
+  fade_speed?: number;
   font_size?: string;
 }
 
@@ -40,8 +42,16 @@ export const useConfigStore = defineStore("config", () => {
     return loadPromise;
   }
 
+  function getDisplayConfig(displayName: string) {
+    return {
+      ...(config.value.display_default ?? {}),
+      ...(config.value.displays?.[displayName] ?? {}),
+    };
+  }
+
   return {
     config,
     loadConfig,
+    getDisplayConfig,
   };
 });
