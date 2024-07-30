@@ -6,7 +6,8 @@ import { uuid } from "@/helpers/random";
 /** Service data */
 export interface ServiceData {
   serviceItems: Array<ServiceItem>;
-  scratchpad?: string;
+  title?: string;
+  description?: string;
 }
 
 /** Service item */

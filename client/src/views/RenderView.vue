@@ -23,7 +23,9 @@ const stateStore = useStateStore();
 // connect to state
 onMounted(stateStore.connect);
 
-const currentContent = computed(() => stateStore.currentState.content);
+const currentContent = computed<StateContent | null>(
+  () => stateStore.currentState.content
+);
 
 const route = useRoute();
 
@@ -47,14 +49,18 @@ const renderDelay = computed(
   () => displayConfig.value?.render_delay ?? DEFAULT_RENDER_DELAY
 );
 
-const delayedContent = ref<StateContent>(currentContent.value);
+const delayedContent = ref<StateContent>(
+  currentContent.value ?? { background: false }
+);
 
 // schedule content update after render delay
-watch(currentContent, (content) =>
-  window.setTimeout(() => {
-    delayedContent.value = content;
-  }, renderDelay.value)
-);
+watch(currentContent, (content) => {
+  if (content != null) {
+    window.setTimeout(() => {
+      delayedContent.value = content;
+    }, renderDelay.value);
+  }
+});
 
 const DEFAULT_TRANSITION_SPEED = 0;
 /**
@@ -81,7 +87,9 @@ const transitionQueue = ref<Array<{ id: string; content: StateContent }>>([]);
  */
 const transitionElements = ref<Array<HTMLElement>>();
 
-function addContentState(content: StateContent) {
+function addContentState(content: StateContent | null) {
+  if (content == null) return;
+
   const id = uuid();
   transitionQueue.value.push({ id, content });
 

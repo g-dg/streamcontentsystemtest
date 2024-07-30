@@ -8,7 +8,7 @@ import PreviewIFrame from "./PreviewIFrame.vue";
 import SongList from "./SongList.vue";
 import ServiceItemList from "./ServiceItemList.vue";
 import ServiceItemContentList from "./ServiceItemContentList.vue";
-import ScratchpadEditor from "./ScratchpadEditor.vue";
+import TitleDescriptionEditor from "./TitleDescriptionEditor.vue";
 
 const songStore = useSongStore();
 const stateStore = useStateStore();
@@ -32,29 +32,8 @@ const appCopyright = __APP_COPYRIGHT__;
   >
     <div style="flex: 1; display: flex">
       <div style="flex: 1; display: flex; flex-direction: column">
-        <div style="flex: 1; display: flex; flex-direction: column">
-          <div style="flex: 1">
-            <SongList />
-          </div>
-        </div>
-        <div style="flex: 0 auto; display: flex; flex-direction: column">
-          <div style="flex: 1">
-            <PreviewIFrame border :scale="1 / 3" />
-          </div>
-          <div style="flex: 0">
-            <footer>
-              {{ appFullName }}
-              {{ appCopyright }}
-              (<RouterLink :to="{ name: 'about' }" target="_blank"
-                >About</RouterLink
-              >)
-            </footer>
-          </div>
-        </div>
-      </div>
-      <div style="flex: 1; display: flex; flex-direction: column">
-        <div style="flex: 3">
-          <ServiceItemList />
+        <div style="flex: 0">
+          <PreviewIFrame border :scale="1 / 3" />
         </div>
         <div style="flex: 0">
           <div
@@ -71,8 +50,27 @@ const appCopyright = __APP_COPYRIGHT__;
             </strong>
           </div>
         </div>
+        <div style="flex: 1; display: flex; flex-direction: column">
+          <div style="flex: 1">
+            <SongList />
+          </div>
+          <div style="flex: 0">
+            <footer>
+              {{ appFullName }}
+              {{ appCopyright }}
+              (<RouterLink :to="{ name: 'about' }" target="_blank"
+                >About</RouterLink
+              >)
+            </footer>
+          </div>
+        </div>
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column">
+        <div style="flex: 3">
+          <ServiceItemList />
+        </div>
         <div style="flex: 1">
-          <ScratchpadEditor />
+          <TitleDescriptionEditor />
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">

@@ -23,53 +23,50 @@ const songVerses = computed(() =>
     : null
 );
 
+function getStateFromId(id: number | string): StateContent {
+  switch (itemType.value) {
+    case "empty": {
+      return { background: false };
+    }
+    case "song": {
+      const verseContent = (songVerses.value ?? {})[id] ?? undefined;
+      return {
+        background: true,
+        song: verseContent,
+        songTitle:
+          (serviceStore.selectedItem?.text ?? "") != ""
+            ? serviceStore.selectedItem?.text
+            : serviceStore.selectedItem?.song?.title ?? "",
+      };
+    }
+    case "mainText": {
+      return {
+        background: false,
+        mainText: serviceStore.selectedItem?.text ?? undefined,
+      };
+    }
+    case "subText": {
+      return {
+        background: false,
+        subText: serviceStore.selectedItem?.text ?? undefined,
+      };
+    }
+    case "smallText": {
+      return {
+        background: false,
+        smallText: serviceStore.selectedItem?.text ?? undefined,
+      };
+    }
+    default: {
+      return { background: false };
+    }
+  }
+}
+
 function selectContent(id: number | string) {
   serviceStore.selectedSubItemId = id;
 
-  switch (itemType.value) {
-    case "empty":
-      {
-        emit("setContent", { background: false });
-      }
-      break;
-    case "song":
-      {
-        const verseContent = (songVerses.value ?? {})[id] ?? undefined;
-        emit("setContent", {
-          background: true,
-          song: verseContent,
-          songTitle:
-            (serviceStore.selectedItem?.text ?? "") != ""
-              ? serviceStore.selectedItem?.text
-              : serviceStore.selectedItem?.song?.title ?? "",
-        });
-      }
-      break;
-    case "mainText":
-      {
-        emit("setContent", {
-          background: false,
-          mainText: serviceStore.selectedItem?.text ?? undefined,
-        });
-      }
-      break;
-    case "subText":
-      {
-        emit("setContent", {
-          background: false,
-          subText: serviceStore.selectedItem?.text ?? undefined,
-        });
-      }
-      break;
-    case "smallText":
-      {
-        emit("setContent", {
-          background: false,
-          smallText: serviceStore.selectedItem?.text ?? undefined,
-        });
-      }
-      break;
-  }
+  emit("setContent", getStateFromId(id));
 }
 
 function emptyScreen() {
