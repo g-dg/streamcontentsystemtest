@@ -230,11 +230,6 @@ function clearText() {
           }"
           style="margin: 1em 0"
         >
-          <input
-            v-model="serviceStore.selectedSubItemId"
-            :value="verseName"
-            type="radio"
-          />
           <strong style="font-size: 125%; font-weight: bold">
             {{ verseName }}
           </strong>
@@ -249,11 +244,6 @@ function clearText() {
             'selected-item': serviceStore.selectedSubItemId == 0,
           }"
         >
-          <input
-            v-model="serviceStore.selectedSubItemId"
-            :value="0"
-            type="radio"
-          />
           <strong style="font-size: 125%; font-weight: bold">
             Text Content
           </strong>
@@ -272,11 +262,6 @@ function clearText() {
             'selected-item': serviceStore.selectedSubItemId == 0,
           }"
         >
-          <input
-            v-model="serviceStore.selectedSubItemId"
-            :value="0"
-            type="radio"
-          />
           <strong style="font-size: 125%; font-weight: bold">
             Show Nothing
           </strong>
