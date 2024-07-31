@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import { useServiceStore } from "@/stores/service";
+import { useServiceStore, type ServiceItem } from "@/stores/service";
+import { uuid } from "@/helpers/random";
 
 const serviceStore = useServiceStore();
 
@@ -22,6 +23,81 @@ function clearService() {
 const topScrollElement = ref<HTMLDivElement>();
 function scrollToTop() {
   topScrollElement.value?.scrollIntoView();
+}
+
+// data for drag and drop
+interface DragDropData {
+  instanceId: string;
+  srcIndex: number;
+  serviceItem: ServiceItem;
+}
+
+// used to detect drag and drop between different component instances
+const instanceId = uuid();
+
+const draggableIndex = ref<number | null>(null);
+function dragHandleEnableDrag(index: number) {
+  draggableIndex.value = index;
+}
+
+// index of the currently hovered item
+const dragHoveredIndex = ref<number | null>(null);
+
+// handles drag and drop start
+function dragStart(evt: DragEvent, index: number) {
+  if (evt.dataTransfer == null) return;
+
+  const data: DragDropData = {
+    instanceId: instanceId,
+    srcIndex: index,
+    serviceItem: serviceStore.serviceData.serviceItems[index],
+  };
+
+  evt.dataTransfer.setData("application/json", JSON.stringify(data));
+  evt.dataTransfer.dropEffect = "move";
+
+  dragHoveredIndex.value = index;
+}
+
+// handles showing room for drag and dropped item
+function dragOver(evt: DragEvent, index: number) {
+  evt.preventDefault();
+  evt.dataTransfer!.dropEffect = "move";
+  dragHoveredIndex.value = index;
+}
+
+// handles drop of item
+function drop(evt: DragEvent, index: number) {
+  evt.preventDefault();
+  const data = JSON.parse(
+    evt.dataTransfer?.getData("application/json") ?? JSON.stringify(null)
+  ) as DragDropData | null;
+
+  dragHoveredIndex.value = null;
+
+  // return if instance id is incorrect since it may cause inconsistencies
+  if (data == null) return;
+
+  let destIndex = index;
+
+  // remove source item only if instance id matches
+  if (data.instanceId == instanceId) {
+    serviceStore.removeItem(data.srcIndex);
+    // update destination index if the item was removed before the source index
+    if (destIndex > data.srcIndex) {
+      destIndex = Math.max(destIndex - 1, 0);
+    }
+  }
+
+  // insert item at new index
+  serviceStore.addItem(data.serviceItem, true, destIndex);
+
+  draggableIndex.value = null;
+}
+
+function dragEnd(evt: DragEvent, index: number) {
+  dragHoveredIndex.value = null;
+  draggableIndex.value = null;
 }
 </script>
 
@@ -53,15 +129,30 @@ function scrollToTop() {
     </div>
 
     <div style="flex: 1 1 auto; height: 4lh">
-      <div style="height: 100%; overflow: auto">
-        <div ref="topScrollElement"></div>
+      <div
+        style="
+          height: 100%;
+          overflow: auto;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <div ref="topScrollElement" style="flex: 0"></div>
 
         <div
           v-for="(item, index) in serviceStore.serviceData.serviceItems"
           :key="item.id"
           @click="selectIndex(index)"
           :class="{ 'selected-item': serviceStore.selectedItemIndex == index }"
+          style="flex: 0"
+          :draggable="draggableIndex == index"
+          @dragstart="dragStart($event, index)"
+          @dragover="dragOver($event, index)"
+          @drop="drop($event, index)"
+          @dragend="dragEnd($event, index)"
         >
+          <div v-if="dragHoveredIndex == index" style="height: 2lh"></div>
+
           <button @click.stop="serviceStore.removeItem(index)">Del</button>
 
           <button
@@ -80,11 +171,12 @@ function scrollToTop() {
             Dn
           </button>
 
-          <input
-            v-model="serviceStore.selectedItemIndex"
-            :value="index"
-            type="radio"
-          />
+          <button
+            @mousedown="dragHandleEnableDrag(index)"
+            @touchstart="dragHandleEnableDrag(index)"
+          >
+            Move
+          </button>
 
           <template v-if="item.comment">
             {{ item.comment }}
@@ -103,6 +195,25 @@ function scrollToTop() {
           <em v-else-if="item.type == 'smallText'"> &lt; Small Text &gt; </em>
 
           <em v-else> &lt; Unknown &gt; </em>
+        </div>
+
+        <div
+          v-if="dragHoveredIndex != null"
+          @dragover="
+            dragOver($event, serviceStore.serviceData.serviceItems.length)
+          "
+          @drop="drop($event, serviceStore.serviceData.serviceItems.length)"
+          style="flex: 1"
+        >
+          <div
+            v-if="
+              dragHoveredIndex == serviceStore.serviceData.serviceItems.length
+            "
+            style="height: 2lh"
+          ></div>
+          <div style="text-align: center">
+            <em>&lt; Move to end &gt;</em>
+          </div>
         </div>
 
         <div

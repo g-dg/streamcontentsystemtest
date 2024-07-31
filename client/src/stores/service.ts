@@ -95,14 +95,19 @@ export const useServiceStore = defineStore("service", () => {
   }
 
   /** Add item */
-  function addItem(item: ServiceItem, select: boolean = true) {
-    const index =
-      selectedItemIndex.value != null
+  function addItem(
+    item: ServiceItem,
+    select: boolean = true,
+    index: number | null = null
+  ) {
+    const insertIndex =
+      index ??
+      (selectedItemIndex.value != null
         ? selectedItemIndex.value + 1
-        : serviceData.value.serviceItems.length;
-    serviceData.value.serviceItems.splice(index, 0, item);
+        : serviceData.value.serviceItems.length);
+    serviceData.value.serviceItems.splice(insertIndex, 0, item);
     if (select) {
-      selectedItemIndex.value = index;
+      selectedItemIndex.value = insertIndex;
     }
   }
 
