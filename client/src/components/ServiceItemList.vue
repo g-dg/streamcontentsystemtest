@@ -10,10 +10,25 @@ function selectIndex(index: number) {
   serviceStore.selectedItemIndex = index;
 }
 
+async function loadService() {
+  if (
+    serviceStore.unsavedChanges &&
+    confirm("There are unsaved changes. Really load service?")
+  ) {
+    await serviceStore.importService();
+    scrollToTop();
+  }
+}
+
+async function saveService() {
+  await serviceStore.exportService();
+  scrollToTop();
+}
+
 function clearService() {
   if (
-    serviceStore.serviceData.serviceItems.length > 0 &&
-    confirm("Really clear service?")
+    serviceStore.unsavedChanges &&
+    confirm("There are unsaved changes. Really clear service?")
   ) {
     serviceStore.clearService();
     scrollToTop();
@@ -109,9 +124,9 @@ function dragEnd(evt: DragEvent, index: number) {
   >
     <div style="flex: 0; position: sticky; top: 0px">
       <span style="display: inline-block">
-        <button @click="serviceStore.importService()">Load Service</button>
-        <button @click="serviceStore.exportService()">Save Service</button>
-        <button @click="clearService()">Clear Service</button>
+        <button @click="loadService()">Load</button>
+        <button @click="saveService()">Save</button>
+        <button @click="clearService()">Clear</button>
         <button @click="serviceStore.addEmpty()">Add Empty</button>
         <button @click="serviceStore.addText('mainText', '')">Main Text</button>
         <button @click="serviceStore.addText('subText', '')">Sub Text</button>
