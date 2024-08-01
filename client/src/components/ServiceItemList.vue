@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
 
-import { useServiceStore, type ServiceItem } from "@/stores/service";
+import {
+  useServiceStore,
+  type ServiceItem,
+  type ServiceItemDragDropData,
+} from "@/stores/service";
 import { uuid } from "@/helpers/random";
 
 const serviceStore = useServiceStore();
@@ -41,19 +45,18 @@ function scrollToTop() {
 }
 
 // data for drag and drop
-interface DragDropData {
-  instanceId: string;
-  srcIndex: number;
-  serviceItem: ServiceItem;
-}
 
 // used to detect drag and drop between different component instances
 const instanceId = uuid();
 
 const draggableIndex = ref<number | null>(null);
-function dragHandleEnableDrag(index: number) {
-  draggableIndex.value = index;
+function dragHandleEnableDrag(index: number, enable: boolean) {
+  draggableIndex.value = enable ? index : null;
 }
+watch(
+  computed(() => serviceStore.serviceData.serviceItems),
+  () => (draggableIndex.value = null)
+);
 
 // index of the currently hovered item
 const dragHoveredIndex = ref<number | null>(null);
@@ -62,7 +65,7 @@ const dragHoveredIndex = ref<number | null>(null);
 function dragStart(evt: DragEvent, index: number) {
   if (evt.dataTransfer == null) return;
 
-  const data: DragDropData = {
+  const data: ServiceItemDragDropData = {
     instanceId: instanceId,
     srcIndex: index,
     serviceItem: serviceStore.serviceData.serviceItems[index],
@@ -74,10 +77,12 @@ function dragStart(evt: DragEvent, index: number) {
   dragHoveredIndex.value = index;
 }
 
-// handles showing room for drag and dropped item
+// handles showing drop area for dragged item
+//TODO: find a way to clear if dragged out of the component and cancelled.
 function dragOver(evt: DragEvent, index: number) {
   evt.preventDefault();
   evt.dataTransfer!.dropEffect = "move";
+
   dragHoveredIndex.value = index;
 }
 
@@ -86,7 +91,7 @@ function drop(evt: DragEvent, index: number) {
   evt.preventDefault();
   const data = JSON.parse(
     evt.dataTransfer?.getData("application/json") ?? JSON.stringify(null)
-  ) as DragDropData | null;
+  ) as ServiceItemDragDropData | null;
 
   dragHoveredIndex.value = null;
 
@@ -95,8 +100,8 @@ function drop(evt: DragEvent, index: number) {
 
   let destIndex = index;
 
-  // remove source item only if instance id matches
-  if (data.instanceId == instanceId) {
+  // remove source item only if source index is provided and instance id matches
+  if (data.srcIndex != null && data.instanceId == instanceId) {
     serviceStore.removeItem(data.srcIndex);
     // update destination index if the item was removed before the source index
     if (destIndex > data.srcIndex) {
@@ -110,9 +115,23 @@ function drop(evt: DragEvent, index: number) {
   draggableIndex.value = null;
 }
 
+// resets drag and drop state
 function dragEnd(evt: DragEvent, index: number) {
   dragHoveredIndex.value = null;
   draggableIndex.value = null;
+}
+
+function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
+  if (evt.dataTransfer == null) return;
+
+  const data: ServiceItemDragDropData = {
+    instanceId: null,
+    srcIndex: null,
+    serviceItem: newItem,
+  };
+
+  evt.dataTransfer.setData("application/json", JSON.stringify(data));
+  evt.dataTransfer.dropEffect = "move";
 }
 </script>
 
@@ -127,10 +146,44 @@ function dragEnd(evt: DragEvent, index: number) {
         <button @click="loadService()">Load</button>
         <button @click="saveService()">Save</button>
         <button @click="clearService()">Clear</button>
-        <button @click="serviceStore.addEmpty()">Add Empty</button>
-        <button @click="serviceStore.addText('mainText', '')">Main Text</button>
-        <button @click="serviceStore.addText('subText', '')">Sub Text</button>
-        <button @click="serviceStore.addText('smallText', '')">
+        <button
+          @click="serviceStore.addItem(serviceStore.emptyItem(), true)"
+          draggable="true"
+          @dragstart="newItemDragStart($event, serviceStore.emptyItem())"
+        >
+          Add Empty
+        </button>
+        <button
+          @click="
+            serviceStore.addItem(serviceStore.textItem('mainText', ''), true)
+          "
+          draggable="true"
+          @dragstart="
+            newItemDragStart($event, serviceStore.textItem('mainText', ''))
+          "
+        >
+          Main Text
+        </button>
+        <button
+          @click="
+            serviceStore.addItem(serviceStore.textItem('subText', ''), true)
+          "
+          draggable="true"
+          @dragstart="
+            newItemDragStart($event, serviceStore.textItem('subText', ''))
+          "
+        >
+          Sub Text
+        </button>
+        <button
+          @click="
+            serviceStore.addItem(serviceStore.textItem('smallText', ''), true)
+          "
+          draggable="true"
+          @dragstart="
+            newItemDragStart($event, serviceStore.textItem('smallText', ''))
+          "
+        >
           Small Text
         </button>
         <span
@@ -187,8 +240,8 @@ function dragEnd(evt: DragEvent, index: number) {
           </button>
 
           <button
-            @mousedown="dragHandleEnableDrag(index)"
-            @touchstart="dragHandleEnableDrag(index)"
+            @mousedown="dragHandleEnableDrag(index, true)"
+            @mouseup="dragHandleEnableDrag(index, true)"
           >
             Move
           </button>
@@ -213,7 +266,13 @@ function dragEnd(evt: DragEvent, index: number) {
         </div>
 
         <div
-          v-if="dragHoveredIndex != null"
+          v-if="serviceStore.serviceData.serviceItems.length == 0"
+          style="text-align: center"
+        >
+          <em> This service has no items </em>
+        </div>
+
+        <div
           @dragover="
             dragOver($event, serviceStore.serviceData.serviceItems.length)
           "
@@ -226,16 +285,9 @@ function dragEnd(evt: DragEvent, index: number) {
             "
             style="height: 2lh"
           ></div>
-          <div style="text-align: center">
+          <div v-if="dragHoveredIndex != null" style="text-align: center">
             <em>&lt; Move to end &gt;</em>
           </div>
-        </div>
-
-        <div
-          v-if="serviceStore.serviceData.serviceItems.length == 0"
-          style="text-align: center"
-        >
-          <em> This service has no items </em>
         </div>
       </div>
     </div>

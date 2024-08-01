@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
-import { useServiceStore } from "@/stores/service";
+import {
+  useServiceStore,
+  type ServiceItemDragDropData,
+} from "@/stores/service";
 import { useSongStore } from "@/stores/song";
 
 const songStore = useSongStore();
 const serviceStore = useServiceStore();
 
 function addToService(songTitle: string) {
-  serviceStore.addSong(songTitle);
+  serviceStore.addItem(serviceStore.songItem(songTitle), true);
 }
 
 const search = ref("");
@@ -46,6 +49,30 @@ const filteredSongTitles = computed(() => {
     })
   );
 });
+
+// drag and drop to allow dragging the song
+const draggableIndex = ref<number | null>(null);
+function dragHandleEnableDrag(index: number, enable: boolean) {
+  draggableIndex.value = enable ? index : null;
+}
+watch(filteredSongTitles, () => (draggableIndex.value = null));
+
+function dragStart(evt: DragEvent, songTitle: string) {
+  if (evt.dataTransfer == null) return;
+
+  const data: ServiceItemDragDropData = {
+    instanceId: null,
+    srcIndex: null,
+    serviceItem: serviceStore.songItem(songTitle),
+  };
+
+  evt.dataTransfer.setData("application/json", JSON.stringify(data));
+  evt.dataTransfer.dropEffect = "move";
+}
+
+function dragEnd() {
+  draggableIndex.value = null;
+}
 </script>
 
 <template>
@@ -64,8 +91,20 @@ const filteredSongTitles = computed(() => {
 
     <div style="flex: 1 1 auto; height: 4lh">
       <div style="height: 100%; overflow: auto">
-        <div v-for="song in filteredSongTitles" :key="song">
-          <button @click="addToService(song)">Add</button>
+        <div
+          v-for="(song, index) in filteredSongTitles"
+          :key="song"
+          :draggable="draggableIndex == index"
+          @dragstart="dragStart($event, song)"
+          @dragend="dragEnd()"
+        >
+          <button
+            @mousedown="dragHandleEnableDrag(index, true)"
+            @mouseup="dragHandleEnableDrag(index, true)"
+            @click="addToService(song)"
+          >
+            Add
+          </button>
           {{ song }}
         </div>
       </div>

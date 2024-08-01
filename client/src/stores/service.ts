@@ -25,6 +25,12 @@ export interface ServiceSong {
   verses: Array<string>;
 }
 
+export interface ServiceItemDragDropData {
+  instanceId: string | null;
+  srcIndex: number | null;
+  serviceItem: ServiceItem;
+}
+
 /** Service store */
 export const useServiceStore = defineStore("service", () => {
   /** Service data */
@@ -52,46 +58,40 @@ export const useServiceStore = defineStore("service", () => {
     }
   );
 
-  /** Selected item */
+  /** Currently selected item */
   const selectedItem = computed(() =>
     selectedItemIndex.value != null
       ? serviceData.value.serviceItems[selectedItemIndex.value]
       : null
   );
 
-  /** Add empty item */
-  function addEmpty() {
-    addItem(
-      {
-        id: uuid(),
-        type: "empty",
-      },
-      true
-    );
+  /** Creates an empty item */
+  function emptyItem(): ServiceItem {
+    return {
+      id: uuid(),
+      type: "empty",
+    };
   }
 
-  /** Add selected song */
-  function addSong(songTitle: string) {
-    addItem(
-      {
-        id: uuid(),
-        type: "song",
-        song: { title: songTitle, verses: [] },
-      },
-      true
-    );
+  /** Creates a song item */
+  function songItem(songTitle: string): ServiceItem {
+    return {
+      id: uuid(),
+      type: "song",
+      song: { title: songTitle, verses: [] },
+    };
   }
 
-  /** Add text item */
-  function addText(type: "mainText" | "subText" | "smallText", text: string) {
-    addItem(
-      {
-        id: uuid(),
-        type,
-        text,
-      },
-      true
-    );
+  /** Creates a text item */
+  function textItem(
+    type: "mainText" | "subText" | "smallText",
+    text: string
+  ): ServiceItem {
+    return {
+      id: uuid(),
+      type,
+      text,
+    };
   }
 
   /** Add item */
@@ -233,9 +233,9 @@ export const useServiceStore = defineStore("service", () => {
     selectedItemIndex,
     selectedSubItemId,
     selectedItem,
-    addEmpty,
-    addSong,
-    addText,
+    emptyItem,
+    songItem,
+    textItem,
     addItem,
     removeItem,
     moveItem,
