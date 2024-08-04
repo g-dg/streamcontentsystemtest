@@ -63,6 +63,8 @@ const dragHoveredIndex = ref<number | null>(null);
 
 // handles drag and drop start
 function dragStart(evt: DragEvent, index: number) {
+  console.debug("dragstart");
+
   if (evt.dataTransfer == null) return;
 
   const data: ServiceItemDragDropData = {
@@ -80,6 +82,8 @@ function dragStart(evt: DragEvent, index: number) {
 // handles showing drop area for dragged item
 //TODO: find a way to clear if dragged out of the component and cancelled.
 function dragOver(evt: DragEvent, index: number) {
+  console.debug("dragover");
+
   evt.preventDefault();
   evt.dataTransfer!.dropEffect = "move";
 
@@ -88,6 +92,8 @@ function dragOver(evt: DragEvent, index: number) {
 
 // handles drop of item
 function drop(evt: DragEvent, index: number) {
+  console.debug("drop");
+
   evt.preventDefault();
   const data = JSON.parse(
     evt.dataTransfer?.getData("application/json") ?? JSON.stringify(null)
@@ -117,6 +123,8 @@ function drop(evt: DragEvent, index: number) {
 
 // resets drag and drop state
 function dragEnd(evt: DragEvent, index: number) {
+  console.debug("dragend");
+
   dragHoveredIndex.value = null;
   draggableIndex.value = null;
 }
@@ -219,7 +227,10 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
           @drop="drop($event, index)"
           @dragend="dragEnd($event, index)"
         >
-          <div v-if="dragHoveredIndex == index" style="height: 2lh"></div>
+          <div
+            v-if="dragHoveredIndex != null && dragHoveredIndex == index"
+            style="height: 2lh"
+          ></div>
 
           <button @click.stop="serviceStore.removeItem(index)">Del</button>
 
@@ -281,6 +292,7 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
         >
           <div
             v-if="
+              dragHoveredIndex != null &&
               dragHoveredIndex == serviceStore.serviceData.serviceItems.length
             "
             style="height: 2lh"
