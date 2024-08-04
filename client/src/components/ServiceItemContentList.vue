@@ -15,12 +15,12 @@ const itemType = computed(() => serviceStore.selectedItem?.type);
 const songVerses = computed(() =>
   serviceStore.selectedItem?.type == "song" &&
   serviceStore.selectedItem?.song?.title != null
-    ? Object.fromEntries(
-        Object.entries(
-          songStore.songs[serviceStore.selectedItem.song.title]
-        ).sort((a, b) => natcasecmp([a[0], b[0]]))
-      )
+    ? songStore.songs[serviceStore.selectedItem.song.title]
     : null
+);
+
+const songVerseNumbersSorted = computed(() =>
+  Object.keys(songVerses.value ?? {}).sort((a, b) => natcasecmp([a[0], b[0]]))
 );
 
 function getStateFromId(id: number | string): StateContent {
@@ -222,7 +222,7 @@ function clearText() {
 
         <div
           v-if="songVerses != null"
-          v-for="(verseContent, verseName) in songVerses"
+          v-for="verseName in songVerseNumbersSorted"
           :key="verseName"
           @click="selectContent(verseName)"
           :class="{
@@ -233,7 +233,7 @@ function clearText() {
           <strong style="font-size: 125%; font-weight: bold">
             {{ verseName }}
           </strong>
-          <pre>{{ verseContent }}</pre>
+          <pre>{{ songVerses[verseName] }}</pre>
           <hr />
         </div>
 
