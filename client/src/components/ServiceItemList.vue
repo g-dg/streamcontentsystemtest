@@ -16,7 +16,7 @@ function selectIndex(index: number) {
 
 async function loadService() {
   if (
-    serviceStore.unsavedChanges &&
+    !serviceStore.unsavedChanges ||
     confirm("There are unsaved changes. Really load service?")
   ) {
     await serviceStore.importService();
