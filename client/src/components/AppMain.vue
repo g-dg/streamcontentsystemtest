@@ -66,10 +66,10 @@ const appCopyright = __APP_COPYRIGHT__;
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
-        <div style="flex: 3">
+        <div style="flex: 1">
           <ServiceItemList />
         </div>
-        <div style="flex: 1">
+        <div style="flex: 0">
           <TitleDescriptionEditor />
         </div>
       </div>

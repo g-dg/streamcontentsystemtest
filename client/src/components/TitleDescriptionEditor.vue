@@ -41,6 +41,15 @@ const descriptionLongestLine = computed(
       .reduce((acc, line) => Math.max(acc, line.length), 0) ?? 0
 );
 
+const DESCRIPTION_MIN_LINES = 5;
+const DESCRIPTION_MAX_LINES = 15;
+const descriptionLineShownCount = computed(() =>
+  Math.min(
+    Math.max(descriptionLineCount.value, DESCRIPTION_MIN_LINES),
+    DESCRIPTION_MAX_LINES
+  )
+);
+
 const descriptionTextArea = ref<HTMLTextAreaElement>();
 const descriptionCopyButton = ref<HTMLButtonElement>();
 
@@ -61,56 +70,41 @@ function clearDescription() {
 </script>
 
 <template>
-  <div style="display: flex; flex-direction: column; width: 100%; height: 100%">
-    <div style="flex: 0; display: flex; flex-direction: column">
-      <div style="flex: 1">
-        <input
-          v-model="serviceStore.serviceData.title"
-          ref="titleTextInput"
-          style="width: 100%"
-          placeholder="Title"
-        />
-      </div>
+  <div>
+    <input
+      v-model="serviceStore.serviceData.title"
+      ref="titleTextInput"
+      style="width: 100%"
+      placeholder="Title"
+    />
 
-      <div style="flex: 0">
-        <button
-          ref="titleCopyButton"
-          @click="copyTitle"
-          :disabled="!copySupported"
-        >
-          Copy
-        </button>
-        <button @click="clearTitle">Clear</button>
+    <button ref="titleCopyButton" @click="copyTitle" :disabled="!copySupported">
+      Copy
+    </button>
+    <button @click="clearTitle">Clear</button>
 
-        Chars: {{ titleCharCount }}
-      </div>
-    </div>
+    Chars: {{ titleCharCount }}
 
-    <div style="flex: 1; display: flex; flex-direction: column">
-      <div style="flex: 1">
-        <textarea
-          v-model="serviceStore.serviceData.description"
-          ref="descriptionTextArea"
-          style="width: 100%; height: 100%"
-          placeholder="Description"
-        ></textarea>
-      </div>
+    <textarea
+      v-model="serviceStore.serviceData.description"
+      ref="descriptionTextArea"
+      :rows="descriptionLineShownCount"
+      style="width: 100%"
+      placeholder="Description"
+    ></textarea>
 
-      <div style="flex: 0">
-        <button
-          ref="descriptionCopyButton"
-          @click="copyDescription"
-          :disabled="!copySupported"
-        >
-          Copy
-        </button>
-        <button @click="clearDescription">Clear</button>
+    <button
+      ref="descriptionCopyButton"
+      @click="copyDescription"
+      :disabled="!copySupported"
+    >
+      Copy
+    </button>
+    <button @click="clearDescription">Clear</button>
 
-        Chars: {{ descriptionCharCount }} Lines:
-        {{ descriptionLineCount }} Longest Line:
-        {{ descriptionLongestLine }}
-      </div>
-    </div>
+    Chars: {{ descriptionCharCount }} Lines: {{ descriptionLineCount }} Longest
+    Line:
+    {{ descriptionLongestLine }}
   </div>
 </template>
 
