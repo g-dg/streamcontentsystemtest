@@ -85,7 +85,7 @@ function dragEnd() {
       <span style="display: inline-block">
         <button @click="songStore.loadSongs()">Reload</button>
         <input v-model="search" type="search" placeholder="Search" />
-        <button @click="search = ''">Clear Search</button>
+        <button @click="search = ''">Clear</button>
       </span>
     </div>
 
