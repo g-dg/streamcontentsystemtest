@@ -31,7 +31,7 @@ async function saveService() {
 
 function clearService() {
   if (
-    serviceStore.unsavedChanges &&
+    !serviceStore.unsavedChanges ||
     confirm("There are unsaved changes. Really clear service?")
   ) {
     serviceStore.clearService();
