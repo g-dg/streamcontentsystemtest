@@ -7,7 +7,7 @@ const serviceStore = useServiceStore();
 const copySupported = computed(() => typeof document.execCommand == "function");
 
 const titleCharCount = computed(
-  () => serviceStore.serviceData.description?.length ?? 0
+  () => serviceStore.serviceData.title?.length ?? 0
 );
 
 const titleTextInput = ref<HTMLInputElement>();
