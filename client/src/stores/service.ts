@@ -174,9 +174,11 @@ export const useServiceStore = defineStore("service", () => {
           selectedItemIndex.value = null;
           selectedSubItemId.value = null;
 
+          const convertedServiceData = convertImportToInternal(fileContent);
+
           // set serviceData
-          savedServiceData.value = JSON.stringify(fileContent);
-          serviceData.value = fileContent;
+          serviceData.value = convertedServiceData;
+          savedServiceData.value = JSON.stringify(serviceData.value);
         } catch (e) {
           console.error(e);
           alert(
@@ -204,9 +206,11 @@ export const useServiceStore = defineStore("service", () => {
         now.getHours() < 12 ? "AM" : "PM"
       }.json`;
 
+      const convertedServiceData = convertInternalToExport(serviceData.value);
+
       // create object url
       const objectURL = URL.createObjectURL(
-        new Blob([JSON.stringify(serviceData.value)], {
+        new Blob([JSON.stringify(convertedServiceData)], {
           type: "application/json",
         })
       );
@@ -225,6 +229,49 @@ export const useServiceStore = defineStore("service", () => {
       console.error(e);
       alert("An error occurred exporting the file.");
     }
+  }
+
+  function convertInternalToExport(serviceData: ServiceData): any {
+    let ret: any = {};
+    ret.serviceItems = serviceData.serviceItems.map((item) => {
+      let ret: any = {};
+      ret.type = item.type;
+      if (item.song != undefined) {
+        let song: any = {};
+        song.title = item.song.title;
+        song.verses = item.song.verses.map((verse) => verse);
+        ret.song = song;
+      }
+      if (item.text != undefined) ret.text = item.text;
+      if (item.comment != undefined) ret.comment = item.comment;
+      return ret;
+    });
+    if (serviceData.title != undefined) ret.title = serviceData.title;
+    if (serviceData.description != undefined)
+      ret.description = serviceData.description;
+    return ret;
+  }
+
+  function convertImportToInternal(serviceData: any): ServiceData {
+    let ret: any = {};
+    ret.serviceItems = serviceData.serviceItems.map((item: any) => {
+      let ret: any = {};
+      ret.id = uuid();
+      ret.type = item.type;
+      if (item.song != undefined) {
+        let song: any = {};
+        song.title = item.song.title;
+        song.verses = item.song.verses.map((verse: any) => verse);
+        ret.song = song;
+      }
+      if (item.text != undefined) ret.text = item.text;
+      if (item.comment != undefined) ret.comment = item.comment;
+      return ret;
+    });
+    if (serviceData.title != undefined) ret.title = serviceData.title;
+    if (serviceData.description != undefined)
+      ret.description = serviceData.description;
+    return ret;
   }
 
   return {
