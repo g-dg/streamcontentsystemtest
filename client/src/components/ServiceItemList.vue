@@ -141,7 +141,7 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
     class="root"
     style="height: 100%; display: flex; flex-direction: column"
   >
-    <div style="flex: 0; position: sticky; top: 0px">
+    <div style="flex: 0">
       <span style="display: inline-block">
         <button @click="loadService()">Load</button>
         <button @click="saveService()">Save</button>

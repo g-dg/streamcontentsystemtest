@@ -133,86 +133,22 @@ function clearText() {
     class="root"
     style="height: 100%; display: flex; flex-direction: column"
   >
-    <div style="flex: 0; position: sticky; top: 0px">
+    <div style="flex: 0">
       <span style="display: inline-block">
         <button @click="emptyScreen">Empty Screen</button>
         <button @click="blackScreen">Black Screen</button>
-        <input
-          v-if="
-            serviceStore.selectedItemIndex != null &&
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex
-            ] != null
-          "
-          v-model="
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex
-            ].comment
-          "
-          type="text"
-          placeholder="Comment"
-        />
-        <template v-if="itemType == 'song'">
-          {{ serviceStore.selectedItem?.song?.title }}
-        </template>
-        <em v-if="itemType == 'empty'"> Empty </em>
-        <em v-if="itemType == 'mainText'"> Main Text </em>
-        <em v-if="itemType == 'subText'"> Sub Text </em>
-        <em v-if="itemType == 'smallText'"> Small Text </em>
+
+        <span style="margin-inline-start: 0.5em">
+          <template v-if="itemType == 'song'">
+            {{ serviceStore.selectedItem?.song?.title }}
+          </template>
+          <em v-if="itemType == 'empty'"> Empty </em>
+          <em v-if="itemType == 'mainText'"> Main Text </em>
+          <em v-if="itemType == 'subText'"> Sub Text </em>
+          <em v-if="itemType == 'smallText'"> Small Text </em>
+        </span>
       </span>
 
-      <div>
-        <input
-          v-if="
-            itemType == 'song' &&
-            serviceStore.selectedItemIndex != null &&
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex
-            ] != null
-          "
-          v-model="
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex
-            ].text
-          "
-          type="text"
-          placeholder="Song Verses"
-          style="width: 100%"
-        />
-
-        <template
-          v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(itemType) &&
-            serviceStore.selectedItemIndex != null &&
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex
-            ] != null
-          "
-        >
-          <textarea
-            ref="textTextAreaElement"
-            v-model="
-              serviceStore.serviceData.serviceItems[
-                serviceStore.selectedItemIndex
-              ].text
-            "
-            :rows="textLineCount"
-            placeholder="Content"
-            style="width: 100%"
-          ></textarea>
-
-          <button
-            ref="textCopyButtonElement"
-            @click="copyText"
-            :disabled="!copySupported"
-          >
-            Copy
-          </button>
-          <button @click="clearText">Clear</button>
-
-          Chars: {{ textCharCount }} Lines: {{ textLineCount }} Longest Line:
-          {{ textLongestLine }}
-        </template>
-      </div>
       <hr />
     </div>
 
@@ -267,7 +203,7 @@ function clearText() {
           </strong>
           <div style="text-align: center">
             <br /><br /><br />
-            <em> &lt; Nothing &gt; </em>
+            <em> &lt; Empty &gt; </em>
             <br /><br /><br /><br /><br />
           </div>
           <hr />
@@ -279,6 +215,85 @@ function clearText() {
         >
           <em> No item is selected </em>
         </div>
+      </div>
+    </div>
+
+    <div style="flex: 0">
+      <hr />
+
+      <span style="display: inline-block">
+        Name: 
+        <input
+          v-if="
+            serviceStore.selectedItemIndex != null &&
+            serviceStore.serviceData.serviceItems[
+              serviceStore.selectedItemIndex
+            ] != null
+          "
+          v-model="
+            serviceStore.serviceData.serviceItems[
+              serviceStore.selectedItemIndex
+            ].comment
+          "
+          type="text"
+        />
+      </span>
+
+      <div>
+        <template
+          v-if="
+            itemType == 'song' &&
+            serviceStore.selectedItemIndex != null &&
+            serviceStore.serviceData.serviceItems[
+              serviceStore.selectedItemIndex
+            ] != null
+          "
+        >
+          <input
+            v-model="
+              serviceStore.serviceData.serviceItems[
+                serviceStore.selectedItemIndex
+              ].text
+            "
+            type="text"
+            placeholder="Song Verses"
+            style="width: 100%"
+          />
+          <button @click="clearText">Clear</button>
+        </template>
+
+        <template
+          v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(itemType) &&
+            serviceStore.selectedItemIndex != null &&
+            serviceStore.serviceData.serviceItems[
+              serviceStore.selectedItemIndex
+            ] != null
+          "
+        >
+          <textarea
+            ref="textTextAreaElement"
+            v-model="
+              serviceStore.serviceData.serviceItems[
+                serviceStore.selectedItemIndex
+              ].text
+            "
+            :rows="textLineCount"
+            placeholder="Content"
+            style="width: 100%"
+          ></textarea>
+
+          <button
+            ref="textCopyButtonElement"
+            @click="copyText"
+            :disabled="!copySupported"
+          >
+            Copy
+          </button>
+          <button @click="clearText">Clear</button>
+
+          Chars: {{ textCharCount }} Lines: {{ textLineCount }} Longest Line:
+          {{ textLongestLine }}
+        </template>
       </div>
     </div>
   </form>

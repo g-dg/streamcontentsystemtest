@@ -81,7 +81,7 @@ function dragEnd() {
     class="root"
     style="height: 100%; display: flex; flex-direction: column"
   >
-    <div style="flex: 0; position: sticky; top: 0px">
+    <div style="flex: 0">
       <span style="display: inline-block">
         <button @click="songStore.loadSongs()">Reload</button>
         <input v-model="search" type="search" placeholder="Search" />
