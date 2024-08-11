@@ -20,7 +20,7 @@ const songVerses = computed(() =>
 );
 
 const songVerseNumbersSorted = computed(() =>
-  Object.keys(songVerses.value ?? {}).sort((a, b) => natcasecmp([a[0], b[0]]))
+  Object.keys(songVerses.value ?? {}).sort((a, b) => natcasecmp([a, b]))
 );
 
 function getStateFromId(id: number | string): StateContent {
