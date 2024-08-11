@@ -24,9 +24,29 @@ export const useSongStore = defineStore("song", () => {
       songs.value = converted;
     } catch (e) {
       console.error(e);
-      alert(
-        "An error occurred loading all songs content. (Is the server running?)"
+      alert("An error occurred loading songs. (Is the server running?)");
+    }
+  }
+
+  async function saveSongs() {
+    try {
+      const songsJson = JSON.stringify(
+        Object.fromEntries(
+          Object.entries(songs.value)
+            .sort((a, b) => natcasecmp([a[0], b[0]]))
+            .map(([title, song]) => [
+              title,
+              Object.fromEntries(
+                Object.entries(song).sort((a, b) => natcasecmp([a[0], b[0]]))
+              ),
+            ])
+        )
       );
+
+      await ContentClient.setContent(SONG_FILE, songsJson);
+    } catch (e) {
+      console.error(e);
+      alert("An error occurred saving songs. (Is the server running?)");
     }
   }
 
@@ -34,5 +54,6 @@ export const useSongStore = defineStore("song", () => {
     songs,
     songTitlesSorted,
     loadSongs,
+    saveSongs,
   };
 });
