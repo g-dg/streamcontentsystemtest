@@ -3,6 +3,7 @@ import { onMounted } from "vue";
 
 import { useSongStore } from "@/stores/song";
 import { useStateStore, type StateContent } from "@/stores/state";
+import { useServiceStore } from "@/stores/service";
 
 import PreviewIFrame from "./PreviewIFrame.vue";
 import SongList from "./SongList.vue";
@@ -12,6 +13,7 @@ import TitleDescriptionEditor from "./TitleDescriptionEditor.vue";
 
 const songStore = useSongStore();
 const stateStore = useStateStore();
+const serviceStore = useServiceStore();
 
 onMounted(songStore.loadSongs);
 
@@ -21,6 +23,20 @@ onMounted(stateStore.connect);
 function setContent(content: StateContent) {
   stateStore.setState(content);
 }
+
+/** Confirms whether to leave the page if unsaved changes are present */
+function unsavedChangesHandler(evt: BeforeUnloadEvent) {
+  if (serviceStore.unsavedChanges) {
+    evt.preventDefault();
+    evt.returnValue = true;
+  }
+}
+/** Sets up unsaved changes leave confirmation */
+function setupUnsavedChangesHandler() {
+  window.removeEventListener("beforeunload", unsavedChangesHandler);
+  window.addEventListener("beforeunload", unsavedChangesHandler);
+}
+onMounted(setupUnsavedChangesHandler);
 
 const appFullName = __APP_NAME_FULL__;
 const appCopyright = __APP_COPYRIGHT__;
