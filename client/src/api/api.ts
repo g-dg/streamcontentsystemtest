@@ -4,8 +4,11 @@ export const API_URI =
 
 /** API function options */
 interface ApiOptions {
+  /** Whether to serialize the body as JSON (on by default) */
   bodyJson?: boolean;
+  /** API return type (default "json") */
   returnType?: "json" | "text" | "blob" | "response";
+  /** Whether to redirect to login page if HTTP 401 Unauthorized is returned */
   redirectOnUnauthorized?: boolean;
 }
 
