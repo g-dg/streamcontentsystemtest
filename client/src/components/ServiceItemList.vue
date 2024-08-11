@@ -220,7 +220,7 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
           :key="item.id"
           @click="selectIndex(index)"
           :class="{ 'selected-item': serviceStore.selectedItemIndex == index }"
-          style="flex: 0"
+          style="flex: 0; padding: 0.5lh 0"
           :draggable="draggableIndex == index"
           @dragstart="dragStart($event, index)"
           @dragover="dragOver($event, index)"
@@ -232,48 +232,52 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
             style="height: 2lh"
           ></div>
 
-          <button @click.stop="serviceStore.removeItem(index)">Del</button>
+          <span style="padding: 0 1em 0 0">
+            <button @click.stop="serviceStore.removeItem(index)">Del</button>
 
-          <button
-            @click.stop="serviceStore.moveItem(index, -1)"
-            :disabled="index == 0"
-          >
-            Up
-          </button>
+            <button
+              @click.stop="serviceStore.moveItem(index, -1)"
+              :disabled="index == 0"
+            >
+              Up
+            </button>
 
-          <button
-            @click.stop="serviceStore.moveItem(index, 1)"
-            :disabled="
-              index + 1 == serviceStore.serviceData.serviceItems.length
-            "
-          >
-            Dn
-          </button>
+            <button
+              @click.stop="serviceStore.moveItem(index, 1)"
+              :disabled="
+                index + 1 == serviceStore.serviceData.serviceItems.length
+              "
+            >
+              Dn
+            </button>
 
-          <button
-            @mousedown="dragHandleEnableDrag(index, true)"
-            @mouseup="dragHandleEnableDrag(index, true)"
-          >
-            Move
-          </button>
+            <button
+              @mousedown="dragHandleEnableDrag(index, true)"
+              @mouseup="dragHandleEnableDrag(index, true)"
+            >
+              Move
+            </button>
+          </span>
 
-          <template v-if="item.comment">
-            {{ item.comment }}
-          </template>
+          <span style="font-size: 112.5%">
+            <template v-if="item.comment">
+              {{ item.comment }}
+            </template>
 
-          <template v-else-if="item.type == 'song'">
-            {{ (item.text ?? "") != "" ? item.text : item.song?.title }}
-          </template>
+            <template v-else-if="item.type == 'song'">
+              {{ (item.text ?? "") != "" ? item.text : item.song?.title }}
+            </template>
 
-          <em v-else-if="item.type == 'empty'"> &lt; Empty &gt; </em>
+            <em v-else-if="item.type == 'empty'"> &lt; Empty &gt; </em>
 
-          <em v-else-if="item.type == 'mainText'"> &lt; Main Text &gt; </em>
+            <em v-else-if="item.type == 'mainText'"> &lt; Main Text &gt; </em>
 
-          <em v-else-if="item.type == 'subText'"> &lt; Sub Text &gt; </em>
+            <em v-else-if="item.type == 'subText'"> &lt; Sub Text &gt; </em>
 
-          <em v-else-if="item.type == 'smallText'"> &lt; Small Text &gt; </em>
+            <em v-else-if="item.type == 'smallText'"> &lt; Small Text &gt; </em>
 
-          <em v-else> &lt; Unknown &gt; </em>
+            <em v-else> &lt; Unknown &gt; </em>
+          </span>
         </div>
 
         <div
