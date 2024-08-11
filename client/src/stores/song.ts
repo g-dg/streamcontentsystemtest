@@ -2,8 +2,9 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
 import { ContentClient } from "@/api/content";
-import clone from "@/helpers/clone";
 import { natcasecmp } from "@/helpers/sort";
+
+const SONG_FILE = "songs.json";
 
 /** Song store */
 export const useSongStore = defineStore("song", () => {
@@ -18,11 +19,9 @@ export const useSongStore = defineStore("song", () => {
   /** Load songs from server */
   async function loadSongs() {
     try {
-      const content = await ContentClient.listContent();
-      const converted = Object.fromEntries(
-        Object.entries(content).map(([key, value]) => [key, JSON.parse(value)])
-      );
-      songs.value = clone(converted);
+      const content = await ContentClient.getContent(SONG_FILE);
+      const converted = JSON.parse(content);
+      songs.value = converted;
     } catch (e) {
       console.error(e);
       alert(
