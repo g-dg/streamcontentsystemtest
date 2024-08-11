@@ -63,8 +63,6 @@ const dragHoveredIndex = ref<number | null>(null);
 
 // handles drag and drop start
 function dragStart(evt: DragEvent, index: number) {
-  console.debug("dragstart");
-
   if (evt.dataTransfer == null) return;
 
   const data: ServiceItemDragDropData = {
@@ -82,8 +80,6 @@ function dragStart(evt: DragEvent, index: number) {
 // handles showing drop area for dragged item
 //TODO: find a way to clear if dragged out of the component and cancelled.
 function dragOver(evt: DragEvent, index: number) {
-  console.debug("dragover");
-
   evt.preventDefault();
   evt.dataTransfer!.dropEffect = "move";
 
@@ -92,8 +88,6 @@ function dragOver(evt: DragEvent, index: number) {
 
 // handles drop of item
 function drop(evt: DragEvent, index: number) {
-  console.debug("drop");
-
   evt.preventDefault();
   const data = JSON.parse(
     evt.dataTransfer?.getData("application/json") ?? JSON.stringify(null)
@@ -123,8 +117,6 @@ function drop(evt: DragEvent, index: number) {
 
 // resets drag and drop state
 function dragEnd(evt: DragEvent, index: number) {
-  console.debug("dragend");
-
   dragHoveredIndex.value = null;
   draggableIndex.value = null;
 }
@@ -237,54 +229,54 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
             }"
             style="padding: 0.5lh 0"
           >
-          <span style="padding: 0 1em 0 0">
-            <button @click.stop="serviceStore.removeItem(index)">Del</button>
+            <span style="padding: 0 1em 0 0">
+              <button @click.stop="serviceStore.removeItem(index)">Del</button>
 
-            <button
-              @click.stop="serviceStore.moveItem(index, -1)"
-              :disabled="index == 0"
-            >
-              Up
-            </button>
+              <button
+                @click.stop="serviceStore.moveItem(index, -1)"
+                :disabled="index == 0"
+              >
+                Up
+              </button>
 
-            <button
-              @click.stop="serviceStore.moveItem(index, 1)"
-              :disabled="
-                index + 1 == serviceStore.serviceData.serviceItems.length
-              "
-            >
-              Dn
-            </button>
+              <button
+                @click.stop="serviceStore.moveItem(index, 1)"
+                :disabled="
+                  index + 1 == serviceStore.serviceData.serviceItems.length
+                "
+              >
+                Dn
+              </button>
 
-            <button
-              @mousedown="dragHandleEnableDrag(index, true)"
-              @mouseup="dragHandleEnableDrag(index, true)"
-            >
-              Move
-            </button>
-          </span>
+              <button
+                @mousedown="dragHandleEnableDrag(index, true)"
+                @mouseup="dragHandleEnableDrag(index, true)"
+              >
+                Move
+              </button>
+            </span>
 
-          <span style="font-size: 112.5%">
-            <template v-if="item.comment">
-              {{ item.comment }}
-            </template>
+            <span style="font-size: 112.5%">
+              <template v-if="item.comment">
+                {{ item.comment }}
+              </template>
 
-            <template v-else-if="item.type == 'song'">
-              {{ (item.text ?? "") != "" ? item.text : item.song?.title }}
-            </template>
+              <template v-else-if="item.type == 'song'">
+                {{ (item.text ?? "") != "" ? item.text : item.song?.title }}
+              </template>
 
-            <em v-else-if="item.type == 'empty'"> &lt; Empty &gt; </em>
+              <em v-else-if="item.type == 'empty'"> &lt; Empty &gt; </em>
 
-            <em v-else-if="item.type == 'mainText'"> &lt; Main Text &gt; </em>
+              <em v-else-if="item.type == 'mainText'"> &lt; Main Text &gt; </em>
 
-            <em v-else-if="item.type == 'subText'"> &lt; Sub Text &gt; </em>
+              <em v-else-if="item.type == 'subText'"> &lt; Sub Text &gt; </em>
 
               <em v-else-if="item.type == 'smallText'">
                 &lt; Small Text &gt;
               </em>
 
-            <em v-else> &lt; Unknown &gt; </em>
-          </span>
+              <em v-else> &lt; Unknown &gt; </em>
+            </span>
           </div>
         </div>
 
