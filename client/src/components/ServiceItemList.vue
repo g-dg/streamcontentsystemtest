@@ -219,8 +219,7 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
           v-for="(item, index) in serviceStore.serviceData.serviceItems"
           :key="item.id"
           @click="selectIndex(index)"
-          :class="{ 'selected-item': serviceStore.selectedItemIndex == index }"
-          style="flex: 0; padding: 0.5lh 0"
+          style="flex: 0"
           :draggable="draggableIndex == index"
           @dragstart="dragStart($event, index)"
           @dragover="dragOver($event, index)"
@@ -232,6 +231,12 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
             style="height: 2lh"
           ></div>
 
+          <div
+            :class="{
+              'selected-item': serviceStore.selectedItemIndex == index,
+            }"
+            style="padding: 0.5lh 0"
+          >
           <span style="padding: 0 1em 0 0">
             <button @click.stop="serviceStore.removeItem(index)">Del</button>
 
@@ -274,10 +279,13 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
 
             <em v-else-if="item.type == 'subText'"> &lt; Sub Text &gt; </em>
 
-            <em v-else-if="item.type == 'smallText'"> &lt; Small Text &gt; </em>
+              <em v-else-if="item.type == 'smallText'">
+                &lt; Small Text &gt;
+              </em>
 
             <em v-else> &lt; Unknown &gt; </em>
           </span>
+          </div>
         </div>
 
         <div
@@ -294,16 +302,7 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
           @drop="drop($event, serviceStore.serviceData.serviceItems.length)"
           style="flex: 1"
         >
-          <div
-            v-if="
-              dragHoveredIndex != null &&
-              dragHoveredIndex == serviceStore.serviceData.serviceItems.length
-            "
-            style="height: 2lh"
-          ></div>
-          <div v-if="dragHoveredIndex != null" style="text-align: center">
-            <em>&lt; Move to end &gt;</em>
-          </div>
+          &nbsp;
         </div>
       </div>
     </div>
