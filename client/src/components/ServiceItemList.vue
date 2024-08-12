@@ -194,6 +194,8 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
           <em><strong> Unsaved Changes! </strong></em>
         </span>
       </span>
+
+      <hr />
     </div>
 
     <div style="flex: 1 1 auto; height: 4lh">

@@ -65,12 +65,14 @@ const appCopyright = __APP_COPYRIGHT__;
               </em>
             </strong>
           </div>
+          <hr />
         </div>
         <div style="flex: 1; display: flex; flex-direction: column">
           <div style="flex: 1">
             <SongList />
           </div>
           <div style="flex: 0">
+            <hr />
             <footer>
               {{ appFullName }}
               {{ appCopyright }}
@@ -86,6 +88,7 @@ const appCopyright = __APP_COPYRIGHT__;
           <ServiceItemList />
         </div>
         <div style="flex: 0">
+          <hr />
           <TitleDescriptionEditor />
         </div>
       </div>
