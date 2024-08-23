@@ -221,15 +221,17 @@ function clearText() {
     <div style="flex: 0">
       <hr />
 
-      <span style="display: inline-block">
-        Name: 
+      <span
+        v-if="
+          serviceStore.selectedItemIndex != null &&
+          serviceStore.serviceData.serviceItems[
+            serviceStore.selectedItemIndex
+          ] != null
+        "
+        style="display: inline-block"
+      >
+        Name:
         <input
-          v-if="
-            serviceStore.selectedItemIndex != null &&
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex
-            ] != null
-          "
           v-model="
             serviceStore.serviceData.serviceItems[
               serviceStore.selectedItemIndex
