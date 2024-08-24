@@ -117,6 +117,10 @@ export const useServiceStore = defineStore("service", () => {
       selectedSubItemId.value = null;
       selectedItemIndex.value = null;
     }
+    if (selectedItemIndex.value != null && index < selectedItemIndex.value) {
+      selectedSubItemId.value = null;
+      selectedItemIndex.value = Math.max(0, selectedItemIndex.value - 1);
+    }
     serviceData.value.serviceItems.splice(index, 1);
   }
 
