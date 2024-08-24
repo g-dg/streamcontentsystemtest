@@ -160,52 +160,69 @@ function clearText() {
           v-if="songVerses != null"
           v-for="verseName in songVerseNumbersSorted"
           :key="verseName"
-          @click="selectContent(verseName)"
-          :class="{
-            'selected-item': serviceStore.selectedSubItemId === verseName,
-          }"
-          style="margin: 1em 0"
         >
-          <strong style="font-size: 125%; font-weight: bold">
-            {{ verseName }}
-          </strong>
-          <pre>{{ songVerses[verseName] }}</pre>
-          <hr />
+          <input
+            v-if="serviceStore.selectedItem?.song != undefined"
+            v-model="serviceStore.selectedItem.song.verses"
+            :value="verseName"
+            type="checkbox"
+            :id="'song_verse_enable_' + verseName"
+            style="margin: 0 0.5em 0 1em"
+          />
+          <label :for="'song_verse_enable_' + verseName">
+            <strong style="font-size: 125%; font-weight: bold">
+              {{ verseName }}
+            </strong>
+          </label>
+          <pre
+            @click="selectContent(verseName)"
+            :class="{
+              'service-item': true,
+              'selected-item': serviceStore.selectedSubItemId === verseName,
+            }"
+            >{{ songVerses[verseName] }}</pre
+          >
+          <hr style="margin-bottom: 1em" />
         </div>
 
         <div
           v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(itemType)"
-          @click="selectContent(0)"
-          :class="{
-            'selected-item': serviceStore.selectedSubItemId == 0,
-          }"
         >
-          <strong style="font-size: 125%; font-weight: bold">
-            Text Content
+          <strong
+            style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
+          >
+            Text
           </strong>
-          <pre>{{
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex ?? -1
-            ]?.text
-          }}</pre>
+          <pre
+            @click="selectContent(0)"
+            :class="{
+              'service-item': true,
+              'selected-item': serviceStore.selectedSubItemId === 0,
+            }"
+            >{{
+              serviceStore.serviceData.serviceItems[
+                serviceStore.selectedItemIndex ?? -1
+              ]?.text
+            }}</pre
+          >
           <hr />
         </div>
 
-        <div
-          v-if="itemType == 'empty'"
-          @click="selectContent(0)"
-          :class="{
-            'selected-item': serviceStore.selectedSubItemId == 0,
-          }"
-        >
-          <strong style="font-size: 125%; font-weight: bold">
-            Show Nothing
+        <div v-if="itemType == 'empty'">
+          <strong
+            style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
+          >
+            Empty
           </strong>
-          <div style="text-align: center">
-            <br /><br /><br />
-            <em> &lt; Empty &gt; </em>
-            <br /><br /><br /><br /><br />
-          </div>
+          <pre
+            @click="selectContent(0)"
+            :class="{
+              'service-item': true,
+              'selected-item': serviceStore.selectedSubItemId === 0,
+            }"
+          >
+            <div style="text-align: center"><em> &lt; Empty &gt; </em></div>
+          </pre>
           <hr />
         </div>
 
@@ -302,6 +319,14 @@ function clearText() {
 </template>
 
 <style lang="scss" scoped>
+.service-item {
+  border: 1px gray solid;
+  padding: 1em;
+  min-height: 10lh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .selected-item {
   background-color: black;
   color: white;
