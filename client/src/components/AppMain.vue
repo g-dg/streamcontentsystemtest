@@ -5,11 +5,11 @@ import { useSongStore } from "@/stores/song";
 import { useStateStore, type StateContent } from "@/stores/state";
 import { useServiceStore } from "@/stores/service";
 
-import PreviewIFrame from "./PreviewIFrame.vue";
-import SongList from "./SongList.vue";
-import ServiceItemList from "./ServiceItemList.vue";
-import ServiceItemContentList from "./ServiceItemContentList.vue";
-import TitleDescriptionEditor from "./TitleDescriptionEditor.vue";
+import PreviewIFrame from "./renderers/PreviewIFrame.vue";
+import SongList from "./songs/SongList.vue";
+import ServiceItemList from "./ui/ServiceItemList.vue";
+import ServiceItemContentList from "./ui/ServiceItemContentList.vue";
+import TitleDescriptionEditor from "./ui/TitleDescriptionEditor.vue";
 
 const songStore = useSongStore();
 const stateStore = useStateStore();
