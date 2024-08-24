@@ -7,6 +7,8 @@ import {
 } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
 
+import SongEditorModal from "./SongEditorModal.vue";
+
 const songStore = useSongStore();
 const serviceStore = useServiceStore();
 
@@ -84,6 +86,7 @@ function dragEnd() {
     <div style="flex: 0">
       <span style="display: inline-block">
         <button @click="songStore.loadSongs()">Reload</button>
+        <SongEditorModal />
         <input v-model="search" type="search" placeholder="Search" />
         <button @click="search = ''">Clear</button>
       </span>
@@ -105,6 +108,7 @@ function dragEnd() {
           >
             Add
           </button>
+          <SongEditorModal :songTitle="song" />
           {{ song }}
         </div>
       </div>
