@@ -17,6 +17,7 @@ export interface ServiceItem {
   song?: ServiceSong;
   text?: string;
   comment?: string;
+  enabled: boolean;
 }
 
 /** Service song */
@@ -25,6 +26,24 @@ export interface ServiceSong {
   verses: Array<string>;
 }
 
+export interface ExportedServiceData {
+  serviceItems: Array<ExportedServiceItem>;
+  title?: string;
+  description?: string;
+}
+export interface ExportedServiceItem {
+  type: "empty" | "song" | "mainText" | "subText" | "smallText";
+  song?: ExportedServiceSong;
+  text?: string;
+  comment?: string;
+  enabled?: boolean;
+}
+export interface ExportedServiceSong {
+  title: string;
+  verses: Array<string>;
+}
+
+/** Data for drag and drop */
 export interface ServiceItemDragDropData {
   instanceId: string | null;
   srcIndex: number | null;
@@ -70,6 +89,7 @@ export const useServiceStore = defineStore("service", () => {
     return {
       id: uuid(),
       type: "empty",
+      enabled: true,
     };
   }
 
@@ -79,6 +99,7 @@ export const useServiceStore = defineStore("service", () => {
       id: uuid(),
       type: "song",
       song: { title: songTitle, verses: [] },
+      enabled: true,
     };
   }
 
@@ -91,6 +112,7 @@ export const useServiceStore = defineStore("service", () => {
       id: uuid(),
       type,
       text,
+      enabled: true,
     };
   }
 
@@ -235,43 +257,55 @@ export const useServiceStore = defineStore("service", () => {
     }
   }
 
-  function convertInternalToExport(serviceData: ServiceData): any {
-    let ret: any = {};
-    ret.serviceItems = serviceData.serviceItems.map((item) => {
-      let ret: any = {};
-      ret.type = item.type;
-      if (item.song != undefined) {
-        let song: any = {};
-        song.title = item.song.title;
-        song.verses = item.song.verses.map((verse) => verse);
-        ret.song = song;
-      }
-      if (item.text != undefined) ret.text = item.text;
-      if (item.comment != undefined) ret.comment = item.comment;
-      return ret;
-    });
+  function convertInternalToExport(
+    serviceData: ServiceData
+  ): ExportedServiceData {
+    let ret: ExportedServiceData = {
+      serviceItems: serviceData.serviceItems.map((item) => {
+        let ret: ExportedServiceItem = {
+          type: item.type,
+        };
+        if (item.song != undefined) {
+          let song: ExportedServiceSong = {
+            title: item.song.title,
+            verses: item.song.verses.map((verse) => verse),
+          };
+          ret.song = song;
+        }
+        if (item.text != undefined) ret.text = item.text;
+        if (item.comment != undefined) ret.comment = item.comment;
+        if (!item.enabled) ret.enabled = false;
+        return ret;
+      }),
+    };
     if (serviceData.title != undefined) ret.title = serviceData.title;
     if (serviceData.description != undefined)
       ret.description = serviceData.description;
     return ret;
   }
 
-  function convertImportToInternal(serviceData: any): ServiceData {
-    let ret: any = {};
-    ret.serviceItems = serviceData.serviceItems.map((item: any) => {
-      let ret: any = {};
-      ret.id = uuid();
-      ret.type = item.type;
-      if (item.song != undefined) {
-        let song: any = {};
-        song.title = item.song.title;
-        song.verses = item.song.verses.map((verse: any) => verse);
-        ret.song = song;
-      }
-      if (item.text != undefined) ret.text = item.text;
-      if (item.comment != undefined) ret.comment = item.comment;
-      return ret;
-    });
+  function convertImportToInternal(
+    serviceData: ExportedServiceData
+  ): ServiceData {
+    let ret: ServiceData = {
+      serviceItems: serviceData.serviceItems.map((item) => {
+        let ret: ServiceItem = {
+          id: uuid(),
+          type: item.type,
+          enabled: item.enabled ?? true,
+        };
+        if (item.song != undefined) {
+          let song: ServiceSong = {
+            title: item.song.title,
+            verses: item.song.verses.map((verse) => verse),
+          };
+          ret.song = song;
+        }
+        if (item.text != undefined) ret.text = item.text;
+        if (item.comment != undefined) ret.comment = item.comment;
+        return ret;
+      }),
+    };
     if (serviceData.title != undefined) ret.title = serviceData.title;
     if (serviceData.description != undefined)
       ret.description = serviceData.description;
