@@ -133,6 +133,25 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
   evt.dataTransfer.setData("application/json", JSON.stringify(data));
   evt.dataTransfer.dropEffect = "move";
 }
+
+// scroll selected item into view
+const serviceItemElements = ref<Array<HTMLElement> | HTMLElement>([]);
+watch(
+  () => serviceStore.selectedItemIndex,
+  () => {
+    const index = serviceStore.selectedItemIndex;
+    if (
+      index != null &&
+      typeof serviceItemElements.value == "object" &&
+      serviceItemElements.value != null &&
+      Array.isArray(serviceItemElements.value)
+    ) {
+      serviceItemElements.value[index]?.scrollIntoView({
+        block: "nearest",
+      });
+    }
+  }
+);
 </script>
 
 <template>
@@ -214,6 +233,7 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
           :key="item.id"
           @click="selectIndex(index)"
           style="flex: 0"
+          ref="serviceItemElements"
           :draggable="draggableIndex == index"
           @dragstart="dragStart($event, index)"
           @dragover="dragOver($event, index)"
