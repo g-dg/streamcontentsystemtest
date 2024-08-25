@@ -4,77 +4,19 @@ import { computed, ref, watch } from "vue";
 import { natcasecmp } from "@/helpers/sort";
 import { useServiceStore } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
-import { type StateContent } from "@/stores/state";
-
-const emit = defineEmits<{ (e: "setContent", content: StateContent): void }>();
 
 const songStore = useSongStore();
 const serviceStore = useServiceStore();
 
-const itemType = computed(() => serviceStore.selectedItem?.type);
 const songVerses = computed(() =>
   serviceStore.selectedItem?.type == "song" &&
   serviceStore.selectedItem?.song?.title != null
     ? songStore.songs[serviceStore.selectedItem.song.title]
     : null
 );
-
 const songVerseNumbersSorted = computed(() =>
   Object.keys(songVerses.value ?? {}).sort((a, b) => natcasecmp([a, b]))
 );
-
-function getStateFromId(id: number | string): StateContent {
-  switch (itemType.value) {
-    case "empty": {
-      return { background: false };
-    }
-    case "song": {
-      const verseContent = (songVerses.value ?? {})[id] ?? undefined;
-      return {
-        background: true,
-        song: verseContent,
-        songTitle:
-          (serviceStore.selectedItem?.text ?? "") != ""
-            ? serviceStore.selectedItem?.text
-            : serviceStore.selectedItem?.song?.title ?? "",
-      };
-    }
-    case "mainText": {
-      return {
-        background: false,
-        mainText: serviceStore.selectedItem?.text ?? undefined,
-      };
-    }
-    case "subText": {
-      return {
-        background: false,
-        subText: serviceStore.selectedItem?.text ?? undefined,
-      };
-    }
-    case "smallText": {
-      return {
-        background: false,
-        smallText: serviceStore.selectedItem?.text ?? undefined,
-      };
-    }
-    default: {
-      return { background: false };
-    }
-  }
-}
-
-function selectContent(id: string) {
-  serviceStore.selectedSubItemId = id;
-
-  emit("setContent", getStateFromId(id));
-}
-
-function emptyScreen() {
-  emit("setContent", { background: false });
-}
-function blackScreen() {
-  emit("setContent", { background: true });
-}
 
 const topScrollElement = ref<HTMLDivElement>();
 function scrollToTop() {
@@ -135,17 +77,24 @@ function clearText() {
   >
     <div style="flex: 0">
       <span style="display: inline-block">
-        <button @click="emptyScreen">Empty Screen</button>
-        <button @click="blackScreen">Black Screen</button>
+        <button @click="serviceStore.goToPreviousSubItem">Back</button>
+        <button @click="serviceStore.goToNextSubItem">Next</button>
+
+        <button @click="serviceStore.showEmptyScreen">Empty Screen</button>
+        <button @click="serviceStore.showBlackScreen">Black Screen</button>
 
         <span style="margin-inline-start: 0.5em">
-          <template v-if="itemType == 'song'">
+          <template v-if="serviceStore.selectedItemType == 'song'">
             {{ serviceStore.selectedItem?.song?.title }}
           </template>
-          <em v-if="itemType == 'empty'"> Empty </em>
-          <em v-if="itemType == 'mainText'"> Main Text </em>
-          <em v-if="itemType == 'subText'"> Sub Text </em>
-          <em v-if="itemType == 'smallText'"> Small Text </em>
+          <em v-if="serviceStore.selectedItemType == 'empty'"> Empty </em>
+          <em v-if="serviceStore.selectedItemType == 'mainText'">
+            Main Text
+          </em>
+          <em v-if="serviceStore.selectedItemType == 'subText'"> Sub Text </em>
+          <em v-if="serviceStore.selectedItemType == 'smallText'">
+            Small Text
+          </em>
         </span>
       </span>
 
@@ -175,7 +124,7 @@ function clearText() {
             </strong>
           </label>
           <pre
-            @click="selectContent(verseName)"
+            @click="serviceStore.selectAndShowItem(verseName)"
             :class="{
               'service-item': true,
               'selected-item': serviceStore.selectedSubItemId === verseName,
@@ -186,7 +135,7 @@ function clearText() {
         </div>
 
         <div
-          v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(itemType)"
+          v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(serviceStore.selectedItemType)"
         >
           <strong
             style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
@@ -194,7 +143,7 @@ function clearText() {
             Text
           </strong>
           <pre
-            @click="selectContent('0')"
+            @click="serviceStore.selectAndShowItem('0')"
             :class="{
               'service-item': true,
               'selected-item': serviceStore.selectedSubItemId === '0',
@@ -208,14 +157,14 @@ function clearText() {
           <hr />
         </div>
 
-        <div v-if="itemType == 'empty'">
+        <div v-if="serviceStore.selectedItemType == 'empty'">
           <strong
             style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
           >
             Empty
           </strong>
           <pre
-            @click="selectContent('0')"
+            @click="serviceStore.selectAndShowItem('0')"
             :class="{
               'service-item': true,
               'selected-item': serviceStore.selectedSubItemId === '0',
@@ -261,7 +210,7 @@ function clearText() {
       <div>
         <template
           v-if="
-            itemType == 'song' &&
+            serviceStore.selectedItemType == 'song' &&
             serviceStore.selectedItemIndex != null &&
             serviceStore.serviceData.serviceItems[
               serviceStore.selectedItemIndex
@@ -282,7 +231,7 @@ function clearText() {
         </template>
 
         <template
-          v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(itemType) &&
+          v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(serviceStore.selectedItemType) &&
             serviceStore.selectedItemIndex != null &&
             serviceStore.serviceData.serviceItems[
               serviceStore.selectedItemIndex

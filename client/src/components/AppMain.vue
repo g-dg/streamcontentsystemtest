@@ -2,7 +2,7 @@
 import { onMounted } from "vue";
 
 import { useSongStore } from "@/stores/song";
-import { useStateStore, type StateContent } from "@/stores/state";
+import { useStateStore } from "@/stores/state";
 import { useServiceStore } from "@/stores/service";
 
 import PreviewIFrame from "./renderers/PreviewIFrame.vue";
@@ -15,14 +15,7 @@ const songStore = useSongStore();
 const stateStore = useStateStore();
 const serviceStore = useServiceStore();
 
-onMounted(songStore.loadSongs);
-
-onMounted(stateStore.connect);
-
-/** Set content to server */
-function setContent(content: StateContent) {
-  stateStore.setState(content);
-}
+onMounted(() => songStore.loadSongs(false));
 
 /** Confirms whether to leave the page if unsaved changes are present */
 function unsavedChangesHandler(evt: BeforeUnloadEvent) {
@@ -94,7 +87,7 @@ const appCopyright = __APP_COPYRIGHT__;
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
         <div style="flex: 1">
-          <ServiceItemContentList @set-content="setContent" />
+          <ServiceItemContentList />
         </div>
       </div>
     </div>

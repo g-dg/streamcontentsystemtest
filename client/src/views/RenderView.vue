@@ -20,8 +20,6 @@ const displayConfig = computed(() =>
 );
 
 const stateStore = useStateStore();
-// connect to state
-onMounted(stateStore.connect);
 
 const currentContent = computed<StateContent | null>(
   () => stateStore.currentState.content

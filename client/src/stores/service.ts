@@ -1,7 +1,11 @@
 import { defineStore } from "pinia";
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 
 import { uuid } from "@/helpers/random";
+import { natcasecmp } from "@/helpers/sort";
+
+import { useSongStore } from "./song";
+import { useStateStore, type StateContent } from "./state";
 
 /** Service data */
 export interface ServiceData {
@@ -52,6 +56,11 @@ export interface ServiceItemDragDropData {
 
 /** Service store */
 export const useServiceStore = defineStore("service", () => {
+  const stateStore = useStateStore();
+
+  const songStore = useSongStore();
+  songStore.loadSongs();
+
   /** Service data */
   const serviceData = ref<ServiceData>({ serviceItems: [] });
 
@@ -83,6 +92,8 @@ export const useServiceStore = defineStore("service", () => {
       ? serviceData.value.serviceItems[selectedItemIndex.value]
       : null
   );
+
+  const selectedItemType = computed(() => selectedItem.value?.type);
 
   /** Creates an empty item */
   function emptyItem(): ServiceItem {
@@ -169,6 +180,152 @@ export const useServiceStore = defineStore("service", () => {
     selectedItemIndex.value = null;
     serviceData.value.serviceItems = [];
   }
+
+  function getState(): StateContent {
+    switch (selectedItemType.value) {
+      case "empty": {
+        return { background: false };
+      }
+      case "song": {
+        const songVerses =
+          selectedItem.value?.song?.title != null
+            ? songStore.songs[selectedItem.value.song.title]
+            : null;
+        const verseContent =
+          (songVerses ?? {})[selectedSubItemId.value ?? ""] ?? undefined;
+        return {
+          background: true,
+          song: verseContent,
+          songTitle:
+            (selectedItem.value?.text ?? "") != ""
+              ? selectedItem.value?.text
+              : selectedItem.value?.song?.title ?? "",
+        };
+      }
+      case "mainText": {
+        return {
+          background: false,
+          mainText: selectedItem.value?.text ?? undefined,
+        };
+      }
+      case "subText": {
+        return {
+          background: false,
+          subText: selectedItem.value?.text ?? undefined,
+        };
+      }
+      case "smallText": {
+        return {
+          background: false,
+          smallText: selectedItem.value?.text ?? undefined,
+        };
+      }
+      default: {
+        return { background: false };
+      }
+    }
+  }
+
+  async function selectAndShowItem(
+    subItemId: string,
+    itemIndex: number | undefined = undefined
+  ) {
+    if (itemIndex !== undefined) {
+      selectedItemIndex.value = itemIndex;
+      await nextTick();
+    }
+    selectedSubItemId.value = subItemId;
+
+    stateStore.setState(getState());
+  }
+
+  function showEmptyScreen() {
+    stateStore.setState({ background: false });
+  }
+  function showBlackScreen() {
+    stateStore.setState({ background: true });
+  }
+
+  const enabledItemList = computed<
+    Array<{ item: number; subitem: string; enabled: boolean }>
+  >(() => {
+    return serviceData.value.serviceItems
+      .map((item, index) => {
+        if (item.type == "song") {
+          const songVerseTitlesSorted = Object.keys(
+            songStore.songs[item.song?.title ?? ""] ?? {}
+          ).sort((a, b) => natcasecmp([a, b]));
+          return songVerseTitlesSorted.map((verseTitle) => {
+            const enabled =
+              (item.song?.verses.length == 0 ||
+                item.song?.verses.includes(verseTitle)) ??
+              false;
+            return { item: index, subitem: verseTitle, enabled };
+          });
+        } else {
+          return { item: index, subitem: "0", enabled: item.enabled };
+        }
+      })
+      .flat();
+  });
+
+  function getAdjacentEnabledSubItem(
+    itemIndex: number | null,
+    subItemId: string | null,
+    step: -1 | 1
+  ): {
+    item: number;
+    subitem: string;
+  } | null {
+    const index = enabledItemList.value.findIndex(
+      (testItem) => testItem.item == itemIndex && testItem.subitem == subItemId
+    );
+
+    if (index == -1) {
+      return null;
+    }
+
+    for (
+      let i = index + step;
+      i >= 0 && i < enabledItemList.value.length;
+      i += step
+    ) {
+      const item = enabledItemList.value[i];
+      if (item.enabled) {
+        return item;
+      }
+    }
+
+    return null;
+  }
+
+  async function goToNextSubItem() {
+    const nextItem = getAdjacentEnabledSubItem(
+      selectedItemIndex.value,
+      selectedSubItemId.value,
+      1
+    );
+
+    if (nextItem != null) {
+      await selectAndShowItem(nextItem.subitem, nextItem.item);
+    }
+  }
+
+  async function goToPreviousSubItem() {
+    const previousItem = getAdjacentEnabledSubItem(
+      selectedItemIndex.value,
+      selectedSubItemId.value,
+      -1
+    );
+
+    if (previousItem != null) {
+      await selectAndShowItem(previousItem.subitem, previousItem.item);
+    }
+  }
+
+  async function selectContent(subItemId: string) {}
+
+  async function setContent(itemId: number, subItemId: string) {}
 
   /** Import service from file */
   async function importService() {
@@ -318,6 +475,7 @@ export const useServiceStore = defineStore("service", () => {
     selectedItemIndex,
     selectedSubItemId,
     selectedItem,
+    selectedItemType,
     emptyItem,
     songItem,
     textItem,
@@ -325,6 +483,11 @@ export const useServiceStore = defineStore("service", () => {
     removeItem,
     moveItem,
     clearService,
+    selectAndShowItem,
+    showEmptyScreen,
+    showBlackScreen,
+    goToNextSubItem,
+    goToPreviousSubItem,
     importService,
     exportService,
   };
