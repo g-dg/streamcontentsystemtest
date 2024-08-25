@@ -16,8 +16,21 @@ export const useSongStore = defineStore("song", () => {
     Object.keys(songs.value).sort((a, b) => natcasecmp([a, b]))
   );
 
+  let songLoadingPromise: Promise<void> | null = null;
+
   /** Load songs from server */
-  async function loadSongs() {
+  function loadSongs(force = false): Promise<void> {
+    if (songLoadingPromise == null) {
+      songLoadingPromise = loadSongsAsync(force);
+    }
+    return songLoadingPromise;
+  }
+
+  async function loadSongsAsync(force = false): Promise<void> {
+    if (!force && Object.keys(songs.value).length > 0) {
+      return;
+    }
+
     try {
       const content = await ContentClient.getContent(SONG_FILE);
       const converted = JSON.parse(content);
@@ -26,6 +39,8 @@ export const useSongStore = defineStore("song", () => {
       console.error(e);
       alert("An error occurred loading songs. (Is the server running?)");
     }
+
+    songLoadingPromise = null;
   }
 
   async function saveSongs() {
