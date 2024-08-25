@@ -67,6 +67,11 @@ function clearText() {
     serviceStore.serviceData.serviceItems[serviceStore.selectedItemIndex].text =
       "";
 }
+
+function verseIsEnabled(verse: string): boolean {
+  const enabledSongVerses = serviceStore.selectedItem?.song?.verses ?? [];
+  return enabledSongVerses.length == 0 || enabledSongVerses.includes(verse);
+}
 </script>
 
 <template>
@@ -110,16 +115,18 @@ function clearText() {
           v-for="verseName in songVerseNumbersSorted"
           :key="verseName"
         >
-          <input
-            v-if="serviceStore.selectedItem?.song != undefined"
-            v-model="serviceStore.selectedItem.song.verses"
-            :value="verseName"
-            type="checkbox"
-            :id="'song_verse_enable_' + verseName"
-            style="margin: 0 0.5em 0 1em"
-          />
           <label :for="'song_verse_enable_' + verseName">
-            <strong style="font-size: 125%; font-weight: bold">
+            <input
+              v-if="serviceStore.selectedItem?.song != undefined"
+              v-model="serviceStore.selectedItem.song.verses"
+              :value="verseName"
+              type="checkbox"
+              :id="'song_verse_enable_' + verseName"
+              style="margin: 0 0.5em 0 1em"
+            />
+            <strong
+              style="font-size: 125%; font-weight: bold; padding-right: 1em"
+            >
               {{ verseName }}
             </strong>
           </label>
@@ -127,7 +134,9 @@ function clearText() {
             @click="serviceStore.selectAndShowItem(verseName)"
             :class="{
               'service-item': true,
-              'selected-item': serviceStore.selectedSubItemId === verseName,
+              'selected-service-item':
+                serviceStore.selectedSubItemId === verseName,
+              'service-item-disabled': !verseIsEnabled(verseName),
             }"
             >{{ songVerses[verseName] }}</pre
           >
@@ -146,7 +155,7 @@ function clearText() {
             @click="serviceStore.selectAndShowItem('0')"
             :class="{
               'service-item': true,
-              'selected-item': serviceStore.selectedSubItemId === '0',
+              'selected-service-item': serviceStore.selectedSubItemId === '0',
             }"
             >{{
               serviceStore.serviceData.serviceItems[
@@ -167,7 +176,7 @@ function clearText() {
             @click="serviceStore.selectAndShowItem('0')"
             :class="{
               'service-item': true,
-              'selected-item': serviceStore.selectedSubItemId === '0',
+              'selected-service-item': serviceStore.selectedSubItemId === '0',
             }"
           >
             <div style="text-align: center"><em> &lt; Empty &gt; </em></div>
@@ -276,7 +285,12 @@ function clearText() {
   flex-direction: column;
   justify-content: center;
 }
-.selected-item {
+.service-item-disabled {
+  color: #333;
+  background-color: #ccc;
+  border: 1px #ccc solid;
+}
+.selected-service-item {
   background-color: black;
   color: white;
 }
