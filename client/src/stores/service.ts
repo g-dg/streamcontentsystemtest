@@ -65,7 +65,7 @@ export const useServiceStore = defineStore("service", () => {
   /** Selected item index */
   const selectedItemIndex = ref<number | null>(null);
   /** Selected sub item id */
-  const selectedSubItemId = ref<number | string | null>(null);
+  const selectedSubItemId = ref<string | null>(null);
 
   watch(
     selectedItemIndex,

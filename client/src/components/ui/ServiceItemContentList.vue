@@ -63,7 +63,7 @@ function getStateFromId(id: number | string): StateContent {
   }
 }
 
-function selectContent(id: number | string) {
+function selectContent(id: string) {
   serviceStore.selectedSubItemId = id;
 
   emit("setContent", getStateFromId(id));
@@ -194,10 +194,10 @@ function clearText() {
             Text
           </strong>
           <pre
-            @click="selectContent(0)"
+            @click="selectContent('0')"
             :class="{
               'service-item': true,
-              'selected-item': serviceStore.selectedSubItemId === 0,
+              'selected-item': serviceStore.selectedSubItemId === '0',
             }"
             >{{
               serviceStore.serviceData.serviceItems[
@@ -215,10 +215,10 @@ function clearText() {
             Empty
           </strong>
           <pre
-            @click="selectContent(0)"
+            @click="selectContent('0')"
             :class="{
               'service-item': true,
-              'selected-item': serviceStore.selectedSubItemId === 0,
+              'selected-item': serviceStore.selectedSubItemId === '0',
             }"
           >
             <div style="text-align: center"><em> &lt; Empty &gt; </em></div>
