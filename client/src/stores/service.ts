@@ -323,9 +323,28 @@ export const useServiceStore = defineStore("service", () => {
     }
   }
 
-  async function selectContent(subItemId: string) {}
+  async function goToFirstSubItem() {
+    const previousItem = enabledItemList.value[0];
 
-  async function setContent(itemId: number, subItemId: string) {}
+    if (previousItem != null) {
+      await selectAndShowItem(previousItem.subitem, previousItem.item);
+    }
+  }
+
+  async function goToLastSubItem() {
+    const previousItem =
+      enabledItemList.value[enabledItemList.value.length - 1];
+
+    if (previousItem != null) {
+      await selectAndShowItem(previousItem.subitem, previousItem.item);
+    }
+  }
+
+  async function showCurrentItem() {
+    if (selectedSubItemId.value != null && selectedItemIndex.value != null) {
+      await selectAndShowItem(selectedSubItemId.value, selectedItemIndex.value);
+    }
+  }
 
   /** Import service from file */
   async function importService() {
@@ -488,6 +507,9 @@ export const useServiceStore = defineStore("service", () => {
     showBlackScreen,
     goToNextSubItem,
     goToPreviousSubItem,
+    goToFirstSubItem,
+    goToLastSubItem,
+    showCurrentItem,
     importService,
     exportService,
   };

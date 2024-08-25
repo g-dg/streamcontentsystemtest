@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 
 import { natcasecmp } from "@/helpers/sort";
 import { useServiceStore } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
+import { useConfigStore } from "@/stores/config";
 
 const songStore = useSongStore();
 const serviceStore = useServiceStore();
@@ -78,6 +79,65 @@ function selectAll() {
     serviceStore.selectedItem.song.verses = [];
   }
 }
+
+const displayBlanked = ref(false);
+async function setupKeypressHandler() {
+  const configStore = useConfigStore();
+  await configStore.loadConfig();
+  if (configStore.config.enable_keyboard_shortcuts ?? true) {
+    document.addEventListener("keydown", keypressHandler);
+  }
+}
+function removeKeypressHandler() {
+  document.removeEventListener("keydown", keypressHandler);
+}
+function keypressHandler(evt: KeyboardEvent) {
+  if (evt.target == document.body) {
+    if (!evt.shiftKey && !evt.ctrlKey && !evt.altKey && !evt.metaKey) {
+      switch (evt.key) {
+        case "ArrowRight":
+        case "ArrowDown":
+        case " ":
+        case "Enter":
+        case "PageDown":
+          serviceStore.goToNextSubItem();
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+        case "Backspace":
+        case "PageUp":
+          serviceStore.goToPreviousSubItem();
+          break;
+        case "Home":
+          serviceStore.goToFirstSubItem();
+          break;
+        case "End":
+          serviceStore.goToLastSubItem();
+          break;
+        case ".":
+        case "b":
+          displayBlanked.value = !displayBlanked.value;
+          if (displayBlanked.value) {
+            serviceStore.showBlackScreen();
+          } else {
+            serviceStore.showCurrentItem();
+          }
+          break;
+        case ",":
+        case "w":
+          displayBlanked.value = !displayBlanked.value;
+          if (displayBlanked.value) {
+            serviceStore.showEmptyScreen();
+          } else {
+            serviceStore.showCurrentItem();
+          }
+          break;
+      }
+    }
+  }
+}
+onMounted(() => setupKeypressHandler());
+onUnmounted(() => removeKeypressHandler());
 </script>
 
 <template>

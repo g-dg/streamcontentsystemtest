@@ -6,6 +6,7 @@ import { ConfigClient } from "@/api/config";
 export interface Config {
   displays?: Record<string, DisplayConfig>;
   display_default?: DisplayConfig;
+  enable_keyboard_shortcuts?: boolean;
 }
 
 export interface DisplayConfig {
