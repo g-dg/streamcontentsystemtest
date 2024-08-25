@@ -72,6 +72,12 @@ function verseIsEnabled(verse: string): boolean {
   const enabledSongVerses = serviceStore.selectedItem?.song?.verses ?? [];
   return enabledSongVerses.length == 0 || enabledSongVerses.includes(verse);
 }
+
+function selectAll() {
+  if (serviceStore.selectedItem?.song?.verses != undefined) {
+    serviceStore.selectedItem.song.verses = [];
+  }
+}
 </script>
 
 <template>
@@ -85,8 +91,14 @@ function verseIsEnabled(verse: string): boolean {
         <button @click="serviceStore.goToPreviousSubItem">Back</button>
         <button @click="serviceStore.goToNextSubItem">Next</button>
 
+        &nbsp;
+
         <button @click="serviceStore.showEmptyScreen">Empty Screen</button>
         <button @click="serviceStore.showBlackScreen">Black Screen</button>
+
+        &nbsp;
+
+        <button @click="selectAll">Clear Selection</button>
 
         <span style="margin-inline-start: 0.5em">
           <template v-if="serviceStore.selectedItemType == 'song'">
