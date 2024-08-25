@@ -88,6 +88,15 @@ const transitionElements = ref<Array<HTMLElement>>();
 function addContentState(content: StateContent | null) {
   if (content == null) return;
 
+  // if we're transitioning to identical states, ignore it
+  const currentLatestContent =
+    transitionQueue.value[transitionQueue.value.length - 1];
+  if (
+    currentLatestContent !== undefined &&
+    JSON.stringify(currentLatestContent.content) === JSON.stringify(content)
+  )
+    return;
+
   const id = uuid();
   transitionQueue.value.push({ id, content });
 
