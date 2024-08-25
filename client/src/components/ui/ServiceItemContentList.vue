@@ -23,11 +23,7 @@ const topScrollElement = ref<HTMLDivElement>();
 function scrollToTop() {
   topScrollElement.value?.scrollIntoView();
 }
-watch(
-  computed(() => serviceStore.selectedItem?.id),
-  scrollToTop,
-  { deep: true }
-);
+watch(() => serviceStore.selectedItem?.id, scrollToTop);
 
 const textTextAreaElement = ref<HTMLTextAreaElement | null>(null);
 const textCopyButtonElement = ref<HTMLButtonElement | null>(null);
@@ -69,19 +65,46 @@ function clearText() {
       "";
 }
 
+// checks if a particular verse is enabled
 function verseIsEnabled(verse: string): boolean {
   const enabledSongVerses = serviceStore.selectedItem?.song?.verses ?? [];
   return enabledSongVerses.length == 0 || enabledSongVerses.includes(verse);
 }
 
+// enable all song verses
 function selectAll() {
   if (serviceStore.selectedItem?.song?.verses != undefined) {
     serviceStore.selectedItem.song.verses = [];
   }
 }
 
-const displayBlanked = ref(false);
-async function setupKeypressHandler() {
+// scroll selected item into view
+const contentItemElements = ref<Array<HTMLElement> | HTMLElement>([]);
+watch(
+  () => serviceStore.selectedSubItemId,
+  () => {
+    const itemId = serviceStore.selectedSubItemId;
+    if (itemId != null) {
+      if (serviceStore.selectedItem?.type == "song") {
+        const verseIndex = songVerseNumbersSorted.value.indexOf(itemId);
+        if (
+          verseIndex != -1 &&
+          typeof contentItemElements.value == "object" &&
+          contentItemElements.value != null &&
+          Array.isArray(contentItemElements.value)
+        ) {
+          contentItemElements.value[verseIndex]?.scrollIntoView({
+            block: "nearest",
+          });
+        }
+      }
+    }
+  }
+);
+
+const displayKeyboardBlanked = ref(false);
+
+async function addKeypressHandler() {
   const configStore = useConfigStore();
   await configStore.loadConfig();
   if (configStore.config.enable_keyboard_shortcuts ?? true) {
@@ -91,6 +114,7 @@ async function setupKeypressHandler() {
 function removeKeypressHandler() {
   document.removeEventListener("keydown", keypressHandler);
 }
+
 function keypressHandler(evt: KeyboardEvent) {
   if (evt.target == document.body) {
     if (!evt.shiftKey && !evt.ctrlKey && !evt.altKey && !evt.metaKey) {
@@ -116,29 +140,36 @@ function keypressHandler(evt: KeyboardEvent) {
           break;
         case ".":
         case "b":
-          if (!displayBlanked.value || serviceStore.selectedItem == null) {
+          if (
+            !displayKeyboardBlanked.value ||
+            serviceStore.selectedItem == null
+          ) {
             serviceStore.showBlackScreen();
-            displayBlanked.value = true;
+            displayKeyboardBlanked.value = true;
           } else {
             serviceStore.showCurrentItem();
-            displayBlanked.value = false;
+            displayKeyboardBlanked.value = false;
           }
           break;
         case ",":
         case "w":
-          if (!displayBlanked.value || serviceStore.selectedItem == null) {
+          if (
+            !displayKeyboardBlanked.value ||
+            serviceStore.selectedItem == null
+          ) {
             serviceStore.showEmptyScreen();
-            displayBlanked.value = true;
+            displayKeyboardBlanked.value = true;
           } else {
             serviceStore.showCurrentItem();
-            displayBlanked.value = false;
+            displayKeyboardBlanked.value = false;
           }
           break;
       }
     }
   }
 }
-onMounted(() => setupKeypressHandler());
+
+onMounted(() => addKeypressHandler());
 onUnmounted(() => removeKeypressHandler());
 </script>
 
@@ -188,6 +219,7 @@ onUnmounted(() => removeKeypressHandler());
           v-if="songVerses != null"
           v-for="verseName in songVerseNumbersSorted"
           :key="verseName"
+          ref="contentItemElements"
         >
           <label :for="'song_verse_enable_' + verseName">
             <input
@@ -219,6 +251,7 @@ onUnmounted(() => removeKeypressHandler());
 
         <div
           v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(serviceStore.selectedItemType)"
+          ref="contentItemElements"
         >
           <strong
             style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
@@ -240,7 +273,10 @@ onUnmounted(() => removeKeypressHandler());
           <hr />
         </div>
 
-        <div v-if="serviceStore.selectedItemType == 'empty'">
+        <div
+          v-if="serviceStore.selectedItemType == 'empty'"
+          ref="contentItemElements"
+        >
           <strong
             style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
           >
