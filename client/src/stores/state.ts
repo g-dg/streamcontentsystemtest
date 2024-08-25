@@ -45,9 +45,9 @@ export const useStateStore = defineStore("state", () => {
   let _closeListener: ((evt: CloseEvent) => void) | null = null;
   let _errorListener: ((evt: Event) => void) | null = null;
 
-  let _isConnecting: boolean = false;
+  let _isConnecting = ref<boolean>(false);
   let _isConnected = ref<boolean>(false);
-  let _isDisconnecting: boolean = false;
+  let _isDisconnecting = ref<boolean>(false);
 
   let _debug: boolean = true;
 
@@ -136,18 +136,24 @@ export const useStateStore = defineStore("state", () => {
   /**
    * Connects (or reconnects) to the state websocket
    */
-  async function connect(): Promise<void> {
-    if (_isConnecting) {
+  async function connect(reconnect = false): Promise<void> {
+    // exit if already connecting or disconnecting
+    if (_isConnecting.value || _isDisconnecting.value) {
       return;
     }
-    _isConnecting = true;
+    _isConnecting.value = true;
+
+    // exit if reconnect is not forced
+    if (_isConnected.value && !reconnect) {
+      return;
+    }
 
     // disconnect (if connected)
     await disconnect();
-    _isDisconnecting = false;
+    _isDisconnecting.value = false;
 
     // connect
-    while (_ws == null && !_isDisconnecting) {
+    while (_ws == null && !_isDisconnecting.value) {
       try {
         await _connectWs();
       } catch (e) {
@@ -159,7 +165,7 @@ export const useStateStore = defineStore("state", () => {
       }
     }
 
-    if (_isDisconnecting) {
+    if (_isDisconnecting.value) {
       return;
     }
 
@@ -197,7 +203,7 @@ export const useStateStore = defineStore("state", () => {
     // set up close listener
     _closeListener = async (evt: CloseEvent) => {
       // reconnect if we're not closing the connection on our end
-      if (!_isDisconnecting) {
+      if (!_isDisconnecting.value) {
         connect();
       }
     };
@@ -222,16 +228,16 @@ export const useStateStore = defineStore("state", () => {
 
     _startPingLoop();
 
-    _isConnecting = false;
+    _isConnecting.value = false;
   }
 
   /**
    * Disconnects from the state websocket, cancelling any reconnect attempts
    */
   async function disconnect(): Promise<void> {
-    _isDisconnecting = true;
+    _isDisconnecting.value = true;
     _isConnected.value = false;
-    _isConnecting = false;
+    _isConnecting.value = false;
 
     _endPingLoop();
     _ws?.removeEventListener("message", _messageListener!);
@@ -329,6 +335,9 @@ export const useStateStore = defineStore("state", () => {
   function setPingDelay(ms: number | null) {
     _pingLoopDelay = ms;
   }
+
+  // connect when store is loaded
+  connect();
 
   return {
     connect,
