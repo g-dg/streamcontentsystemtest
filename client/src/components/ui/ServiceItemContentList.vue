@@ -116,20 +116,22 @@ function keypressHandler(evt: KeyboardEvent) {
           break;
         case ".":
         case "b":
-          displayBlanked.value = !displayBlanked.value;
-          if (displayBlanked.value) {
+          if (!displayBlanked.value || serviceStore.selectedItem == null) {
             serviceStore.showBlackScreen();
+            displayBlanked.value = true;
           } else {
             serviceStore.showCurrentItem();
+            displayBlanked.value = false;
           }
           break;
         case ",":
         case "w":
-          displayBlanked.value = !displayBlanked.value;
-          if (displayBlanked.value) {
+          if (!displayBlanked.value || serviceStore.selectedItem == null) {
             serviceStore.showEmptyScreen();
+            displayBlanked.value = true;
           } else {
             serviceStore.showCurrentItem();
+            displayBlanked.value = false;
           }
           break;
       }
