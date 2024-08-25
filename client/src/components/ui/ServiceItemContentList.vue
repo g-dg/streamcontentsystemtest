@@ -124,12 +124,14 @@ function keypressHandler(evt: KeyboardEvent) {
         case " ":
         case "Enter":
         case "PageDown":
+        case "n":
           serviceStore.goToNextSubItem();
           break;
         case "ArrowLeft":
         case "ArrowUp":
         case "Backspace":
         case "PageUp":
+        case "p":
           serviceStore.goToPreviousSubItem();
           break;
         case "Home":
