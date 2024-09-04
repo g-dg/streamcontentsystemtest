@@ -29,9 +29,6 @@ export const useConfigStore = defineStore("config", () => {
       _config.value = await ConfigClient.getConfig();
     } catch (e) {
       console.error(e);
-      alert(
-        "An error occurred loading client config. (Is the server running?)"
-      );
     }
   }
 
