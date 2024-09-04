@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
 
-srcDir = "./songs"
-destDir = "./songs_json"
+inputDir = "./songs"
+outputFile = "./songs.json"
 
 import json
 import re
 import os
 from xml.dom import minidom
 
-files = os.listdir(srcDir)
+inputFiles = os.listdir(inputDir)
 
-verseRePattern = re.compile("^v[0-9]+.*$")
+naturalSort = lambda s: [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\\d+)", s)]
+inputFiles = sorted(inputFiles, key=naturalSort)
 
-for file in files:
-	print(file)
-	file = os.path.join(srcDir, file)
+verseRePattern = re.compile(r"^v[0-9]+.*$")
+
+output = {}
+
+for file in inputFiles:
+	file = os.path.join(inputDir, file)
 	dom = minidom.parse(file)
 	title = dom.getElementsByTagName("title")[0].firstChild.nodeValue
 	verses = dom.getElementsByTagName("verse")
-	output = {}
+	songOutput = {}
 	for verse in verses:
 		verseName = verse.getAttribute("name")
 		if verseRePattern.match(verseName) != None:
@@ -30,8 +34,9 @@ for file in files:
 				fullVerse += "\n"
 			else:
 				fullVerse += line.nodeValue
-		output[verseName] = fullVerse
-	outputJson = json.dumps(output)
-	outputFileName = title
-	with open(os.path.join(destDir, outputFileName), "w") as outfd:
-		outfd.write(outputJson)
+		songOutput[verseName] = fullVerse
+	output[title] = songOutput
+
+outputJson = json.dumps(output, separators=(',', ':'))
+with open(outputFile, "w") as outfd:
+	outfd.write(outputJson)
