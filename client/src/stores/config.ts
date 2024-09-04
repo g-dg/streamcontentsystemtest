@@ -13,6 +13,7 @@ export interface DisplayConfig {
   render_delay?: number;
   fade_speed?: number;
   font_size?: string;
+  background?: string;
 }
 
 /** Config store */

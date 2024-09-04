@@ -29,7 +29,7 @@ const route = useRoute();
 
 const DEFAULT_FONT_SIZE = "40pt";
 
-/** Font size from "font-size" query parameter or display config or default font size */
+/** Font size from "font-size" query parameter or display config or default font size (whichever comes first) */
 const fontSize = computed(() => {
   const size_raw = (route.query["font-size"] as string) ?? null;
   const number_size = size_raw?.match(/^\d+(\.\d+)?$/)?.[0];
@@ -131,21 +131,26 @@ watch(
 </script>
 
 <template>
-  <TransitionGroup name="fade">
-    <div
-      v-for="entry in transitionQueue"
-      :key="entry.id"
-      ref="transitionElements"
-      class="renderer transition-fade"
-      :style="{ transition: `opacity ${transitionSpeed}ms linear` }"
-    >
-      <RootRenderer :content="entry.content" :font-size="fontSize" />
-    </div>
-  </TransitionGroup>
+  <div
+    class="full-size"
+    :style="{ background: displayConfig.background ?? 'transparent' }"
+  >
+    <TransitionGroup name="fade">
+      <div
+        v-for="entry in transitionQueue"
+        :key="entry.id"
+        ref="transitionElements"
+        class="full-size transition-fade"
+        :style="{ transition: `opacity ${transitionSpeed}ms linear` }"
+      >
+        <RootRenderer :content="entry.content" :font-size="fontSize" />
+      </div>
+    </TransitionGroup>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-.renderer {
+.full-size {
   position: absolute;
   top: 0;
   left: 0;
