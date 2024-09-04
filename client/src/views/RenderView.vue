@@ -10,9 +10,15 @@ import { uuid } from "@/helpers/random";
 
 const props = defineProps<{ displayName?: string }>();
 
+const loading = ref(1);
+
 const configStore = useConfigStore();
-// load config
-onMounted(configStore.loadConfig);
+async function loadConfig() {
+  loading.value++;
+  await configStore.loadConfig();
+  loading.value--;
+}
+loadConfig();
 
 /** display config for current display */
 const displayConfig = computed(() =>
@@ -128,10 +134,13 @@ watch(
   },
   { deep: true }
 );
+
+onMounted(() => loading.value--);
 </script>
 
 <template>
   <div
+    v-if="loading == 0"
     class="full-size"
     :style="{ background: displayConfig.background ?? 'transparent' }"
   >
