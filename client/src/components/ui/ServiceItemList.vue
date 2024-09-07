@@ -29,16 +29,6 @@ async function saveService() {
   scrollToTop();
 }
 
-function clearService() {
-  if (
-    !serviceStore.unsavedChanges ||
-    confirm("There are unsaved changes. Really clear service?")
-  ) {
-    serviceStore.clearService();
-    scrollToTop();
-  }
-}
-
 const topScrollElement = ref<HTMLDivElement>();
 function scrollToTop() {
   topScrollElement.value?.scrollIntoView();
@@ -164,7 +154,7 @@ watch(
       <span style="display: inline-block">
         <button @click="loadService()">Load</button>
         <button @click="saveService()">Save</button>
-        <button @click="clearService()">Clear</button>
+        &nbsp;
         <button
           @click="serviceStore.addItem(serviceStore.emptyItem(), true)"
           draggable="true"
