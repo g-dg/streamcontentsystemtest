@@ -57,8 +57,13 @@ const appFullName = __APP_NAME_FULL__;
 
     <h2>Source Code:</h2>
     <p>
-      You may request the source code by emailing
-      <a href="mailto:garnet@garnetdg.ca">Garnet DeGelder</a>
+      Source code can be accessed on
+      <a
+        href="https://github.com/g-dg/streamcontentsystemtest"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Github</a
+      >
     </p>
   </main>
 </template>
