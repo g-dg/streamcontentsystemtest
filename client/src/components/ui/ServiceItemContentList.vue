@@ -127,6 +127,7 @@ function keypressHandler(evt: KeyboardEvent) {
         case "Enter":
         case "PageDown":
         case "n":
+          evt.preventDefault();
           serviceStore.goToNextSubItem();
           break;
         case "ArrowLeft":
@@ -134,16 +135,20 @@ function keypressHandler(evt: KeyboardEvent) {
         case "Backspace":
         case "PageUp":
         case "p":
+          evt.preventDefault();
           serviceStore.goToPreviousSubItem();
           break;
         case "Home":
+          evt.preventDefault();
           serviceStore.goToFirstSubItem();
           break;
         case "End":
+          evt.preventDefault();
           serviceStore.goToLastSubItem();
           break;
         case ".":
         case "b":
+          evt.preventDefault();
           if (
             !displayKeyboardBlanked.value ||
             serviceStore.selectedItem == null
@@ -157,6 +162,7 @@ function keypressHandler(evt: KeyboardEvent) {
           break;
         case ",":
         case "w":
+          evt.preventDefault();
           if (
             !displayKeyboardBlanked.value ||
             serviceStore.selectedItem == null
@@ -168,6 +174,9 @@ function keypressHandler(evt: KeyboardEvent) {
             displayKeyboardBlanked.value = false;
           }
           break;
+      }
+      if (evt.key.length == 1) {
+        evt.preventDefault();
       }
     }
   }
