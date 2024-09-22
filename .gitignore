@@ -7,8 +7,6 @@
 /database.sqlite3-wal
 /database.sqlite3-shm
 
-/Cargo.lock
-
 /content/
 
 /certs/
