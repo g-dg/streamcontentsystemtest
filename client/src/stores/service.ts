@@ -254,7 +254,7 @@ export const useServiceStore = defineStore("service", () => {
       .map((item, index) => {
         if (item.type == "song") {
           const songVerseTitlesSorted = Object.keys(
-            songStore.songs[item.song?.title ?? ""] ?? {}
+            songStore.songs[item.song?.title ?? ""].verses ?? {}
           ).sort((a, b) => natcasecmp([a, b]));
           return songVerseTitlesSorted.map((verseTitle) => {
             const enabled =
