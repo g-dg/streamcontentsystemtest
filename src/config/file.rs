@@ -39,6 +39,10 @@ pub struct AppConfig {
     #[serde(default = "default_http_caching_max_age")]
     pub http_caching_max_age: u64,
 
+    /// Whether to open the web browser on server startup
+    #[serde(default = "default_open_browser_on_start")]
+    pub open_browser_on_start: bool,
+
     /// Options passed to the client
     #[serde(default = "default_client_options")]
     pub client_options: Value,
@@ -91,6 +95,9 @@ fn default_static_file_index() -> String {
 }
 fn default_http_caching_max_age() -> u64 {
     60 * 60
+}
+fn default_open_browser_on_start() -> bool {
+    true
 }
 fn default_client_options() -> Value {
     json!({})

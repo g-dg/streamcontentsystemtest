@@ -35,7 +35,9 @@ pub async fn main() {
                 _ = sleep(Duration::from_secs(1)) => {},
                 _ = shutdown_token.cancelled() => {},
             }
-            let _ = open_browser(browser_port);
+            if config.open_browser_on_start {
+                let _ = open_browser(browser_port);
+            }
         });
 
         // serve app
@@ -45,7 +47,7 @@ pub async fn main() {
             .expect("Error occurred in web server task");
 
         let _ = browser_task.await;
-    } else {
+    } else if config.open_browser_on_start {
         // else open the browser (assumes that the only failure was that the port was in use)
         let _ = open_browser(browser_port);
     }
