@@ -22,7 +22,7 @@ for file in inputFiles:
 	dom = minidom.parse(file)
 	title = dom.getElementsByTagName("title")[0].firstChild.nodeValue
 	verses = dom.getElementsByTagName("verse")
-	songOutput = {}
+	verseOutput = {}
 	for verse in verses:
 		verseName = verse.getAttribute("name")
 		if verseRePattern.match(verseName) != None:
@@ -34,8 +34,8 @@ for file in inputFiles:
 				fullVerse += "\n"
 			else:
 				fullVerse += line.nodeValue
-		songOutput[verseName] = fullVerse
-	output[title] = songOutput
+		verseOutput[verseName] = fullVerse
+	output[title] = { "verses": verseOutput }
 
 outputJson = json.dumps(output, separators=(',', ':'))
 with open(outputFile, "w") as outfd:

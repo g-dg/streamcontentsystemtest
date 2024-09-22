@@ -6,10 +6,15 @@ import { natcasecmp } from "@/helpers/sort";
 
 const SONG_FILE = "songs.json";
 
+export interface Song {
+  verses: Record<string, string>,
+  attribution?: string,
+}
+
 /** Song store */
 export const useSongStore = defineStore("song", () => {
   /** List of songs */
-  const songs = ref<Record<string, Record<string, string>>>({});
+  const songs = ref<Record<string, Song>>({});
 
   /** Song tiles sorted by name */
   const songTitlesSorted = computed(() =>

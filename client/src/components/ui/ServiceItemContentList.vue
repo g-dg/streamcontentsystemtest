@@ -9,12 +9,14 @@ import { useConfigStore } from "@/stores/config";
 const songStore = useSongStore();
 const serviceStore = useServiceStore();
 
-const songVerses = computed(() =>
+const song = computed(() =>
   serviceStore.selectedItem?.type == "song" &&
   serviceStore.selectedItem?.song?.title != null
     ? songStore.songs[serviceStore.selectedItem.song.title]
     : null
 );
+
+const songVerses = computed(() => song.value?.verses);
 const songVerseNumbersSorted = computed(() =>
   Object.keys(songVerses.value ?? {}).sort((a, b) => natcasecmp([a, b]))
 );

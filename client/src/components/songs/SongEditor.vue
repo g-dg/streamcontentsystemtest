@@ -19,10 +19,10 @@ function loadSongFromStore() {
     props.songTitle != undefined ? songStore.songs[props.songTitle] : undefined;
   if (song != undefined) {
     editedTitle.value = props.songTitle ?? "";
-    const versesSorted = Object.keys(song).sort((a, b) => natcasecmp([a, b]));
+    const versesSorted = Object.keys(song.verses).sort((a, b) => natcasecmp([a, b]));
     editedVerses.value = versesSorted.map((x) => ({
       name: x,
-      content: song[x],
+      content: song.verses[x],
     }));
   } else {
     editedTitle.value = "";
@@ -49,9 +49,11 @@ async function saveSong() {
     delete songStore.songs[props.songTitle];
   }
 
-  songStore.songs[editedTitle.value] = Object.fromEntries(
-    editedVerses.value.map((x) => [x.name, x.content])
-  );
+  songStore.songs[editedTitle.value] = {
+    verses: Object.fromEntries(
+      editedVerses.value.map((x) => [x.name, x.content])
+    ),
+  };
 
   await songStore.saveSongs();
   emit("close");

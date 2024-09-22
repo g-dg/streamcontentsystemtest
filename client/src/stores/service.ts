@@ -187,10 +187,11 @@ export const useServiceStore = defineStore("service", () => {
         return { background: false };
       }
       case "song": {
-        const songVerses =
+        const song =
           selectedItem.value?.song?.title != null
             ? songStore.songs[selectedItem.value.song.title]
             : null;
+        const songVerses = song?.verses;
         const verseContent =
           (songVerses ?? {})[selectedSubItemId.value ?? ""] ?? undefined;
         return {
