@@ -49,7 +49,8 @@ export interface ExportedServiceSong {
 
 /** Data for drag and drop */
 export interface ServiceItemDragDropData {
-  instanceId: string | null;
+  appInstanceId: string;
+  componentInstanceId: string | null;
   srcIndex: number | null;
   serviceItem: ServiceItem;
 }

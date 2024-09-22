@@ -6,9 +6,11 @@ import {
   type ServiceItem,
   type ServiceItemDragDropData,
 } from "@/stores/service";
+import { useInstanceIdStore } from "@/stores/instanceId";
 import { uuid } from "@/helpers/random";
 
 const serviceStore = useServiceStore();
+const instanceIdStore = useInstanceIdStore();
 
 function selectIndex(index: number) {
   serviceStore.selectedItemIndex = index;
@@ -56,7 +58,8 @@ function dragStart(evt: DragEvent, index: number) {
   if (evt.dataTransfer == null) return;
 
   const data: ServiceItemDragDropData = {
-    instanceId: instanceId,
+    appInstanceId: instanceIdStore.appInstanceId,
+    componentInstanceId: instanceId,
     srcIndex: index,
     serviceItem: serviceStore.serviceData.serviceItems[index],
   };
@@ -70,6 +73,12 @@ function dragStart(evt: DragEvent, index: number) {
 // handles showing drop area for dragged item
 //TODO: find a way to clear if dragged out of the component and cancelled.
 function dragOver(evt: DragEvent, index: number) {
+  const data = JSON.parse(
+    evt.dataTransfer?.getData("application/json") ?? JSON.stringify(null)
+  ) as ServiceItemDragDropData | null;
+
+  if (data?.appInstanceId != instanceIdStore.appInstanceId) return;
+
   evt.preventDefault();
   evt.dataTransfer!.dropEffect = "move";
 
@@ -91,7 +100,7 @@ function drop(evt: DragEvent, index: number) {
   let destIndex = index;
 
   // remove source item only if source index is provided and instance id matches
-  if (data.srcIndex != null && data.instanceId == instanceId) {
+  if (data.srcIndex != null && data.componentInstanceId == instanceId) {
     serviceStore.removeItem(data.srcIndex);
     // update destination index if the item was removed before the source index
     if (destIndex > data.srcIndex) {
@@ -115,7 +124,8 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
   if (evt.dataTransfer == null) return;
 
   const data: ServiceItemDragDropData = {
-    instanceId: null,
+    appInstanceId: instanceIdStore.appInstanceId,
+    componentInstanceId: null,
     srcIndex: null,
     serviceItem: newItem,
   };
