@@ -407,6 +407,7 @@ onUnmounted(() => removeKeypressHandler());
   display: flex;
   flex-direction: column;
   justify-content: center;
+  white-space: pre-wrap;
 }
 .service-item-disabled {
   color: #333;
