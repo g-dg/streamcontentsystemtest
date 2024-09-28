@@ -73,11 +73,16 @@ function dragStart(evt: DragEvent, index: number) {
 // handles showing drop area for dragged item
 //TODO: find a way to clear if dragged out of the component and cancelled.
 function dragOver(evt: DragEvent, index: number) {
-  const data = JSON.parse(
-    evt.dataTransfer?.getData("application/json") ?? JSON.stringify(null)
-  ) as ServiceItemDragDropData | null;
+  const dataString = evt.dataTransfer?.getData("application/json");
 
-  if (data?.appInstanceId != instanceIdStore.appInstanceId) return;
+  // Chromium has the data as an empty string
+  const data =
+    dataString != undefined && dataString != ""
+      ? (JSON.parse(dataString) as ServiceItemDragDropData)
+      : null;
+
+  if (data != null && data.appInstanceId != instanceIdStore.appInstanceId)
+    return;
 
   evt.preventDefault();
   evt.dataTransfer!.dropEffect = "move";
