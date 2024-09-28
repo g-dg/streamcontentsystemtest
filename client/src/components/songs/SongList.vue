@@ -19,6 +19,12 @@ function addToService(songTitle: string) {
 }
 
 const search = ref("");
+const searchBoxElement = ref<HTMLInputElement>();
+
+function clearSearch() {
+  search.value = "";
+  searchBoxElement.value?.focus();
+}
 
 /** Song titles filtered by search */
 const filteredSongTitles = computed(() => {
@@ -90,8 +96,13 @@ function dragEnd() {
       <span style="display: inline-block">
         <button @click="songStore.loadSongs()">Reload</button>
         <SongEditorModal />
-        <input v-model="search" type="search" placeholder="Search" />
-        <button @click="search = ''">Clear</button>
+        <input
+          v-model="search"
+          ref="searchBoxElement"
+          type="search"
+          placeholder="Search"
+        />
+        <button @click="clearSearch">Clear</button>
       </span>
     </div>
 
