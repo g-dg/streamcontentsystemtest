@@ -183,6 +183,8 @@ function setSelectedVersesFromVerseString() {
   const verseString = serviceStore.selectedItem?.text;
   const versesPart = verseString?.match(/:([^:]+$)/)?.[1] ?? "";
 
+  if (!versesPart.split("").every((x) => "0123456789 ,-".includes(x))) return;
+
   const parsedVerses = parseSequence(versesPart);
   if (
     parsedVerses.length != 0 &&
