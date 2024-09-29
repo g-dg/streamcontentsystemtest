@@ -108,7 +108,10 @@ watch(
 // supports positive numbers only
 // supports spaces and commas for separating numbers
 // supports dashes for specifying ranges (only ascending works)
-function parseSequence(title: string): Array<string> {
+function parseSequence(
+  title: string,
+  maxSequenceLength: number = 65536
+): Array<string> {
   // current number we're building (empty if no current number)
   let currentNumber = "";
 
@@ -122,7 +125,7 @@ function parseSequence(title: string): Array<string> {
   for (let i = 0; i <= title.length; i++) {
     const c = title[i];
 
-    // if whitespace and not building song
+    // if whitespace and not building number
     if ([" "].includes(c) && currentNumber == "") {
       // next character
       continue;
@@ -140,6 +143,8 @@ function parseSequence(title: string): Array<string> {
     if ([",", "-", " ", undefined].includes(c)) {
       // if we have a number we're building
       if (currentNumber != "") {
+        // don't exceed max sequence length
+        if (output.length >= maxSequenceLength) throw new Error();
         // add number to list
         output.push(currentNumber);
       }
@@ -154,6 +159,8 @@ function parseSequence(title: string): Array<string> {
         output.pop();
         // create sequence
         for (let n = start + 1; n <= end; n++) {
+          // don't exceed max sequence length
+          if (output.length >= maxSequenceLength) throw new Error();
           // add to list
           output.push(n.toString());
         }
