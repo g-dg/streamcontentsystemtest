@@ -248,7 +248,7 @@ export const useServiceStore = defineStore("service", () => {
     stateStore.setState({ background: true });
   }
 
-  const enabledItemList = computed<
+  const allItemList = computed<
     Array<{ item: number; subitem: string; enabled: boolean }>
   >(() => {
     return serviceData.value.serviceItems
@@ -279,7 +279,7 @@ export const useServiceStore = defineStore("service", () => {
     item: number;
     subitem: string;
   } | null {
-    const index = enabledItemList.value.findIndex(
+    const index = allItemList.value.findIndex(
       (testItem) => testItem.item == itemIndex && testItem.subitem == subItemId
     );
 
@@ -289,10 +289,10 @@ export const useServiceStore = defineStore("service", () => {
 
     for (
       let i = index + step;
-      i >= 0 && i < enabledItemList.value.length;
+      i >= 0 && i < allItemList.value.length;
       i += step
     ) {
-      const item = enabledItemList.value[i];
+      const item = allItemList.value[i];
       if (item.enabled) {
         return item;
       }
@@ -326,18 +326,19 @@ export const useServiceStore = defineStore("service", () => {
   }
 
   async function goToFirstSubItem() {
-    const previousItem = enabledItemList.value[0];
+    const enabledItems = allItemList.value.filter((x) => x.enabled);
+    const previousItem = enabledItems[0];
 
-    if (previousItem != null) {
+    if (previousItem != undefined) {
       await selectAndShowItem(previousItem.subitem, previousItem.item);
     }
   }
 
   async function goToLastSubItem() {
-    const previousItem =
-      enabledItemList.value[enabledItemList.value.length - 1];
+    const enabledItems = allItemList.value.filter((x) => x.enabled);
+    const previousItem = enabledItems[enabledItems.length - 1];
 
-    if (previousItem != null) {
+    if (previousItem != undefined) {
       await selectAndShowItem(previousItem.subitem, previousItem.item);
     }
   }
