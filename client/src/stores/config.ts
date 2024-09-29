@@ -7,6 +7,7 @@ export interface Config {
   displays?: Record<string, DisplayConfig>;
   display_default?: DisplayConfig;
   enable_keyboard_shortcuts?: boolean;
+  parse_selected_verses?: boolean;
 }
 
 export interface DisplayConfig {

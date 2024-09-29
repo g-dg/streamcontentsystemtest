@@ -104,14 +104,101 @@ watch(
   }
 );
 
+// parses number sequence strings
+// supports positive numbers only
+// supports spaces and commas for separating numbers
+// supports dashes for specifying ranges (only ascending works)
+function parseSequence(title: string): Array<string> {
+  // current number we're building (empty if no current number)
+  let currentNumber = "";
+
+  // start of sequence we're building (empty if no sequence)
+  let sequenceStart = "";
+
+  // output array
+  let output = [];
+
+  // iterate through all characters, including an undefined at the end
+  for (let i = 0; i <= title.length; i++) {
+    const c = title[i];
+
+    // if whitespace and not building song
+    if ([" "].includes(c) && currentNumber == "") {
+      // next character
+      continue;
+    }
+
+    // if a digit
+    if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(c)) {
+      // add to current number
+      currentNumber += c;
+      // next character
+      continue;
+    }
+
+    // if number is finished building
+    if ([",", "-", " ", undefined].includes(c)) {
+      // if we have a number we're building
+      if (currentNumber != "") {
+        // add number to list
+        output.push(currentNumber);
+      }
+
+      // if building sequence
+      if (sequenceStart.length != 0) {
+        // parse start
+        const start = parseInt(sequenceStart);
+        // parse end
+        const end = parseInt(currentNumber);
+        // remove number that just got added
+        output.pop();
+        // create sequence
+        for (let n = start + 1; n <= end; n++) {
+          // add to list
+          output.push(n.toString());
+        }
+        // reset sequence start
+        sequenceStart = "";
+      }
+
+      // if starting a sequence
+      if (["-"].includes(c)) {
+        // save the sequence start
+        sequenceStart = output[output.length - 1];
+      }
+
+      // reset current number
+      currentNumber = "";
+    }
+  }
+
+  return output;
+}
+
+// select verses based on verse string
+function setSelectedVersesFromVerseString() {
+  const configStore = useConfigStore();
+  if (!(configStore.config.parse_selected_verses ?? true)) return;
+
+  const verseString = serviceStore.selectedItem?.text;
+  const versesPart = verseString?.match(/:([^:]+$)/)?.[1] ?? "";
+
+  const parsedVerses = parseSequence(versesPart);
+  if (
+    parsedVerses.length != 0 &&
+    serviceStore.selectedItem?.song?.verses != undefined
+  ) {
+    serviceStore.selectedItem.song.verses = parsedVerses.filter((x) =>
+      songVerseNumbersSorted.value.includes(x)
+    );
+  }
+}
+watch(() => serviceStore.selectedItem?.text, setSelectedVersesFromVerseString);
+
 const displayKeyboardBlanked = ref(false);
 
-async function addKeypressHandler() {
-  const configStore = useConfigStore();
-  await configStore.loadConfig();
-  if (configStore.config.enable_keyboard_shortcuts ?? true) {
-    document.addEventListener("keydown", keypressHandler);
-  }
+function addKeypressHandler() {
+  document.addEventListener("keydown", keypressHandler);
 }
 function removeKeypressHandler() {
   document.removeEventListener("keydown", keypressHandler);
@@ -277,11 +364,7 @@ onUnmounted(() => removeKeypressHandler());
               'service-item': true,
               'selected-service-item': serviceStore.selectedSubItemId === '0',
             }"
-            >{{
-              serviceStore.serviceData.serviceItems[
-                serviceStore.selectedItemIndex ?? -1
-              ]?.text
-            }}</pre
+            >{{ serviceStore.selectedItem?.text }}</pre
           >
           <hr />
         </div>
@@ -320,41 +403,22 @@ onUnmounted(() => removeKeypressHandler());
       <hr />
 
       <span
-        v-if="
-          serviceStore.selectedItemIndex != null &&
-          serviceStore.serviceData.serviceItems[
-            serviceStore.selectedItemIndex
-          ] != null
-        "
+        v-if="serviceStore.selectedItem != null"
         style="display: inline-block"
       >
         Name:
-        <input
-          v-model="
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex
-            ].comment
-          "
-          type="text"
-        />
+        <input v-model="serviceStore.selectedItem.comment" type="text" />
       </span>
 
       <div>
         <template
           v-if="
             serviceStore.selectedItemType == 'song' &&
-            serviceStore.selectedItemIndex != null &&
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex
-            ] != null
+            serviceStore.selectedItem != null
           "
         >
           <input
-            v-model="
-              serviceStore.serviceData.serviceItems[
-                serviceStore.selectedItemIndex
-              ].text
-            "
+            v-model="serviceStore.selectedItem.text"
             type="text"
             placeholder="Song Verses"
             style="width: 100%"
@@ -364,19 +428,12 @@ onUnmounted(() => removeKeypressHandler());
 
         <template
           v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(serviceStore.selectedItemType) &&
-            serviceStore.selectedItemIndex != null &&
-            serviceStore.serviceData.serviceItems[
-              serviceStore.selectedItemIndex
-            ] != null
+            serviceStore.selectedItem != null
           "
         >
           <textarea
             ref="textTextAreaElement"
-            v-model="
-              serviceStore.serviceData.serviceItems[
-                serviceStore.selectedItemIndex
-              ].text
-            "
+            v-model="serviceStore.selectedItem.text"
             :rows="textLineCount"
             placeholder="Content"
             style="width: 100%"
