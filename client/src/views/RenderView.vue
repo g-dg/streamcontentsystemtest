@@ -152,7 +152,11 @@ onMounted(() => loading.value--);
         class="full-size transition-fade"
         :style="{ transition: `opacity ${transitionSpeed}ms linear` }"
       >
-        <RootRenderer :content="entry.content" :font-size="fontSize" />
+        <RootRenderer
+          :content="entry.content"
+          :display-config="displayConfig"
+          :font-size="fontSize"
+        />
       </div>
     </TransitionGroup>
   </div>

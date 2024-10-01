@@ -8,8 +8,13 @@ import SmallTextRenderer from "@/components/renderers/SmallTextRenderer.vue";
 import SongRenderer from "@/components/renderers/SongRenderer.vue";
 import SongTitleRenderer from "@/components/renderers/SongTitleRenderer.vue";
 import SubTextRenderer from "@/components/renderers/SubTextRenderer.vue";
+import type { DisplayConfig } from "@/stores/config";
 
-const props = defineProps<{ content: StateContent | null; fontSize: string }>();
+const props = defineProps<{
+  content: StateContent | null;
+  displayConfig: DisplayConfig;
+  fontSize: string;
+}>();
 
 // Text shadow is built up by layering multiple shadows over eachother
 const TEXT_SHADOW_LAYERS = 8;
@@ -22,7 +27,11 @@ const textShadow = computed(() =>
 
 <template>
   <div
-    class="renderer"
+    :class="[
+      'renderer',
+      ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
+      ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
+    ]"
     :style="{
       'font-size': fontSize,
       'background-color':
@@ -31,26 +40,36 @@ const textShadow = computed(() =>
     }"
   >
     <SmallTextRenderer
+      v-if="!displayConfig.hide_small_text"
       :content="content"
+      :display-config="displayConfig"
       :font-size="fontSize"
-      class="full-size"
+      class="renderer-item full-size"
     />
     <SubTextRenderer
       :content="content"
+      :display-config="displayConfig"
       :font-size="fontSize"
-      class="full-size"
+      class="renderer-item full-size"
     />
     <MainTextRenderer
       :content="content"
+      :display-config="displayConfig"
       :font-size="fontSize"
-      class="full-size"
+      class="renderer-item full-size"
     />
     <SongTitleRenderer
       :content="content"
+      :display-config="displayConfig"
       :font-size="fontSize"
-      class="full-size"
+      class="renderer-item full-size"
     />
-    <SongRenderer :content="content" :font-size="fontSize" class="full-size" />
+    <SongRenderer
+      :content="content"
+      :display-config="displayConfig"
+      :font-size="fontSize"
+      class="renderer-item full-size"
+    />
   </div>
 </template>
 
@@ -71,5 +90,15 @@ const textShadow = computed(() =>
   overflow: hidden;
   font-family: "Ubuntu", "Liberation Sans", "Arial", sans-serif;
   color: #fff;
+}
+
+.renderer-is-noninteractable {
+  cursor: none;
+
+  .renderer-item {
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
 }
 </style>

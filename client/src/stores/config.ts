@@ -6,11 +6,13 @@ import { ConfigClient } from "@/api/config";
 export interface Config {
   displays?: Record<string, DisplayConfig>;
   display_default?: DisplayConfig;
-  enable_keyboard_shortcuts?: boolean;
   parse_selected_verses?: boolean;
 }
 
 export interface DisplayConfig {
+  main_content?: boolean;
+  noninteractable?: boolean;
+  hide_small_text?: boolean;
   render_delay?: number;
   fade_speed?: number;
   font_size?: string;

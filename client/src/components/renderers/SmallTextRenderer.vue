@@ -1,11 +1,23 @@
 <script setup lang="ts">
+import { type DisplayConfig } from "@/stores/config";
 import { type StateContent } from "@/stores/state";
 
-const props = defineProps<{ content: StateContent | null; fontSize: string }>();
+const props = defineProps<{
+  content: StateContent | null;
+  displayConfig: DisplayConfig;
+  fontSize: string;
+}>();
 </script>
 
 <template>
-  <div v-if="content?.smallText != undefined" class="renderer">
+  <div
+    v-if="content?.smallText != undefined"
+    :class="[
+      'renderer',
+      ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
+      ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
+    ]"
+  >
     <div
       class="text"
       :style="{
@@ -22,15 +34,25 @@ const props = defineProps<{ content: StateContent | null; fontSize: string }>();
 .renderer {
   width: 100vw;
   height: 100vh;
-  overflow: auto;
   display: flex;
   align-items: end;
+  overflow: auto;
 }
+.renderer-is-noninteractable {
+  overflow: hidden;
+}
+.renderer-is-main-content {
+  align-items: center;
+}
+
 .text {
   text-align: center;
   white-space: pre-wrap;
-  overflow: auto;
   max-height: calc(100vh);
   width: calc(100vw);
+  overflow: auto;
+}
+.renderer-is-noninteractable .text {
+  overflow: hidden;
 }
 </style>

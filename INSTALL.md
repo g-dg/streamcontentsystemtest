@@ -6,6 +6,7 @@ Server
 - Pretty much any operating system that's supported by Rust should work
 	- Current version is tested on Linux (currently Arch and the Debian testing)
 	- Previous versions have been tested on Windows, current versions should still work
+- Apparently doesn't currently run when compiled with MSVC, but works with MinGW.
 
 Client
 ------
@@ -128,6 +129,21 @@ Options
 					- Default is `transparent`
 					- Type: string
 					- This is passed to the CSS `background` property
+				- `main_content`
+					- Whether this is the main content
+					- Default is `false`
+					- Type: boolean
+					- Intended for displays that are the main content (i.e. don't have a stream behind them)
+					- Centers text vertically
+				- `noninteractable`
+					- Changes some settings to avoid accidentally showing stuff
+					- Default is `false`
+					- Type: boolean
+					- Prevents scrollbars, hides cursor, prevents text selection
+				- `hide_small_text`
+					- Whether to hide the small text item
+					- Default is `false`
+					- Type: boolean
 		- `display_default`
 			- Default display configuration when the current display is not found in the `displays` object
 			- Default is `{}`
@@ -137,4 +153,9 @@ Options
 
 Source code for server options can be found in `src/config/file.rs`.
 Source code for client options can be found in `client/src/stores/config.ts`.
-Some options may be purposely undocumented. They should not be used unless stated by the developer.
+Some options may be purposely undocumented. They should not be used unless instructed by the developer.
+
+Other setup
+===========
+
+- Create an empty file in the content directory called `songs.json`
