@@ -150,6 +150,11 @@ Options
 			- Type: JSON object
 			- Gets merged with display configuration
 			- See `displays` documentation for possible options
+		- `ask_service_export_filename`
+			- Whether to ask for exported service filename
+			- Default is false
+			- Type: boolean
+			- Useful for if you don't have your browser set up to ask where to save downloads
 
 Source code for server options can be found in `src/config/file.rs`.
 Source code for client options can be found in `client/src/stores/config.ts`.

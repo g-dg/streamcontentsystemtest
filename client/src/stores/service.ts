@@ -6,6 +6,7 @@ import { natcasecmp } from "@/helpers/sort";
 
 import { useSongStore } from "./song";
 import { useStateStore, type StateContent } from "./state";
+import { useConfigStore } from "./config";
 
 /** Service data */
 export interface ServiceData {
@@ -61,6 +62,9 @@ export const useServiceStore = defineStore("service", () => {
 
   const songStore = useSongStore();
   songStore.loadSongs();
+
+  const configStore = useConfigStore();
+  configStore.loadConfig();
 
   /** Service data */
   const serviceData = ref<ServiceData>({ serviceItems: [] });
@@ -403,13 +407,22 @@ export const useServiceStore = defineStore("service", () => {
   /** Export service to file */
   async function exportService() {
     try {
-      // build filename
-      const now = new Date();
-      const filename = `${now.getFullYear()}-${String(
-        now.getMonth() + 1
-      ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${
-        now.getHours() < 12 ? "AM" : "PM"
-      }.json`;
+      let filename = "";
+      if (configStore.config.ask_service_export_filename ?? false) {
+        // ask filename
+        filename = prompt("Enter filename") ?? "";
+      }
+
+      if (filename == "") {
+        // build filename if empty
+        const now = new Date();
+        filename = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${String(now.getDate()).padStart(2, "0")} ${
+          now.getHours() < 12 ? "AM" : "PM"
+        }.json`;
+      }
 
       const convertedServiceData = convertInternalToExport(serviceData.value);
 

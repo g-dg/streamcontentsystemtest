@@ -7,7 +7,11 @@ import { useSongStore } from "@/stores/song";
 import { useConfigStore } from "@/stores/config";
 
 const songStore = useSongStore();
+
 const serviceStore = useServiceStore();
+
+const configStore = useConfigStore();
+configStore.loadConfig();
 
 const song = computed(() =>
   serviceStore.selectedItem?.type == "song" &&
@@ -184,7 +188,6 @@ function parseSequence(
 
 // select verses based on verse string
 function setSelectedVersesFromVerseString() {
-  const configStore = useConfigStore();
   if (!(configStore.config.parse_selected_verses ?? true)) return;
 
   const verseString = serviceStore.selectedItem?.text;

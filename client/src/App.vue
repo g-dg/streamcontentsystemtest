@@ -10,7 +10,6 @@ const showHeaderFooter = computed(() => {
 });
 
 const noTheme = computed(() => {
-  console.debug(router.currentRoute.value.matched);
   if (router.currentRoute.value.matched.length == 0) return true;
   return router.currentRoute.value.meta.noTheme ?? false;
 });
