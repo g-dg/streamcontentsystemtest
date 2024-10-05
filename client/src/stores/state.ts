@@ -49,7 +49,7 @@ export const useStateStore = defineStore("state", () => {
   let _isConnected = ref<boolean>(false);
   let _isDisconnecting = ref<boolean>(false);
 
-  let _debug: boolean = true;
+  let _debug: boolean = false;
 
   let _pingLoopDelay: number | null = DEFAULT_PING_DELAY;
   let _pingLoopTaskId: Symbol | undefined;
@@ -137,6 +137,10 @@ export const useStateStore = defineStore("state", () => {
    * Connects (or reconnects) to the state websocket
    */
   async function connect(reconnect = false): Promise<void> {
+    if (_debug) {
+      console.debug("Connecting to state websocket...");
+    }
+
     // exit if already connecting or disconnecting
     if (_isConnecting.value || _isDisconnecting.value) {
       return;
@@ -202,19 +206,24 @@ export const useStateStore = defineStore("state", () => {
 
     // set up close listener
     _closeListener = async (evt: CloseEvent) => {
+      if (_debug) {
+        console.info("State websocket closed", evt);
+      }
+      console.debug(_isDisconnecting.value);
       // reconnect if we're not closing the connection on our end
       if (!_isDisconnecting.value) {
-        connect();
+        connect(true);
       }
     };
     _ws.addEventListener("close", _closeListener);
 
-    // set up error handler (reconnect on error)
+    // set up error handler
     _errorListener = async (evt: Event) => {
       if (_debug) {
         console.error("Error occurred on state websocket", evt);
       }
-      connect();
+      // reconnect on error
+      connect(true);
     };
     _ws.addEventListener("error", _errorListener);
 
@@ -319,8 +328,12 @@ export const useStateStore = defineStore("state", () => {
 
   async function _pingLoop(taskId: Symbol) {
     while (_pingLoopTaskId == taskId && _pingLoopDelay != null) {
-      await ping();
-      await sleep(_pingLoopDelay);
+      if (_pingLoopDelay != null) {
+        await ping();
+        await sleep(_pingLoopDelay);
+      } else {
+        await sleep(DEFAULT_PING_DELAY);
+      }
     }
   }
 
