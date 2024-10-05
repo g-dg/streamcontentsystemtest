@@ -1,2 +1,72 @@
 @import "./base.scss";
 @import "./loading.scss";
+
+:root {
+  --theme-light: 255, 255, 255;
+  --theme-dark: 8, 8, 8;
+
+  --bg: var(--theme-dark);
+  --fg: var(--theme-light);
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: var(--theme-light);
+    --fg: var(--theme-dark);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.simple-page {
+  padding: 0.5em;
+}
+
+.app-root {
+  min-height: 100vh;
+}
+
+.themed {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--fg));
+
+  button,
+  input,
+  select,
+  textarea {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--fg));
+    border: 1px solid rgba(var(--fg), 0.375);
+    border-radius: 4px;
+  }
+  button,
+  input[type="button"],
+  input[type="reset"],
+  input[type="submit"],
+  select {
+    &:hover {
+      background: linear-gradient(rgba(var(--fg), 0.1), rgba(var(--fg), 0.1)),
+        linear-gradient(rgb(var(--bg)), rgb(var(--bg)));
+    }
+    &:active {
+      background: linear-gradient(rgba(var(--fg), 0.25), rgba(var(--fg), 0.25)),
+        linear-gradient(rgb(var(--bg)), rgb(var(--bg)));
+    }
+  }
+
+  hr {
+    border: none;
+    border-bottom: 1px solid rgba(var(--fg), 0.5);
+  }
+
+  a,
+  a:link,
+  a:visited,
+  a:hover {
+    color: rgb(var(--fg));
+    text-decoration: underline;
+  }
+}

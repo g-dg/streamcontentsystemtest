@@ -37,7 +37,7 @@ const appCopyright = __APP_COPYRIGHT__;
 
 <template>
   <div
-    style="display: flex; flex-direction: column; height: calc(100vh - 16px)"
+    style="display: flex; flex-direction: column; height: 100vh; padding: 8px"
   >
     <div style="flex: 1; display: flex">
       <div style="flex: 1; display: flex; flex-direction: column">

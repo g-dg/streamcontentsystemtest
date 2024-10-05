@@ -10,15 +10,24 @@ const scaledFontSize = computed(
 </script>
 
 <template>
-  <iframe
-    :src="`/display/preview?font-size=${scaledFontSize}`"
+  <div
     :style="{
-      border: border ? '1px black solid' : 'none',
-      width: '100%',
-      height: '100%',
-      'aspect-ratio': '16 / 9',
+      border: border ? '1px rgba(var(--fg), 0.5) solid' : 'none',
+      backgroundClip: 'padding-box',
+      backgroundColor: 'white',
     }"
-  ></iframe>
+  >
+    <iframe
+      :src="`/display/preview?font-size=${scaledFontSize}`"
+      :style="{
+        border: 'none',
+        width: '100%',
+        height: '100%',
+        aspectRatio: '16 / 9',
+        display: 'block',
+      }"
+    ></iframe>
+  </div>
 </template>
 
 <style lang="scss" scoped></style>

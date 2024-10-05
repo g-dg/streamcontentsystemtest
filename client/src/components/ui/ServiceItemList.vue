@@ -330,7 +330,8 @@ watch(
 
 <style lang="scss" scoped>
 .selected-item {
-  background-color: black;
-  color: white;
+  background-color: rgb(var(--fg));
+  color: rgb(var(--bg));
+  font-weight: bold;
 }
 </style>

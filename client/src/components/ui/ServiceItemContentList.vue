@@ -467,7 +467,7 @@ onUnmounted(() => removeKeypressHandler());
 
 <style lang="scss" scoped>
 .service-item {
-  border: 1px gray solid;
+  border: 1px rgba(var(--fg), 0.5) solid;
   padding: 1em;
   min-height: 10lh;
   display: flex;
@@ -476,12 +476,12 @@ onUnmounted(() => removeKeypressHandler());
   white-space: pre-wrap;
 }
 .service-item-disabled {
-  color: #333;
-  background-color: #ccc;
-  border: 1px #ccc solid;
+  color: rgba(var(--fg), 0.5);
+  background-color: rgba(var(--fg), 0.125);
+  border: 1px rgba(var(--fg), 0.25) solid;
 }
 .selected-service-item {
-  background-color: black;
-  color: white;
+  background-color: rgb(var(--fg));
+  color: rgb(var(--bg));
 }
 </style>

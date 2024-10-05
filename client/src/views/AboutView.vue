@@ -28,7 +28,7 @@ const appFullName = __APP_NAME_FULL__;
 </script>
 
 <template>
-  <main>
+  <div class="simple-page">
     <h1>{{ appName }}</h1>
 
     <h2>
@@ -65,7 +65,9 @@ const appFullName = __APP_NAME_FULL__;
         >Github</a
       >
     </p>
-  </main>
+  </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

@@ -23,6 +23,7 @@ const router = createRouter({
       props: true,
       meta: {
         showHeaderFooter: false,
+        noTheme: true,
       },
     },
   ],
