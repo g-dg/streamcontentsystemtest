@@ -191,7 +191,8 @@ function setSelectedVersesFromVerseString() {
   if (!(configStore.config.parse_selected_verses ?? true)) return;
 
   const verseString = serviceStore.selectedItem?.text;
-  const versesPart = verseString?.match(/:([^:]+$)/)?.[1] ?? "";
+  const versesPart =
+    /:(?<verses>[^:]+$)/.exec(verseString ?? "")?.groups?.["verses"] ?? "";
 
   if (!versesPart.split("").every((x) => "0123456789 ,-".includes(x))) return;
 

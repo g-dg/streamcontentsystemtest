@@ -28,18 +28,27 @@ function clearSearch() {
 
 /** Song titles filtered by search */
 const filteredSongTitles = computed(() => {
+  let searchText = search.value;
+
+  searchText =
+    /^(?<title>[^:]*)(:[^:]*)?$/.exec(searchText)?.groups?.["title"] ?? "";
+
+  searchText = searchText.trim();
+
+  if (searchText.length == 0) {
+    return songStore.songTitlesSorted;
+  }
+
   /*
     Search splits (on spaces) the search string and each song title into terms.
     Items are returned if every search term is included in a title term.
     Title terms that start with numbers must match only the number part completely 
     to prevent "1" from matching "11", but allow "1" to match "1a".
   */
-  if (search.value.trim() == "") {
-    return songStore.songTitlesSorted;
-  }
-  const searchSplit = search.value
+  const searchSplit = searchText
     .split(" ")
     .filter((term) => term.trim().length > 0);
+
   return songStore.songTitlesSorted.filter((title) =>
     searchSplit.every((searchTerm) => {
       searchTerm = searchTerm.toUpperCase();
@@ -101,6 +110,7 @@ function dragEnd() {
           ref="searchBoxElement"
           type="search"
           placeholder="Search"
+          @focus="searchBoxElement?.select()"
         />
         <button @click="clearSearch">Clear</button>
       </span>
