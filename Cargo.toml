@@ -1,34 +1,35 @@
 [package]
 name = "garnetdg_streamcontentsystemtest"
-version = "3.1.0"
+version = "4.0.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-argon2 = { version = "0.5" }
-axum = { version = "0.7", features = ["ws"] }
-axum-extra = { version = "0.9", features = ["typed-header"] }
-chrono = { version = "0.4", features = ["serde"] }
-crossterm = { version = "0.28" }
-futures = { version = "0.3" }
-r2d2 = { version = "0.8" }
-r2d2_sqlite = { version = "0.25" }
-rand = { version = "0.8" }
-ratatui = { version = "0.28" }
-reqwest = { version = "0.12", default-features = false, features = ["http2", "charset", "gzip", "brotli", "zstd", "deflate", "json", "stream", "cookies", "multipart", "rustls-tls", "rustls-tls-native-roots"] }
-rusqlite = { version = "0.32", features = ["bundled", "functions", "backup", "vtab", "array", "csvtab", "i128_blob", "serialize", "chrono", "serde_json", "uuid"] }
-sanitize-filename = { version = "0.5" }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0" }
-tokio = { version = "1.40", features = ["full"] }
-tokio-stream = { version = "0.1" }
-tokio-util = { version = "0.7" }
-tower = { version = "0.5", features = ["full"] }
-tower-http = { version = "0.6", features = ["full"] }
-webbrowser = { version = "1.0" }
-uuid = { version = "1.10", features = ["v4", "fast-rng", "serde"] }
+argon2 = { version = "0.5.3" }
+axum = { version = "0.7.7", features = ["ws"] }
+axum-extra = { version = "0.9.4", features = ["typed-header"] }
+chrono = { version = "0.4.38", features = ["serde"] }
+crossterm = { version = "0.28.1" }
+futures = { version = "0.3.31" }
+r2d2 = { version = "0.8.10" }
+r2d2_sqlite = { version = "0.25.0" }
+rand = { version = "0.8.5" }
+ratatui = { version = "0.28.1" }
+reqwest = { version = "0.12.8", default-features = false, features = ["http2", "charset", "gzip", "brotli", "zstd", "deflate", "json", "stream", "cookies", "multipart", "rustls-tls", "rustls-tls-native-roots"] }
+rusqlite = { version = "0.32.1", features = ["bundled", "functions", "backup", "vtab", "array", "csvtab", "i128_blob", "serialize", "chrono", "serde_json", "uuid"] }
+sanitize-filename = { version = "0.5.0" }
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = { version = "1.0.128" }
+tokio = { version = "1.40.0", features = ["full"] }
+tokio-stream = { version = "0.1.16" }
+tokio-util = { version = "0.7.12" }
+tower = { version = "0.5.1", features = ["full"] }
+tower-http = { version = "0.6.1", features = ["full"] }
+webbrowser = { version = "1.0.2" }
+uuid = { version = "1.10.0", features = ["v4", "fast-rng", "serde"] }
 
 [profile.release]
+opt-level = 3
 codegen-units = 1
 lto = "fat"
