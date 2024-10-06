@@ -22,14 +22,15 @@ const model = defineModel<boolean>();
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(var(--bg), 0.5);
   z-index: 1000;
 }
 .modal {
   display: inline-block;
   width: auto;
-  background-color: #fff;
-  box-shadow: 0px 0px 10px 0px black;
+  background-color: rgb(var(--bg));
+  box-shadow: 0px 0px 10px 0px rgb(var(--fg));
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
 }
