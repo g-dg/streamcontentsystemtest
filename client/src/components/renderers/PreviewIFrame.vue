@@ -3,9 +3,9 @@ import { computed } from "vue";
 
 const props = defineProps<{ border?: boolean; scale?: number }>();
 
-const DEFAULT_NORMAL_FONT_SIZE = 40;
+const DEFAULT_NORMAL_FONT_SIZE_VMIN = 5;
 const scaledFontSize = computed(
-  () => DEFAULT_NORMAL_FONT_SIZE * (props.scale ?? 1)
+  () => DEFAULT_NORMAL_FONT_SIZE_VMIN * (props.scale ?? 1)
 );
 </script>
 
@@ -18,7 +18,7 @@ const scaledFontSize = computed(
     }"
   >
     <iframe
-      :src="`/display/preview?font-size=${scaledFontSize}`"
+      :src="`/display/preview?font-size=${scaledFontSize}vmin`"
       :style="{
         border: 'none',
         width: '100%',

@@ -42,7 +42,7 @@ const appCopyright = __APP_COPYRIGHT__;
     <div style="flex: 1; display: flex">
       <div style="flex: 1; display: flex; flex-direction: column">
         <div style="flex: 0">
-          <PreviewIFrame border :scale="1 / 3" />
+          <PreviewIFrame border />
         </div>
         <div style="flex: 0">
           <div

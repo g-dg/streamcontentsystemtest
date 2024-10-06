@@ -33,7 +33,7 @@ const currentContent = computed<StateContent | null>(
 
 const route = useRoute();
 
-const DEFAULT_FONT_SIZE = "40pt";
+const DEFAULT_FONT_SIZE = "5vmin";
 
 /** Font size from "font-size" query parameter or display config or default font size (whichever comes first) */
 const fontSize = computed(() => {
