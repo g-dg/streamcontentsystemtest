@@ -110,11 +110,12 @@ export const useServiceStore = defineStore("service", () => {
   }
 
   /** Creates a song item */
-  function songItem(songTitle: string): ServiceItem {
+  function songItem(songTitle: string, displayTitle?: string): ServiceItem {
     return {
       id: uuid(),
       type: "song",
       song: { title: songTitle, verses: [] },
+      text: displayTitle,
       enabled: true,
     };
   }

@@ -15,7 +15,7 @@ const serviceStore = useServiceStore();
 const instanceIdStore = useInstanceIdStore();
 
 function addToService(songTitle: string) {
-  serviceStore.addItem(serviceStore.songItem(songTitle), true);
+  serviceStore.addItem(serviceStore.songItem(songTitle, search.value), true);
 }
 
 const search = ref("");
@@ -83,7 +83,7 @@ function dragStart(evt: DragEvent, songTitle: string) {
     appInstanceId: instanceIdStore.appInstanceId,
     componentInstanceId: null,
     srcIndex: null,
-    serviceItem: serviceStore.songItem(songTitle),
+    serviceItem: serviceStore.songItem(songTitle, search.value),
   };
 
   evt.dataTransfer.setData("application/json", JSON.stringify(data));
