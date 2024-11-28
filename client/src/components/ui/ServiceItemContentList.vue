@@ -99,9 +99,13 @@ watch(
           contentItemElements.value != null &&
           Array.isArray(contentItemElements.value)
         ) {
-          contentItemElements.value[verseIndex]?.scrollIntoView({
-            block: "nearest",
-          });
+          contentItemElements.value
+            .find(
+              (x) => parseInt(x.getAttribute("data-index") ?? "") == verseIndex
+            )
+            ?.scrollIntoView({
+              block: "nearest",
+            });
         }
       }
     }
@@ -330,9 +334,10 @@ onUnmounted(() => removeKeypressHandler());
 
         <div
           v-if="songVerses != null"
-          v-for="verseName in songVerseNumbersSorted"
+          v-for="(verseName, index) in songVerseNumbersSorted"
           :key="verseName"
           ref="contentItemElements"
+          :data-index="index"
         >
           <label :for="'song_verse_enable_' + verseName">
             <input
@@ -365,6 +370,7 @@ onUnmounted(() => removeKeypressHandler());
         <div
           v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(serviceStore.selectedItemType)"
           ref="contentItemElements"
+          :data-index="0"
         >
           <strong
             style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
@@ -385,6 +391,7 @@ onUnmounted(() => removeKeypressHandler());
         <div
           v-if="serviceStore.selectedItemType == 'empty'"
           ref="contentItemElements"
+          :data-index="0"
         >
           <strong
             style="font-size: 125%; font-weight: bold; padding-left: 0.5em"

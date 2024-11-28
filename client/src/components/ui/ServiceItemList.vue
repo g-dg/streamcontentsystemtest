@@ -151,9 +151,11 @@ watch(
       serviceItemElements.value != null &&
       Array.isArray(serviceItemElements.value)
     ) {
-      serviceItemElements.value[index]?.scrollIntoView({
-        block: "nearest",
-      });
+      serviceItemElements.value
+        .find((x) => parseInt(x.getAttribute("data-index") ?? "") == index)
+        ?.scrollIntoView({
+          block: "nearest",
+        });
     }
   }
 );
@@ -239,6 +241,7 @@ watch(
           @click="selectIndex(index)"
           style="flex: 0"
           ref="serviceItemElements"
+          :data-index="index"
           :draggable="draggableIndex == index"
           @dragstart="dragStart($event, index)"
           @dragover="dragOver($event, index)"
