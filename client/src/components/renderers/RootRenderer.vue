@@ -37,6 +37,7 @@ const textShadow = computed(() =>
       'background-color':
         content?.background ?? false ? '#000' : 'rgba(0,0,0,0)',
       'text-shadow': textShadow,
+      'font-weight': displayConfig.bold == true ? 'bold' : 'normal',
     }"
   >
     <SmallTextRenderer

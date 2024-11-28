@@ -18,6 +18,7 @@ export interface DisplayConfig {
   fade_speed?: number;
   font_size?: string;
   background?: string;
+  bold?: boolean;
 }
 
 /** Config store */
