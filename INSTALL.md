@@ -133,6 +133,10 @@ Options
 					- Whether to default all text to bold
 					- Default is `false`
 					- Type: boolean
+				- `line_height`
+					- Line height of renderer
+					- Default is `1.25`
+					- Type: number
 				- `main_content`
 					- Whether this is the main content
 					- Default is `false`

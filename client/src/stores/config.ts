@@ -19,6 +19,7 @@ export interface DisplayConfig {
   font_size?: string;
   background?: string;
   bold?: boolean;
+  line_height?: number;
   alternate_blanking?: boolean;
 }
 
