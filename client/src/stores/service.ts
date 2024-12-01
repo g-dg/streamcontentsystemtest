@@ -5,7 +5,7 @@ import { uuid } from "@/helpers/random";
 import { natcasecmp } from "@/helpers/sort";
 
 import { useSongStore } from "./song";
-import { useStateStore, type StateContent } from "./state";
+import { useDisplayStateStore, type DisplayState } from "./state";
 import { useConfigStore } from "./config";
 
 /** Service data */
@@ -58,7 +58,7 @@ export interface ServiceItemDragDropData {
 
 /** Service store */
 export const useServiceStore = defineStore("service", () => {
-  const stateStore = useStateStore();
+  const displayStateStore = useDisplayStateStore();
 
   const songStore = useSongStore();
   songStore.loadSongs();
@@ -187,7 +187,7 @@ export const useServiceStore = defineStore("service", () => {
     serviceData.value.serviceItems = [];
   }
 
-  function getState(): StateContent {
+  function getState(): DisplayState {
     switch (selectedItemType.value) {
       case "empty": {
         return { background: false };
@@ -243,14 +243,14 @@ export const useServiceStore = defineStore("service", () => {
     }
     selectedSubItemId.value = subItemId;
 
-    stateStore.setState(getState());
+    displayStateStore.setState(getState());
   }
 
   function showEmptyScreen() {
-    stateStore.setState({ background: false });
+    displayStateStore.setState({ background: false });
   }
   function showBlackScreen() {
-    stateStore.setState({ background: true });
+    displayStateStore.setState({ background: true });
   }
 
   const allItemList = computed<

@@ -4,7 +4,7 @@ import { useRoute } from "vue-router";
 
 import RootRenderer from "@/components/renderers/RootRenderer.vue";
 
-import { useStateStore, type StateContent } from "@/stores/state";
+import { useDisplayStateStore, type DisplayState } from "@/stores/state";
 import { useConfigStore } from "@/stores/config";
 import { uuid } from "@/helpers/random";
 
@@ -25,10 +25,10 @@ const displayConfig = computed(() =>
   configStore.getDisplayConfig(props.displayName ?? "")
 );
 
-const stateStore = useStateStore();
+const displayStateStore = useDisplayStateStore();
 
-const currentContent = computed<StateContent | null>(
-  () => stateStore.currentState.content
+const currentContent = computed<DisplayState | null>(
+  () => displayStateStore.currentState
 );
 
 const route = useRoute();
@@ -53,7 +53,7 @@ const renderDelay = computed(
   () => displayConfig.value?.render_delay ?? DEFAULT_RENDER_DELAY
 );
 
-const delayedContent = ref<StateContent>(
+const delayedContent = ref<DisplayState>(
   currentContent.value ?? { background: false }
 );
 
@@ -78,20 +78,20 @@ const transitionSpeed = computed(
  * Returns whether the specified content renders as opaque.
  * Used for transition timing.
  */
-function contentRendersAsOpaque(content: StateContent): boolean {
+function contentRendersAsOpaque(content: DisplayState): boolean {
   return content.background;
 }
 
 /**
  * Queue of elements with the last item being the current state and any previous items being transitioned away.
  */
-const transitionQueue = ref<Array<{ id: string; content: StateContent }>>([]);
+const transitionQueue = ref<Array<{ id: string; content: DisplayState }>>([]);
 /**
  * References to elements corresponding to render queue
  */
 const transitionElements = ref<Array<HTMLElement>>();
 
-function addContentState(content: StateContent | null) {
+function addContentState(content: DisplayState | null) {
   if (content == null) return;
 
   // if we're transitioning to identical states, ignore it

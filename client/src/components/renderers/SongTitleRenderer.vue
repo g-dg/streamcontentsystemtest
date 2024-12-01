@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { type DisplayConfig } from "@/stores/config";
-import { type StateContent } from "@/stores/state";
+import { type DisplayState } from "@/stores/state";
 
 const props = defineProps<{
-  content: StateContent | null;
+  content: DisplayState | null;
   displayConfig: DisplayConfig;
   fontSize: string;
 }>();

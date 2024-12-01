@@ -2,7 +2,7 @@
 import { onMounted } from "vue";
 
 import { useSongStore } from "@/stores/song";
-import { useStateStore } from "@/stores/state";
+import { useDisplayStateStore } from "@/stores/state";
 import { useServiceStore } from "@/stores/service";
 
 import PreviewIFrame from "./renderers/PreviewIFrame.vue";
@@ -12,7 +12,7 @@ import ServiceItemContentList from "./ui/ServiceItemContentList.vue";
 import TitleDescriptionEditor from "./ui/TitleDescriptionEditor.vue";
 
 const songStore = useSongStore();
-const stateStore = useStateStore();
+const displayStateStore = useDisplayStateStore();
 const serviceStore = useServiceStore();
 
 onMounted(() => songStore.loadSongs(false));
@@ -47,7 +47,7 @@ const appCopyright = __APP_COPYRIGHT__;
         <div style="flex: 0">
           <div
             :style="{
-              visibility: stateStore.connected ? 'hidden' : 'visible',
+              visibility: displayStateStore.connected ? 'hidden' : 'visible',
               textAlign: 'center',
             }"
           >

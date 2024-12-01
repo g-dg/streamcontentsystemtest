@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-import type { StateContent } from "@/stores/state";
+import type { DisplayState } from "@/stores/state";
 
 import MainTextRenderer from "@/components/renderers/MainTextRenderer.vue";
 import SmallTextRenderer from "@/components/renderers/SmallTextRenderer.vue";
@@ -11,7 +11,7 @@ import SubTextRenderer from "@/components/renderers/SubTextRenderer.vue";
 import type { DisplayConfig } from "@/stores/config";
 
 const props = defineProps<{
-  content: StateContent | null;
+  content: DisplayState | null;
   displayConfig: DisplayConfig;
   fontSize: string;
 }>();

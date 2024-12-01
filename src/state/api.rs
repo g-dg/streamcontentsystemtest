@@ -3,7 +3,7 @@ use std::sync::Arc;
 use axum::{
     extract::{
         ws::{Message, WebSocket},
-        State, WebSocketUpgrade,
+        Path, State, WebSocketUpgrade,
     },
     response::Response,
     routing::get,
@@ -19,7 +19,7 @@ use super::models::CurrentState;
 
 /// State routes
 pub fn route() -> Router<Arc<AppServices>> {
-    Router::new().route("/", get(handler))
+    Router::new().route("/:channel", get(handler))
 }
 
 /// State requests from the client
@@ -42,12 +42,16 @@ pub enum StateResponse {
 }
 
 /// Handles the connection and upgrades to websockets
-pub async fn handler(State(state): State<Arc<AppServices>>, ws: WebSocketUpgrade) -> Response {
-    ws.on_upgrade(|socket| websocket_handler(socket, state))
+pub async fn handler(
+    State(state): State<Arc<AppServices>>,
+    ws: WebSocketUpgrade,
+    Path(channel): Path<String>,
+) -> Response {
+    ws.on_upgrade(|socket| websocket_handler(socket, state, channel))
 }
 
 /// Websocket handler
-pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
+pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>, channel_name: String) {
     let (mut ws_send, mut ws_recv) = socket.split();
 
     // send a message to this queue to send it to the client
@@ -60,13 +64,19 @@ pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
         }
     });
 
-    let r_state = state.clone();
     let r_queue_send = queue_send.clone();
+
+    let channel = state.state_service.get_channel(&channel_name).await;
+
+    let r_channel_recv = channel.watch_recv.clone();
+    let r_channel_send = channel.watch_send;
+
+    let t_channel_recv = channel.watch_recv;
 
     // handles incoming requests from the client
     let mut recv_task = tokio::spawn(async move {
-        let mut watch_recv = r_state.state_service.watch_recv.clone();
-        let watch_send = r_state.state_service.watch_send.clone();
+        let mut watch_recv = r_channel_recv;
+        let watch_send = r_channel_send;
 
         // sends a response
         async fn send_response(
@@ -141,7 +151,7 @@ pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>) {
 
     // watch for changed state
     let watch_task = tokio::spawn(async move {
-        let mut watch_recv = state.state_service.watch_recv.clone();
+        let mut watch_recv = t_channel_recv;
         while let Ok(()) = watch_recv.changed().await {
             let state = watch_recv.borrow_and_update().clone();
             let response = StateResponse::State { state };
