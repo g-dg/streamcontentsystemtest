@@ -13,13 +13,17 @@ const songStore = useSongStore();
 
 const editedTitle = ref("");
 const editedVerses = ref<Array<{ name: string; content: string }>>([]);
+const editedAttribution = ref("");
 
 function loadSongFromStore() {
   const song =
     props.songTitle != undefined ? songStore.songs[props.songTitle] : undefined;
   if (song != undefined) {
     editedTitle.value = props.songTitle ?? "";
-    const versesSorted = Object.keys(song.verses).sort((a, b) => natcasecmp([a, b]));
+    editedAttribution.value = song.attribution ?? "";
+    const versesSorted = Object.keys(song.verses).sort((a, b) =>
+      natcasecmp([a, b])
+    );
     editedVerses.value = versesSorted.map((x) => ({
       name: x,
       content: song.verses[x],
@@ -27,6 +31,7 @@ function loadSongFromStore() {
   } else {
     editedTitle.value = "";
     editedVerses.value = [{ name: "1", content: "" }];
+    editedAttribution.value = "";
   }
 }
 
@@ -53,6 +58,10 @@ async function saveSong() {
     verses: Object.fromEntries(
       editedVerses.value.map((x) => [x.name, x.content])
     ),
+    attribution:
+      (editedAttribution.value ?? "") == ""
+        ? undefined
+        : editedAttribution.value,
   };
 
   await songStore.saveSongs();
@@ -86,6 +95,7 @@ function cancel() {
       placeholder="Song Name"
       style="flex: 0; width: 100%"
     />
+
     <div style="flex: 1; overflow: auto">
       <div v-for="(verse, index) in editedVerses" :key="verse.name">
         <hr />
@@ -109,9 +119,19 @@ function cancel() {
     </div>
 
     <div style="flex: 0; padding-top: 1lh; text-align: right">
-      <button @click="saveSong">Save</button>
-      <button v-if="songTitle != undefined" @click="deleteSong">Delete</button>
-      <button @click="cancel">Cancel</button>
+      <input
+        v-model="editedAttribution"
+        type="text"
+        placeholder="Attribution"
+        style="flex: 0; width: 100%"
+      />
+      <div>
+        <button @click="saveSong">Save</button>
+        <button v-if="songTitle != undefined" @click="deleteSong">
+          Delete
+        </button>
+        <button @click="cancel">Cancel</button>
+      </div>
     </div>
   </div>
 </template>

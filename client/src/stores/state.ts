@@ -8,6 +8,7 @@ export interface DisplayState {
   background: boolean;
   song?: string;
   songTitle?: string;
+  attribution?: string;
   mainText?: string;
   subText?: string;
   smallText?: string;

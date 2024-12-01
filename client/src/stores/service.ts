@@ -200,6 +200,8 @@ export const useServiceStore = defineStore("service", () => {
         const songVerses = song?.verses;
         const verseContent =
           (songVerses ?? {})[selectedSubItemId.value ?? ""] ?? undefined;
+        const songAttribution =
+          (song?.attribution ?? "") == "" ? undefined : song?.attribution;
         return {
           background: true,
           song: verseContent,
@@ -207,6 +209,7 @@ export const useServiceStore = defineStore("service", () => {
             (selectedItem.value?.text ?? "") != ""
               ? selectedItem.value?.text
               : selectedItem.value?.song?.title ?? "",
+          attribution: songAttribution,
         };
       }
       case "mainText": {
