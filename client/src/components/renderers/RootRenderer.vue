@@ -8,6 +8,7 @@ import SmallTextRenderer from "@/components/renderers/SmallTextRenderer.vue";
 import SongRenderer from "@/components/renderers/SongRenderer.vue";
 import SongTitleRenderer from "@/components/renderers/SongTitleRenderer.vue";
 import SubTextRenderer from "@/components/renderers/SubTextRenderer.vue";
+import AlternateTextRenderer from "./AlternateTextRenderer.vue";
 import type { DisplayConfig } from "@/stores/config";
 
 const props = defineProps<{
@@ -54,6 +55,12 @@ const textShadow = computed(() =>
       class="renderer-item full-size"
     />
     <MainTextRenderer
+      :content="content"
+      :display-config="displayConfig"
+      :font-size="fontSize"
+      class="renderer-item full-size"
+    />
+    <AlternateTextRenderer
       :content="content"
       :display-config="displayConfig"
       :font-size="fontSize"

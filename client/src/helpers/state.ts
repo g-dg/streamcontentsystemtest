@@ -280,7 +280,7 @@ export function useState<T>(
    * Sets a new state
    * @param state State to set
    */
-  async function setState(state: any): Promise<CurrentState<T>> {
+  async function setState(state: T): Promise<CurrentState<T>> {
     const id = randomString(STATE_ID_LENGTH);
 
     return await _setRawState({

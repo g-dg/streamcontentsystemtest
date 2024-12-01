@@ -18,7 +18,7 @@ export interface ServiceData {
 /** Service item */
 export interface ServiceItem {
   id: string;
-  type: "empty" | "song" | "mainText" | "subText" | "smallText";
+  type: "empty" | "blank" | "song" | "mainText" | "subText" | "smallText";
   song?: ServiceSong;
   text?: string;
   comment?: string;
@@ -37,7 +37,7 @@ export interface ExportedServiceData {
   description?: string;
 }
 export interface ExportedServiceItem {
-  type: "empty" | "song" | "mainText" | "subText" | "smallText";
+  type: "empty" | "blank" | "song" | "mainText" | "subText" | "smallText";
   song?: ExportedServiceSong;
   text?: string;
   comment?: string;
@@ -105,6 +105,15 @@ export const useServiceStore = defineStore("service", () => {
     return {
       id: uuid(),
       type: "empty",
+      enabled: true,
+    };
+  }
+
+  /** Creates a blank item */
+  function blankItem(): ServiceItem {
+    return {
+      id: uuid(),
+      type: "blank",
       enabled: true,
     };
   }
@@ -187,10 +196,19 @@ export const useServiceStore = defineStore("service", () => {
     serviceData.value.serviceItems = [];
   }
 
+  /** Gets the display state from the currently-selected items */
   function getState(): DisplayState {
     switch (selectedItemType.value) {
       case "empty": {
-        return { background: false };
+        return {
+          background: false,
+          alternate_text: serviceData.value.serviceItems[0]?.text,
+        };
+      }
+      case "blank": {
+        return {
+          background: false,
+        };
       }
       case "song": {
         const song =
@@ -250,10 +268,16 @@ export const useServiceStore = defineStore("service", () => {
   }
 
   function showEmptyScreen() {
-    displayStateStore.setState({ background: false });
+    displayStateStore.setState({
+      background: false,
+      alternate_text: serviceData.value.serviceItems[0]?.text,
+    });
   }
   function showBlackScreen() {
-    displayStateStore.setState({ background: true });
+    displayStateStore.setState({
+      background: true,
+      alternate_text: serviceData.value.serviceItems[0]?.text,
+    });
   }
 
   const allItemList = computed<
@@ -516,6 +540,7 @@ export const useServiceStore = defineStore("service", () => {
     selectedItem,
     selectedItemType,
     emptyItem,
+    blankItem,
     songItem,
     textItem,
     addItem,

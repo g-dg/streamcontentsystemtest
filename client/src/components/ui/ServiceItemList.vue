@@ -172,13 +172,23 @@ watch(
         <button @click="loadService()">Load</button>
         <button @click="saveService()">Save</button>
         &nbsp;
+
         <button
           @click="serviceStore.addItem(serviceStore.emptyItem(), true)"
           draggable="true"
           @dragstart="newItemDragStart($event, serviceStore.emptyItem())"
         >
-          Add Empty
+          Empty
         </button>
+
+        <button
+          @click="serviceStore.addItem(serviceStore.blankItem(), true)"
+          draggable="true"
+          @dragstart="newItemDragStart($event, serviceStore.blankItem())"
+        >
+          Blank
+        </button>
+
         <button
           @click="
             serviceStore.addItem(serviceStore.textItem('mainText', ''), true)
@@ -190,6 +200,7 @@ watch(
         >
           Main Text
         </button>
+
         <button
           @click="
             serviceStore.addItem(serviceStore.textItem('subText', ''), true)
@@ -201,6 +212,7 @@ watch(
         >
           Sub Text
         </button>
+
         <button
           @click="
             serviceStore.addItem(serviceStore.textItem('smallText', ''), true)
@@ -212,6 +224,7 @@ watch(
         >
           Small Text
         </button>
+
         <span
           :style="{
             visibility: serviceStore.unsavedChanges ? 'visible' : 'hidden',
@@ -296,6 +309,8 @@ watch(
               </template>
 
               <em v-else-if="item.type == 'empty'"> &lt; Empty &gt; </em>
+
+              <em v-else-if="item.type == 'blank'"> &lt; Blank &gt; </em>
 
               <em v-else-if="item.type == 'mainText'"> &lt; Main Text &gt; </em>
 

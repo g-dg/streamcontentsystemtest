@@ -315,6 +315,7 @@ onUnmounted(() => removeKeypressHandler());
             {{ serviceStore.selectedItem?.song?.title }}
           </template>
           <em v-if="serviceStore.selectedItemType == 'empty'"> Empty </em>
+          <em v-if="serviceStore.selectedItemType == 'blank'"> Blank </em>
           <em v-if="serviceStore.selectedItemType == 'mainText'">
             Main Text
           </em>
@@ -406,6 +407,28 @@ onUnmounted(() => removeKeypressHandler());
             }"
           >
             <div style="text-align: center"><em> &lt; Empty &gt; </em></div>
+          </pre>
+          <hr />
+        </div>
+
+        <div
+          v-if="serviceStore.selectedItemType == 'blank'"
+          ref="contentItemElements"
+          :data-index="0"
+        >
+          <strong
+            style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
+          >
+            Blank
+          </strong>
+          <pre
+            @click="serviceStore.selectAndShowItem('0')"
+            :class="{
+              'service-item': true,
+              'selected-service-item': serviceStore.selectedSubItemId === '0',
+            }"
+          >
+            <div style="text-align: center"><em> &lt; Blank &gt; </em></div>
           </pre>
           <hr />
         </div>

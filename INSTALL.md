@@ -129,12 +129,20 @@ Options
 					- Default is `transparent`
 					- Type: string
 					- This is passed to the CSS `background` property
+				- `bold`
+					- Whether to default all text to bold
+					- Default is `false`
+					- Type: boolean
 				- `main_content`
 					- Whether this is the main content
 					- Default is `false`
 					- Type: boolean
 					- Intended for displays that are the main content (i.e. don't have a stream behind them)
 					- Centers text vertically
+				- `alternate_blanking`
+					- Whether to display the first slide instead of blanking
+					- Default is `false`
+					- Type: boolean
 				- `noninteractable`
 					- Changes some settings to avoid accidentally showing stuff
 					- Default is `false`
