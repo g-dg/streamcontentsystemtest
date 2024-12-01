@@ -91,6 +91,33 @@ const transitionQueue = ref<Array<{ id: string; content: DisplayState }>>([]);
  */
 const transitionElements = ref<Array<HTMLElement>>();
 
+/**
+ * Returns whether the states should be treated as the same states
+ */
+function isStateSame(a: DisplayState, b: DisplayState): boolean {
+  // if JSON values are the same, then they are the same
+  if (JSON.stringify(a) == JSON.stringify(b)) return true;
+
+  // if alternate blanking is enabled
+  if (displayConfig.value.alternate_blanking) {
+    // if switching between alternate text and first main text, then they are the same
+    if (a.alternateText === b.mainText && a.alternateText != undefined)
+      return true;
+    if (b.alternateText === a.mainText && b.alternateText != undefined)
+      return true;
+
+    // if switching between alternate text and small text when small text is hidden
+    if (
+      a.alternateText === b.alternateText &&
+      (displayConfig.value.hide_small_text ?? false) &&
+      (a.smallText != undefined || b.smallText != undefined)
+    )
+      return true;
+  }
+
+  return false;
+}
+
 function addContentState(content: DisplayState | null) {
   if (content == null) return;
 
@@ -99,7 +126,7 @@ function addContentState(content: DisplayState | null) {
     transitionQueue.value[transitionQueue.value.length - 1];
   if (
     currentLatestContent !== undefined &&
-    JSON.stringify(currentLatestContent.content) === JSON.stringify(content)
+    isStateSame(currentLatestContent.content, content)
   )
     return;
 
