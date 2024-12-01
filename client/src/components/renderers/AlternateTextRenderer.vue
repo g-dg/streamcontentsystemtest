@@ -13,7 +13,13 @@ const props = defineProps<{
   <div
     v-if="
       (displayConfig.alternate_blanking ?? false) &&
-      content?.alternate_text != undefined
+      content?.alternateText != undefined &&
+      content?.song == undefined &&
+      content?.songTitle == undefined &&
+      content?.attribution == undefined &&
+      content?.mainText == undefined &&
+      content?.subText == undefined &&
+      (content?.smallText == undefined || displayConfig.hide_small_text)
     "
     :class="[
       'renderer',
@@ -30,7 +36,7 @@ const props = defineProps<{
       "
     >
       <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
-        {{ content.alternate_text }}
+        {{ content.alternateText }}
       </div>
     </div>
   </div>

@@ -196,13 +196,15 @@ export const useServiceStore = defineStore("service", () => {
     serviceData.value.serviceItems = [];
   }
 
+  const alternateText = computed(() => serviceData.value.serviceItems[0]?.text);
+
   /** Gets the display state from the currently-selected items */
   function getState(): DisplayState {
     switch (selectedItemType.value) {
       case "empty": {
         return {
           background: false,
-          alternate_text: serviceData.value.serviceItems[0]?.text,
+          alternateText: alternateText.value,
         };
       }
       case "blank": {
@@ -246,6 +248,7 @@ export const useServiceStore = defineStore("service", () => {
         return {
           background: false,
           smallText: selectedItem.value?.text ?? undefined,
+          alternateText: alternateText.value,
         };
       }
       default: {
@@ -270,13 +273,12 @@ export const useServiceStore = defineStore("service", () => {
   function showEmptyScreen() {
     displayStateStore.setState({
       background: false,
-      alternate_text: serviceData.value.serviceItems[0]?.text,
+      alternateText: alternateText.value,
     });
   }
   function showBlackScreen() {
     displayStateStore.setState({
       background: true,
-      alternate_text: serviceData.value.serviceItems[0]?.text,
     });
   }
 

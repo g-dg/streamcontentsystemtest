@@ -12,7 +12,7 @@ export interface DisplayState {
   mainText?: string;
   subText?: string;
   smallText?: string;
-  alternate_text?: string;
+  alternateText?: string;
 }
 
 /** State store */
