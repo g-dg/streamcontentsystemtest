@@ -27,58 +27,30 @@ const textShadow = computed(() =>
 </script>
 
 <template>
-  <div
-    :class="[
-      'renderer',
-      ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
-      ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
-    ]"
-    :style="{
+  <div :class="[
+    'renderer',
+    ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
+    ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
+  ]" :style="{
       'font-size': fontSize,
       'background-color':
         content?.background ?? false ? '#000' : 'rgba(0,0,0,0)',
       'text-shadow': textShadow,
       'font-weight': displayConfig.bold == true ? 'bold' : 'normal',
       'line-height': displayConfig.line_height ?? 1.25,
-    }"
-  >
-    <SmallTextRenderer
-      v-if="!displayConfig.hide_small_text"
-      :content="content"
-      :display-config="displayConfig"
-      :font-size="fontSize"
-      class="renderer-item full-size"
-    />
-    <SubTextRenderer
-      :content="content"
-      :display-config="displayConfig"
-      :font-size="fontSize"
-      class="renderer-item full-size"
-    />
-    <MainTextRenderer
-      :content="content"
-      :display-config="displayConfig"
-      :font-size="fontSize"
-      class="renderer-item full-size"
-    />
-    <AlternateTextRenderer
-      :content="content"
-      :display-config="displayConfig"
-      :font-size="fontSize"
-      class="renderer-item full-size"
-    />
-    <SongTitleRenderer
-      :content="content"
-      :display-config="displayConfig"
-      :font-size="fontSize"
-      class="renderer-item full-size"
-    />
-    <SongRenderer
-      :content="content"
-      :display-config="displayConfig"
-      :font-size="fontSize"
-      class="renderer-item full-size"
-    />
+    }">
+    <SmallTextRenderer v-if="!displayConfig.hide_small_text" :content="content" :display-config="displayConfig"
+      :font-size="fontSize" class="renderer-item full-size" />
+    <SubTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
+      class="renderer-item full-size" />
+    <MainTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
+      class="renderer-item full-size" />
+    <AlternateTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
+      class="renderer-item full-size" />
+    <SongTitleRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
+      class="renderer-item full-size" />
+    <SongRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
+      class="renderer-item full-size" />
   </div>
 </template>
 

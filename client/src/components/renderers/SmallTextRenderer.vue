@@ -10,21 +10,15 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    v-if="content?.smallText != undefined"
-    :class="[
-      'renderer',
-      ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
-      ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
-    ]"
-  >
-    <div
-      class="text"
-      :style="{
-        'font-size': `calc(${fontSize} * 0.75)`,
-        padding: `calc(${fontSize} / 4)`,
-      }"
-    >
+  <div v-if="content?.smallText != undefined" :class="[
+    'renderer',
+    ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
+    ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
+  ]">
+    <div class="text" :style="{
+      'font-size': `calc(${fontSize} * 0.75)`,
+      padding: `calc(${fontSize} / 4)`,
+    }">
       {{ content.smallText }}
     </div>
   </div>
@@ -38,9 +32,11 @@ const props = defineProps<{
   align-items: end;
   overflow: auto;
 }
+
 .renderer-is-noninteractable {
   overflow: hidden;
 }
+
 .renderer-is-main-content {
   align-items: center;
 }
@@ -52,6 +48,7 @@ const props = defineProps<{
   width: calc(100vw);
   overflow: auto;
 }
+
 .renderer-is-noninteractable .text {
   overflow: hidden;
 }

@@ -10,31 +10,26 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    v-if="
-      (displayConfig.alternate_blanking ?? false) &&
-      content?.alternateText != undefined &&
-      content?.song == undefined &&
-      content?.songTitle == undefined &&
-      content?.attribution == undefined &&
-      content?.mainText == undefined &&
-      content?.subText == undefined &&
-      (content?.smallText == undefined || displayConfig.hide_small_text)
-    "
-    :class="[
+  <div v-if="
+    (displayConfig.alternate_blanking ?? false) &&
+    content?.alternateText != undefined &&
+    content?.song == undefined &&
+    content?.songTitle == undefined &&
+    content?.attribution == undefined &&
+    content?.mainText == undefined &&
+    content?.subText == undefined &&
+    (content?.smallText == undefined || displayConfig.hide_small_text)
+  " :class="[
       'renderer',
       ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
       ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
-    ]"
-  >
-    <div
-      style="
+    ]">
+    <div style="
         display: flex;
         flex-direction: column;
         align-items: center;
         width: 100%;
-      "
-    >
+      ">
       <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
         {{ content.alternateText }}
       </div>
@@ -51,6 +46,7 @@ const props = defineProps<{
   padding: 3.5vh 3.5vw;
   overflow: auto;
 }
+
 .renderer-is-noninteractable {
   overflow: hidden;
 }
@@ -63,6 +59,7 @@ const props = defineProps<{
   font-weight: bold;
   overflow: auto;
 }
+
 .renderer-is-noninteractable .text {
   overflow: hidden;
 }

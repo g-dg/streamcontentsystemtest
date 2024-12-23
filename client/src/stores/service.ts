@@ -270,15 +270,15 @@ export const useServiceStore = defineStore("service", () => {
     displayStateStore.setState(getState());
   }
 
-  function showEmptyScreen() {
+  function setEmptyScreen() {
     displayStateStore.setState({
       background: false,
       alternateText: alternateText.value,
     });
   }
-  function showBlackScreen() {
+  function setBlankScreen() {
     displayStateStore.setState({
-      background: true,
+      background: false,
     });
   }
 
@@ -446,12 +446,7 @@ export const useServiceStore = defineStore("service", () => {
       if (filename == "") {
         // build filename if empty
         const now = new Date();
-        filename = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-          2,
-          "0"
-        )}-${String(now.getDate()).padStart(2, "0")} ${
-          now.getHours() < 12 ? "AM" : "PM"
-        }.json`;
+        filename = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${now.getHours() < 12 ? "AM" : "PM"}.json`;
       }
 
       const convertedServiceData = convertInternalToExport(serviceData.value);
@@ -550,8 +545,8 @@ export const useServiceStore = defineStore("service", () => {
     moveItem,
     clearService,
     selectAndShowItem,
-    showEmptyScreen,
-    showBlackScreen,
+    setEmptyScreen,
+    setBlankScreen,
     goToNextSubItem,
     goToPreviousSubItem,
     goToFirstSubItem,

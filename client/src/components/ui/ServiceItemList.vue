@@ -162,74 +162,50 @@ watch(
 </script>
 
 <template>
-  <form
-    @submit.prevent
-    class="root"
-    style="height: 100%; display: flex; flex-direction: column"
-  >
+  <form @submit.prevent class="root" style="height: 100%; display: flex; flex-direction: column">
     <div style="flex: 0">
       <span style="display: inline-block">
         <button @click="loadService()">Load</button>
         <button @click="saveService()">Save</button>
         &nbsp;
 
-        <button
-          @click="serviceStore.addItem(serviceStore.emptyItem(), true)"
-          draggable="true"
-          @dragstart="newItemDragStart($event, serviceStore.emptyItem())"
-        >
+        <button @click="serviceStore.addItem(serviceStore.emptyItem(), true)" draggable="true"
+          @dragstart="newItemDragStart($event, serviceStore.emptyItem())">
           Empty
         </button>
 
-        <button
-          @click="serviceStore.addItem(serviceStore.blankItem(), true)"
-          draggable="true"
-          @dragstart="newItemDragStart($event, serviceStore.blankItem())"
-        >
+        <button @click="serviceStore.addItem(serviceStore.blankItem(), true)" draggable="true"
+          @dragstart="newItemDragStart($event, serviceStore.blankItem())">
           Blank
         </button>
 
-        <button
-          @click="
-            serviceStore.addItem(serviceStore.textItem('mainText', ''), true)
-          "
-          draggable="true"
-          @dragstart="
+        <button @click="
+          serviceStore.addItem(serviceStore.textItem('mainText', ''), true)
+          " draggable="true" @dragstart="
             newItemDragStart($event, serviceStore.textItem('mainText', ''))
-          "
-        >
+            ">
           Main Text
         </button>
 
-        <button
-          @click="
-            serviceStore.addItem(serviceStore.textItem('subText', ''), true)
-          "
-          draggable="true"
-          @dragstart="
+        <button @click="
+          serviceStore.addItem(serviceStore.textItem('subText', ''), true)
+          " draggable="true" @dragstart="
             newItemDragStart($event, serviceStore.textItem('subText', ''))
-          "
-        >
+            ">
           Sub Text
         </button>
 
-        <button
-          @click="
-            serviceStore.addItem(serviceStore.textItem('smallText', ''), true)
-          "
-          draggable="true"
-          @dragstart="
+        <button @click="
+          serviceStore.addItem(serviceStore.textItem('smallText', ''), true)
+          " draggable="true" @dragstart="
             newItemDragStart($event, serviceStore.textItem('smallText', ''))
-          "
-        >
+            ">
           Small Text
         </button>
 
-        <span
-          :style="{
-            visibility: serviceStore.unsavedChanges ? 'visible' : 'hidden',
-          }"
-        >
+        <span :style="{
+          visibility: serviceStore.unsavedChanges ? 'visible' : 'hidden',
+        }">
           <em><strong> Unsaved Changes! </strong></em>
         </span>
       </span>
@@ -238,63 +214,36 @@ watch(
     </div>
 
     <div style="flex: 1 1 auto; height: 4lh">
-      <div
-        style="
+      <div style="
           height: 100%;
           overflow: auto;
           display: flex;
           flex-direction: column;
-        "
-      >
+        ">
         <div ref="topScrollElement" style="flex: 0"></div>
 
-        <div
-          v-for="(item, index) in serviceStore.serviceData.serviceItems"
-          :key="item.id"
-          @click="selectIndex(index)"
-          style="flex: 0"
-          ref="serviceItemElements"
-          :data-index="index"
-          :draggable="draggableIndex == index"
-          @dragstart="dragStart($event, index)"
-          @dragover="dragOver($event, index)"
-          @drop="drop($event, index)"
-          @dragend="dragEnd($event, index)"
-        >
-          <div
-            v-if="dragHoveredIndex != null && dragHoveredIndex == index"
-            style="height: 2lh"
-          ></div>
+        <div v-for="(item, index) in serviceStore.serviceData.serviceItems" :key="item.id" @click="selectIndex(index)"
+          style="flex: 0" ref="serviceItemElements" :data-index="index" :draggable="draggableIndex == index"
+          @dragstart="dragStart($event, index)" @dragover="dragOver($event, index)" @drop="drop($event, index)"
+          @dragend="dragEnd($event, index)">
+          <div v-if="dragHoveredIndex != null && dragHoveredIndex == index" style="height: 2lh"></div>
 
-          <div
-            :class="{
-              'selected-item': serviceStore.selectedItemIndex == index,
-            }"
-            style="padding: 0.5lh 0"
-          >
+          <div :class="{
+            'selected-item': serviceStore.selectedItemIndex == index,
+          }" style="padding: 0.5lh 0">
             <span style="padding: 0 1em 0 0">
               <button @click.stop="serviceStore.removeItem(index)">Del</button>
 
-              <button
-                @click.stop="serviceStore.moveItem(index, -1)"
-                :disabled="index == 0"
-              >
+              <button @click.stop="serviceStore.moveItem(index, -1)" :disabled="index == 0">
                 Up
               </button>
 
-              <button
-                @click.stop="serviceStore.moveItem(index, 1)"
-                :disabled="
-                  index + 1 == serviceStore.serviceData.serviceItems.length
-                "
-              >
+              <button @click.stop="serviceStore.moveItem(index, 1)" :disabled="index + 1 == serviceStore.serviceData.serviceItems.length
+                ">
                 Dn
               </button>
 
-              <button
-                @mousedown="dragHandleEnableDrag(index, true)"
-                @mouseup="dragHandleEnableDrag(index, true)"
-              >
+              <button @mousedown="dragHandleEnableDrag(index, true)" @mouseup="dragHandleEnableDrag(index, true)">
                 Move
               </button>
             </span>
@@ -325,20 +274,13 @@ watch(
           </div>
         </div>
 
-        <div
-          v-if="serviceStore.serviceData.serviceItems.length == 0"
-          style="text-align: center"
-        >
+        <div v-if="serviceStore.serviceData.serviceItems.length == 0" style="text-align: center">
           <em> This service has no items </em>
         </div>
 
-        <div
-          @dragover="
-            dragOver($event, serviceStore.serviceData.serviceItems.length)
-          "
-          @drop="drop($event, serviceStore.serviceData.serviceItems.length)"
-          style="flex: 1"
-        >
+        <div @dragover="
+          dragOver($event, serviceStore.serviceData.serviceItems.length)
+          " @drop="drop($event, serviceStore.serviceData.serviceItems.length)" style="flex: 1">
           &nbsp;
         </div>
       </div>

@@ -10,14 +10,11 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    v-if="content?.song != undefined"
-    :class="[
-      'renderer',
-      ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
-      ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
-    ]"
-  >
+  <div v-if="content?.song != undefined" :class="[
+    'renderer',
+    ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
+    ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
+  ]">
     <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
       {{ content.song }}
     </div>
@@ -33,6 +30,7 @@ const props = defineProps<{
   padding: 3.5vh 3.5vw;
   overflow: auto;
 }
+
 .renderer-is-noninteractable {
   overflow: hidden;
 }
@@ -44,6 +42,7 @@ const props = defineProps<{
   width: calc(100vw - 7vw);
   overflow: auto;
 }
+
 .renderer-is-noninteractable .text {
   overflow: hidden;
 }

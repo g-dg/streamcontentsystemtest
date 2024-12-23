@@ -36,21 +36,17 @@ const appCopyright = __APP_COPYRIGHT__;
 </script>
 
 <template>
-  <div
-    style="display: flex; flex-direction: column; height: 100vh; padding: 8px"
-  >
+  <div style="display: flex; flex-direction: column; height: 100vh; padding: 8px">
     <div style="flex: 1; display: flex">
       <div style="flex: 1; display: flex; flex-direction: column">
         <div style="flex: 0">
           <PreviewIFrame border />
         </div>
         <div style="flex: 0">
-          <div
-            :style="{
-              visibility: displayStateStore.connected ? 'hidden' : 'visible',
-              textAlign: 'center',
-            }"
-          >
+          <div :style="{
+            visibility: displayStateStore.connected ? 'hidden' : 'visible',
+            textAlign: 'center',
+          }">
             <strong style="color: red">
               <em>
                 &gt;&gt;&gt;&gt;&gt;&gt;&gt; DISCONNECTED FROM SERVER!!!
@@ -69,9 +65,7 @@ const appCopyright = __APP_COPYRIGHT__;
             <footer>
               {{ appFullName }}
               {{ appCopyright }}
-              (<RouterLink :to="{ name: 'about' }" target="_blank"
-                >About</RouterLink
-              >)
+              (<RouterLink :to="{ name: 'about' }" target="_blank">About</RouterLink>)
             </footer>
           </div>
         </div>

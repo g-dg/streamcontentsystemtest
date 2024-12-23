@@ -71,12 +71,7 @@ function clearDescription() {
 
 <template>
   <div>
-    <input
-      v-model="serviceStore.serviceData.title"
-      ref="titleTextInput"
-      style="width: 100%"
-      placeholder="Title"
-    />
+    <input v-model="serviceStore.serviceData.title" ref="titleTextInput" style="width: 100%" placeholder="Title" />
 
     <button ref="titleCopyButton" @click="copyTitle" :disabled="!copySupported">
       Copy
@@ -85,19 +80,10 @@ function clearDescription() {
 
     Chars: {{ titleCharCount }}
 
-    <textarea
-      v-model="serviceStore.serviceData.description"
-      ref="descriptionTextArea"
-      :rows="descriptionLineShownCount"
-      style="width: 100%"
-      placeholder="Description"
-    ></textarea>
+    <textarea v-model="serviceStore.serviceData.description" ref="descriptionTextArea" :rows="descriptionLineShownCount"
+      style="width: 100%" placeholder="Description"></textarea>
 
-    <button
-      ref="descriptionCopyButton"
-      @click="copyDescription"
-      :disabled="!copySupported"
-    >
+    <button ref="descriptionCopyButton" @click="copyDescription" :disabled="!copySupported">
       Copy
     </button>
     <button @click="clearDescription">Clear</button>

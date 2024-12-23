@@ -58,16 +58,9 @@ const appFullName = __APP_NAME_FULL__;
     <h2>Source Code:</h2>
     <p>
       Source code can be accessed on
-      <a
-        href="https://github.com/g-dg/streamcontentsystemtest"
-        target="_blank"
-        rel="noopener noreferrer"
-        >Github</a
-      >
+      <a href="https://github.com/g-dg/streamcontentsystemtest" target="_blank" rel="noopener noreferrer">Github</a>
     </p>
   </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

@@ -15,7 +15,7 @@ configStore.loadConfig();
 
 const song = computed(() =>
   serviceStore.selectedItem?.type == "song" &&
-  serviceStore.selectedItem?.song?.title != null
+    serviceStore.selectedItem?.song?.title != null
     ? songStore.songs[serviceStore.selectedItem.song.title]
     : null
 );
@@ -257,7 +257,7 @@ function keypressHandler(evt: KeyboardEvent) {
             !displayKeyboardBlanked.value ||
             serviceStore.selectedItem == null
           ) {
-            serviceStore.showBlackScreen();
+            serviceStore.setBlankScreen();
             displayKeyboardBlanked.value = true;
           } else {
             serviceStore.showCurrentItem();
@@ -271,7 +271,7 @@ function keypressHandler(evt: KeyboardEvent) {
             !displayKeyboardBlanked.value ||
             serviceStore.selectedItem == null
           ) {
-            serviceStore.showEmptyScreen();
+            serviceStore.setEmptyScreen();
             displayKeyboardBlanked.value = true;
           } else {
             serviceStore.showCurrentItem();
@@ -291,11 +291,7 @@ onUnmounted(() => removeKeypressHandler());
 </script>
 
 <template>
-  <form
-    @submit.prevent
-    class="root"
-    style="height: 100%; display: flex; flex-direction: column"
-  >
+  <form @submit.prevent class="root" style="height: 100%; display: flex; flex-direction: column">
     <div style="flex: 0">
       <span style="display: inline-block">
         <button @click="serviceStore.goToPreviousSubItem">Back</button>
@@ -303,8 +299,8 @@ onUnmounted(() => removeKeypressHandler());
 
         &nbsp;
 
-        <button @click="serviceStore.showEmptyScreen">Empty Screen</button>
-        <button @click="serviceStore.showBlackScreen">Black Screen</button>
+        <button @click="serviceStore.setEmptyScreen">Empty</button>
+        <button @click="serviceStore.setBlankScreen">Blank</button>
 
         &nbsp;
 
@@ -333,110 +329,64 @@ onUnmounted(() => removeKeypressHandler());
       <div style="height: 100%; overflow: auto">
         <div ref="topScrollElement"></div>
 
-        <div
-          v-if="songVerses != null"
-          v-for="(verseName, index) in songVerseNumbersSorted"
-          :key="verseName"
-          ref="contentItemElements"
-          :data-index="index"
-        >
+        <div v-if="songVerses != null" v-for="(verseName, index) in songVerseNumbersSorted" :key="verseName"
+          ref="contentItemElements" :data-index="index">
           <label :for="'song_verse_enable_' + verseName">
-            <input
-              v-if="serviceStore.selectedItem?.song != undefined"
-              v-model="serviceStore.selectedItem.song.verses"
-              :value="verseName"
-              type="checkbox"
-              :id="'song_verse_enable_' + verseName"
-              style="margin: 0 0.5em 0 1em"
-            />
-            <strong
-              style="font-size: 125%; font-weight: bold; padding-right: 1em"
-            >
+            <input v-if="serviceStore.selectedItem?.song != undefined" v-model="serviceStore.selectedItem.song.verses"
+              :value="verseName" type="checkbox" :id="'song_verse_enable_' + verseName" style="margin: 0 0.5em 0 1em" />
+            <strong style="font-size: 125%; font-weight: bold; padding-right: 1em">
               {{ verseName }}
             </strong>
           </label>
-          <pre
-            @click="serviceStore.selectAndShowItem(verseName)"
-            :class="{
-              'service-item': true,
-              'selected-service-item':
-                serviceStore.selectedSubItemId === verseName,
-              'service-item-disabled': !verseIsEnabled(verseName),
-            }"
-            >{{ songVerses[verseName] }}</pre
-          >
+          <pre @click="serviceStore.selectAndShowItem(verseName)" :class="{
+            'service-item': true,
+            'selected-service-item':
+              serviceStore.selectedSubItemId === verseName,
+            'service-item-disabled': !verseIsEnabled(verseName),
+          }">{{ songVerses[verseName] }}</pre>
           <hr style="margin-bottom: 1em" />
         </div>
 
         <div
-          v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(serviceStore.selectedItemType)"
-          ref="contentItemElements"
-          :data-index="0"
-        >
-          <strong
-            style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
-          >
+          v-if="(['mainText', 'subText', 'smallText'] as Array<string | undefined>).includes(serviceStore.selectedItemType)"
+          ref="contentItemElements" :data-index="0">
+          <strong style="font-size: 125%; font-weight: bold; padding-left: 0.5em">
             Text
           </strong>
-          <pre
-            @click="serviceStore.selectAndShowItem('0')"
-            :class="{
-              'service-item': true,
-              'selected-service-item': serviceStore.selectedSubItemId === '0',
-            }"
-            >{{ serviceStore.selectedItem?.text }}</pre
-          >
+          <pre @click="serviceStore.selectAndShowItem('0')" :class="{
+            'service-item': true,
+            'selected-service-item': serviceStore.selectedSubItemId === '0',
+          }">{{ serviceStore.selectedItem?.text }}</pre>
           <hr />
         </div>
 
-        <div
-          v-if="serviceStore.selectedItemType == 'empty'"
-          ref="contentItemElements"
-          :data-index="0"
-        >
-          <strong
-            style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
-          >
+        <div v-if="serviceStore.selectedItemType == 'empty'" ref="contentItemElements" :data-index="0">
+          <strong style="font-size: 125%; font-weight: bold; padding-left: 0.5em">
             Empty
           </strong>
-          <pre
-            @click="serviceStore.selectAndShowItem('0')"
-            :class="{
-              'service-item': true,
-              'selected-service-item': serviceStore.selectedSubItemId === '0',
-            }"
-          >
-            <div style="text-align: center"><em> &lt; Empty &gt; </em></div>
-          </pre>
+          <pre @click="serviceStore.selectAndShowItem('0')" :class="{
+            'service-item': true,
+            'selected-service-item': serviceStore.selectedSubItemId === '0',
+          }">
+        <div style="text-align: center"><em> &lt; Empty &gt; </em></div>
+      </pre>
           <hr />
         </div>
 
-        <div
-          v-if="serviceStore.selectedItemType == 'blank'"
-          ref="contentItemElements"
-          :data-index="0"
-        >
-          <strong
-            style="font-size: 125%; font-weight: bold; padding-left: 0.5em"
-          >
+        <div v-if="serviceStore.selectedItemType == 'blank'" ref="contentItemElements" :data-index="0">
+          <strong style="font-size: 125%; font-weight: bold; padding-left: 0.5em">
             Blank
           </strong>
-          <pre
-            @click="serviceStore.selectAndShowItem('0')"
-            :class="{
-              'service-item': true,
-              'selected-service-item': serviceStore.selectedSubItemId === '0',
-            }"
-          >
-            <div style="text-align: center"><em> &lt; Blank &gt; </em></div>
-          </pre>
+          <pre @click="serviceStore.selectAndShowItem('0')" :class="{
+            'service-item': true,
+            'selected-service-item': serviceStore.selectedSubItemId === '0',
+          }">
+        <div style="text-align: center"><em> &lt; Blank &gt; </em></div>
+      </pre>
           <hr />
         </div>
 
-        <div
-          v-if="serviceStore.selectedItem == null"
-          style="text-align: center"
-        >
+        <div v-if="serviceStore.selectedItem == null" style="text-align: center">
           <em> No item is selected </em>
         </div>
       </div>
@@ -445,48 +395,27 @@ onUnmounted(() => removeKeypressHandler());
     <div style="flex: 0">
       <hr />
 
-      <span
-        v-if="serviceStore.selectedItem != null"
-        style="display: inline-block"
-      >
+      <span v-if="serviceStore.selectedItem != null" style="display: inline-block">
         Name:
         <input v-model="serviceStore.selectedItem.comment" type="text" />
       </span>
 
       <div>
-        <template
-          v-if="
-            serviceStore.selectedItemType == 'song' &&
-            serviceStore.selectedItem != null
-          "
-        >
-          <input
-            v-model="serviceStore.selectedItem.text"
-            type="text"
-            placeholder="Song Verses"
-            style="width: 100%"
-          />
+        <template v-if="
+          serviceStore.selectedItemType == 'song' &&
+          serviceStore.selectedItem != null
+        ">
+          <input v-model="serviceStore.selectedItem.text" type="text" placeholder="Song Verses" style="width: 100%" />
           <button @click="clearText">Clear</button>
         </template>
 
-        <template
-          v-if="(['mainText', 'subText', 'smallText'] as Array<string|undefined>).includes(serviceStore.selectedItemType) &&
-            serviceStore.selectedItem != null
-          "
-        >
-          <textarea
-            ref="textTextAreaElement"
-            v-model="serviceStore.selectedItem.text"
-            :rows="textLineCount"
-            placeholder="Content"
-            style="width: 100%"
-          ></textarea>
+        <template v-if="(['mainText', 'subText', 'smallText'] as Array<string | undefined>).includes(serviceStore.selectedItemType) &&
+          serviceStore.selectedItem != null
+        ">
+          <textarea ref="textTextAreaElement" v-model="serviceStore.selectedItem.text" :rows="textLineCount"
+            placeholder="Content" style="width: 100%"></textarea>
 
-          <button
-            ref="textCopyButtonElement"
-            @click="copyText"
-            :disabled="!copySupported"
-          >
+          <button ref="textCopyButtonElement" @click="copyText" :disabled="!copySupported">
             Copy
           </button>
           <button @click="clearText">Clear</button>
@@ -509,11 +438,13 @@ onUnmounted(() => removeKeypressHandler());
   justify-content: center;
   white-space: pre-wrap;
 }
+
 .service-item-disabled {
   color: rgba(var(--fg), 0.5);
   background-color: rgba(var(--fg), 0.125);
   border: 1px rgba(var(--fg), 0.25) solid;
 }
+
 .selected-service-item {
   background-color: rgb(var(--fg));
   color: rgb(var(--bg));

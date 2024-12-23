@@ -10,14 +10,11 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    v-if="content?.subText != undefined"
-    :class="[
-      'renderer',
-      ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
-      ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
-    ]"
-  >
+  <div v-if="content?.subText != undefined" :class="[
+    'renderer',
+    ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
+    ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
+  ]">
     <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
       {{ content.subText }}
     </div>
@@ -33,9 +30,11 @@ const props = defineProps<{
   padding: 3.5vh 3.5vw;
   overflow: auto;
 }
+
 .renderer-is-noninteractable {
   overflow: hidden;
 }
+
 .renderer-is-main-content {
   align-items: center;
 }
@@ -48,6 +47,7 @@ const props = defineProps<{
   font-weight: bold;
   overflow: auto;
 }
+
 .renderer-is-noninteractable .text {
   overflow: hidden;
 }

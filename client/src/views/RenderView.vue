@@ -166,24 +166,11 @@ onMounted(() => loading.value--);
 </script>
 
 <template>
-  <div
-    v-if="loading == 0"
-    class="full-size"
-    :style="{ background: displayConfig.background ?? 'transparent' }"
-  >
+  <div v-if="loading == 0" class="full-size" :style="{ background: displayConfig.background ?? 'transparent' }">
     <TransitionGroup name="fade">
-      <div
-        v-for="entry in transitionQueue"
-        :key="entry.id"
-        ref="transitionElements"
-        class="full-size transition-fade"
-        :style="{ transition: `opacity ${transitionSpeed}ms linear` }"
-      >
-        <RootRenderer
-          :content="entry.content"
-          :display-config="displayConfig"
-          :font-size="fontSize"
-        />
+      <div v-for="entry in transitionQueue" :key="entry.id" ref="transitionElements" class="full-size transition-fade"
+        :style="{ transition: `opacity ${transitionSpeed}ms linear` }">
+        <RootRenderer :content="entry.content" :display-config="displayConfig" :font-size="fontSize" />
       </div>
     </TransitionGroup>
   </div>

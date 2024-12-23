@@ -96,40 +96,23 @@ function dragEnd() {
 </script>
 
 <template>
-  <form
-    @submit.prevent
-    class="root"
-    style="height: 100%; display: flex; flex-direction: column"
-  >
+  <form @submit.prevent class="root" style="height: 100%; display: flex; flex-direction: column">
     <div style="flex: 0">
       <span style="display: inline-block">
         <button @click="songStore.loadSongs()">Reload</button>
         <SongEditorModal />
-        <input
-          v-model="search"
-          ref="searchBoxElement"
-          type="search"
-          placeholder="Search"
-          @focus="searchBoxElement?.select()"
-        />
+        <input v-model="search" ref="searchBoxElement" type="search" placeholder="Search"
+          @focus="searchBoxElement?.select()" />
         <button @click="clearSearch">Clear</button>
       </span>
     </div>
 
     <div style="flex: 1 1 auto; height: 4lh">
       <div style="height: 100%; overflow: auto">
-        <div
-          v-for="(song, index) in filteredSongTitles"
-          :key="song"
-          :draggable="draggableIndex == index"
-          @dragstart="dragStart($event, song)"
-          @dragend="dragEnd()"
-        >
-          <button
-            @mousedown="dragHandleEnableDrag(index, true)"
-            @mouseup="dragHandleEnableDrag(index, true)"
-            @click="addToService(song)"
-          >
+        <div v-for="(song, index) in filteredSongTitles" :key="song" :draggable="draggableIndex == index"
+          @dragstart="dragStart($event, song)" @dragend="dragEnd()">
+          <button @mousedown="dragHandleEnableDrag(index, true)" @mouseup="dragHandleEnableDrag(index, true)"
+            @click="addToService(song)">
             Add
           </button>
           <SongEditorModal :songTitle="song" />

@@ -89,42 +89,23 @@ function cancel() {
 
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
-    <input
-      v-model="editedTitle"
-      type="text"
-      placeholder="Song Name"
-      style="flex: 0; width: 100%"
-    />
+    <input v-model="editedTitle" type="text" placeholder="Song Name" style="flex: 0; width: 100%" />
 
     <div style="flex: 1; overflow: auto">
       <div v-for="(verse, index) in editedVerses" :key="verse.name">
         <hr />
         <div style="display: flex">
-          <input
-            v-model="verse.name"
-            type="text"
-            placeholder="Verse Name"
-            style="flex: 1"
-          />
+          <input v-model="verse.name" type="text" placeholder="Verse Name" style="flex: 1" />
           <button @click="deleteVerse(index)" style="flex: 0">Delete</button>
         </div>
-        <textarea
-          v-model="verse.content"
-          :rows="verse.content.split('\n').length + 1"
-          placeholder="Verse Content"
-          style="width: 100%"
-        ></textarea>
+        <textarea v-model="verse.content" :rows="verse.content.split('\n').length + 1" placeholder="Verse Content"
+          style="width: 100%"></textarea>
       </div>
       <button @click="newVerse">New Verse</button>
     </div>
 
     <div style="flex: 0; padding-top: 1lh; text-align: right">
-      <input
-        v-model="editedAttribution"
-        type="text"
-        placeholder="Attribution"
-        style="flex: 0; width: 100%"
-      />
+      <input v-model="editedAttribution" type="text" placeholder="Attribution" style="flex: 0; width: 100%" />
       <div>
         <button @click="saveSong">Save</button>
         <button v-if="songTitle != undefined" @click="deleteSong">

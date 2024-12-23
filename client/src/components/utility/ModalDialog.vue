@@ -25,6 +25,7 @@ const model = defineModel<boolean>();
   background-color: rgba(var(--bg), 0.5);
   z-index: 1000;
 }
+
 .modal {
   display: inline-block;
   width: auto;
@@ -34,6 +35,7 @@ const model = defineModel<boolean>();
   display: flex;
   flex-direction: column;
 }
+
 .modal-content {
   flex: 1;
   display: flex;

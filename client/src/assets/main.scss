@@ -8,6 +8,7 @@
   --bg: var(--theme-dark);
   --fg: var(--theme-light);
 }
+
 @media (prefers-color-scheme: light) {
   :root {
     --bg: var(--theme-light);
@@ -42,6 +43,7 @@ body:has(.app-root.themed) {
     border: 1px solid rgba(var(--fg), 0.375);
     border-radius: 4px;
   }
+
   button,
   input[type="button"],
   input[type="reset"],
@@ -51,6 +53,7 @@ body:has(.app-root.themed) {
       background: linear-gradient(rgba(var(--fg), 0.1), rgba(var(--fg), 0.1)),
         linear-gradient(rgb(var(--bg)), rgb(var(--bg)));
     }
+
     &:active {
       background: linear-gradient(rgba(var(--fg), 0.25), rgba(var(--fg), 0.25)),
         linear-gradient(rgb(var(--bg)), rgb(var(--bg)));

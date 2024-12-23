@@ -10,22 +10,17 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    v-if="content?.mainText != undefined"
-    :class="[
-      'renderer',
-      ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
-      ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
-    ]"
-  >
-    <div
-      style="
+  <div v-if="content?.mainText != undefined" :class="[
+    'renderer',
+    ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
+    ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
+  ]">
+    <div style="
         display: flex;
         flex-direction: column;
         align-items: center;
         width: 100%;
-      "
-    >
+      ">
       <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
         {{ content.mainText }}
       </div>
@@ -42,6 +37,7 @@ const props = defineProps<{
   padding: 3.5vh 3.5vw;
   overflow: auto;
 }
+
 .renderer-is-noninteractable {
   overflow: hidden;
 }
@@ -54,6 +50,7 @@ const props = defineProps<{
   font-weight: bold;
   overflow: auto;
 }
+
 .renderer-is-noninteractable .text {
   overflow: hidden;
 }
