@@ -5,7 +5,7 @@ import { useSongStore } from "@/stores/song";
 import { useDisplayStateStore } from "@/stores/state";
 import { useServiceStore } from "@/stores/service";
 
-import PreviewIFrame from "./renderers/PreviewIFrame.vue";
+import PreviewSection from "./ui/PreviewSection.vue";
 import SongList from "./songs/SongList.vue";
 import ServiceItemList from "./ui/ServiceItemList.vue";
 import ServiceItemContentList from "./ui/ServiceItemContentList.vue";
@@ -40,7 +40,7 @@ const appCopyright = __APP_COPYRIGHT__;
     <div style="flex: 1; display: flex">
       <div style="flex: 1; display: flex; flex-direction: column">
         <div style="flex: 0">
-          <PreviewIFrame border />
+          <PreviewSection />
         </div>
         <div style="flex: 0">
           <div :style="{

@@ -8,6 +8,7 @@ export interface Config {
   display_default?: DisplayConfig;
   parse_selected_verses?: boolean;
   ask_service_export_filename?: boolean;
+  preview_displays?: Array<string>;
 }
 
 export interface DisplayConfig {
