@@ -17,6 +17,11 @@ const router = createRouter({
       component: () => import("@/views/AboutView.vue"),
     },
     {
+      name: "mobileControl",
+      path: "/control/mobile",
+      component: () => import("@/components/ui/MobileControl.vue"),
+    },
+    {
       name: "renderer",
       path: "/display/:displayName",
       component: () => import("@/views/RenderView.vue"),

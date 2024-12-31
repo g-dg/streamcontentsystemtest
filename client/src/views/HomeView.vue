@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import AppMain from "../components/ManagementMain.vue";
+import ManagementMain from "../components/ManagementMain.vue";
 </script>
 
 <template>
   <div>
-    <AppMain />
+    <ManagementMain />
   </div>
 </template>
 

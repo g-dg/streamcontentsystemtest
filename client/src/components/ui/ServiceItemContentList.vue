@@ -6,6 +6,11 @@ import { useServiceStore } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
 import { useConfigStore } from "@/stores/config";
 
+const props = defineProps<{
+  readonly?: boolean;
+  mobileController?: boolean;
+}>();
+
 const songStore = useSongStore();
 
 const serviceStore = useServiceStore();
@@ -27,6 +32,7 @@ const songVerseNumbersSorted = computed(() =>
 
 const topScrollElement = ref<HTMLDivElement>();
 function scrollToTop() {
+  if (props.mobileController) return;
   topScrollElement.value?.scrollIntoView();
 }
 watch(() => serviceStore.selectedItem?.id, scrollToTop);
@@ -89,6 +95,7 @@ const contentItemElements = ref<Array<HTMLElement> | HTMLElement>([]);
 watch(
   () => serviceStore.selectedSubItemId,
   () => {
+    if (props.mobileController) return;
     const itemId = serviceStore.selectedSubItemId;
     if (itemId != null) {
       if (serviceStore.selectedItem?.type == "song") {
@@ -292,7 +299,7 @@ onUnmounted(() => removeKeypressHandler());
 
 <template>
   <form @submit.prevent class="root" style="height: 100%; display: flex; flex-direction: column">
-    <div style="flex: 0">
+    <div v-if="!readonly" style="flex: 0">
       <span style="display: inline-block">
         <button @click="serviceStore.goToPreviousSubItem">Back</button>
         <button @click="serviceStore.goToNextSubItem">Next</button>
@@ -325,7 +332,7 @@ onUnmounted(() => removeKeypressHandler());
       <hr />
     </div>
 
-    <div style="flex: 1 1 auto; height: 4lh">
+    <div style="flex: 1 1 auto" :style="{ height: mobileController ? 'auto' : '4lh' }">
       <div style="height: 100%; overflow: auto">
         <div ref="topScrollElement"></div>
 
@@ -392,7 +399,7 @@ onUnmounted(() => removeKeypressHandler());
       </div>
     </div>
 
-    <div style="flex: 0">
+    <div v-if="!readonly" style="flex: 0">
       <hr />
 
       <span v-if="serviceStore.selectedItem != null" style="display: inline-block">

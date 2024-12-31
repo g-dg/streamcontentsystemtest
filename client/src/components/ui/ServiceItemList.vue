@@ -9,6 +9,11 @@ import {
 import { useInstanceIdStore } from "@/stores/instanceId";
 import { uuid } from "@/helpers/random";
 
+const props = defineProps<{
+  readonly?: boolean;
+  mobileController?: boolean;
+}>();
+
 const serviceStore = useServiceStore();
 const instanceIdStore = useInstanceIdStore();
 
@@ -33,6 +38,7 @@ async function saveService() {
 
 const topScrollElement = ref<HTMLDivElement>();
 function scrollToTop() {
+  if (props.mobileController) return;
   topScrollElement.value?.scrollIntoView();
 }
 
@@ -43,6 +49,7 @@ const instanceId = uuid();
 
 const draggableIndex = ref<number | null>(null);
 function dragHandleEnableDrag(index: number, enable: boolean) {
+  if (props.mobileController) return; // don't enable drag and drop on mobile
   draggableIndex.value = enable ? index : null;
 }
 watch(
@@ -144,6 +151,7 @@ const serviceItemElements = ref<Array<HTMLElement> | HTMLElement>([]);
 watch(
   () => serviceStore.selectedItemIndex,
   () => {
+    if (props.mobileController) return;
     const index = serviceStore.selectedItemIndex;
     if (
       index != null &&
@@ -163,7 +171,7 @@ watch(
 
 <template>
   <form @submit.prevent class="root" style="height: 100%; display: flex; flex-direction: column">
-    <div style="flex: 0">
+    <div v-if="!readonly" style="flex: 0">
       <span style="display: inline-block">
         <button @click="loadService()">Load</button>
         <button @click="saveService()">Save</button>
@@ -213,7 +221,7 @@ watch(
       <hr />
     </div>
 
-    <div style="flex: 1 1 auto; height: 4lh">
+    <div style="flex: 1 1 auto" :style="{ height: mobileController ? 'auto' : '4lh' }">
       <div style="
           height: 100%;
           overflow: auto;
@@ -231,7 +239,7 @@ watch(
           <div :class="{
             'selected-item': serviceStore.selectedItemIndex == index,
           }" style="padding: 0.5lh 0">
-            <span style="padding: 0 1em 0 0">
+            <span v-if="!readonly" style="padding: 0 1em 0 0">
               <button @click.stop="serviceStore.removeItem(index)">Del</button>
 
               <button @click.stop="serviceStore.moveItem(index, -1)" :disabled="index == 0">
