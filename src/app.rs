@@ -6,7 +6,7 @@ use std::{
 
 use axum::{
     extract::{Request, State},
-    http::{header, HeaderValue, Method},
+    http::{header, HeaderValue, Method, StatusCode},
     response::IntoResponse,
     routing::get,
     Router,
@@ -97,21 +97,24 @@ impl App {
                 let uri = format!("{}{}", client_uri_root, request_path_query);
 
                 // get resource from client server
-                let response = reqwest::get(uri).await.unwrap();
-
-                (
-                    [(
-                        header::CONTENT_TYPE,
-                        String::from(
-                            response
-                                .headers()
-                                .get(header::CONTENT_TYPE.as_str())
-                                .map(|content_type| content_type.to_str().unwrap())
-                                .unwrap_or("text/plain"),
-                        ),
-                    )],
-                    response.bytes().await.unwrap(),
-                )
+                if let Ok(response) = reqwest::get(uri).await {
+                    (
+                        [(
+                            header::CONTENT_TYPE,
+                            String::from(
+                                response
+                                    .headers()
+                                    .get(header::CONTENT_TYPE.as_str())
+                                    .map(|content_type| content_type.to_str().unwrap())
+                                    .unwrap_or("text/plain"),
+                            ),
+                        )],
+                        response.bytes().await.unwrap(),
+                    )
+                        .into_response()
+                } else {
+                    StatusCode::SERVICE_UNAVAILABLE.into_response()
+                }
             }
 
             Router::new()
