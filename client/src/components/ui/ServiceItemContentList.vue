@@ -340,7 +340,7 @@ onUnmounted(() => removeKeypressHandler());
           ref="contentItemElements" :data-index="index">
           <label :for="'song_verse_enable_' + verseName">
             <input v-if="serviceStore.selectedItem?.song != undefined" v-model="serviceStore.selectedItem.song.verses"
-              :value="verseName" type="checkbox" :id="'song_verse_enable_' + verseName" style="margin: 0 0.5em 0 1em" />
+              :value="verseName" type="checkbox" :id="'song_verse_enable_' + verseName" :disabled="readonly" style="margin: 0 0.5em 0 1em" />
             <strong style="font-size: 125%; font-weight: bold; padding-right: 1em">
               {{ verseName }}
             </strong>
