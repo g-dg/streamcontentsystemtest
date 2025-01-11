@@ -2,7 +2,14 @@
 import { RouterLink, RouterView } from "vue-router";
 import { computed } from "vue";
 
+import { useDebugStore } from "./stores/debug";
 import router from "./router";
+
+const debugStore = useDebugStore();
+
+if (router.currentRoute.value.query.debug) {
+  debugStore.debugEnabled = true;
+}
 
 const showHeaderFooter = computed(() => {
   if (router.currentRoute.value.matched.length > 0) return false;

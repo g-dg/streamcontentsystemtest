@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 
-import { useSongStore } from "@/stores/song";
 import { useDisplayStateStore } from "@/stores/state";
 import { useServiceStore } from "@/stores/service";
 
-import PreviewSection from "./ui/PreviewSection.vue";
-import SongList from "./songs/SongList.vue";
-import ServiceItemList from "./ui/ServiceItemList.vue";
-import ServiceItemContentList from "./ui/ServiceItemContentList.vue";
-import TitleDescriptionEditor from "./ui/TitleDescriptionEditor.vue";
+import PreviewSection from "./PreviewSection.vue";
+import SongList from "../songs/SongList.vue";
+import ServiceItemList from "./ServiceItemList.vue";
+import ServiceItemContentList from "./ServiceItemContentList.vue";
+import TitleDescriptionEditor from "./TitleDescriptionEditor.vue";
 
-const songStore = useSongStore();
 const displayStateStore = useDisplayStateStore();
 const serviceStore = useServiceStore();
-
-onMounted(() => songStore.loadSongs(false));
 
 /** Confirms whether to leave the page if unsaved changes are present */
 function unsavedChangesHandler(evt: BeforeUnloadEvent) {

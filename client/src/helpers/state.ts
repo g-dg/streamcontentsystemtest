@@ -4,6 +4,7 @@ import { API_URI } from "@/api/api";
 import { sleep } from "@/helpers/sleep";
 import { randomString } from "@/helpers/random";
 import { clone } from "@/helpers/clone";
+import { useDebugStore } from "@/stores/debug";
 
 /** State object */
 export interface CurrentState<T> {
@@ -15,8 +16,10 @@ export interface CurrentState<T> {
 export function useState<T>(
   channel: string,
   defaultContent: T,
-  autoConnect: boolean = true
+  autoConnect: boolean = true,
 ) {
+  const debugStore = useDebugStore();
+
   // Taken from my Rust-Vue state system with authentication removed
 
   const WS_PATH = `api/state/${encodeURIComponent(channel)}`;
@@ -40,9 +43,9 @@ export function useState<T>(
   let _isConnected = ref<boolean>(false);
   let _isDisconnecting = ref<boolean>(false);
 
-  let _debug: boolean = false;
+  let restoreState = ref(false);
 
-  let _pingLoopDelay: number | null = DEFAULT_PING_DELAY;
+  let pingLoopDelay = ref<number | null>(DEFAULT_PING_DELAY);
   let _pingLoopTaskId: Symbol | undefined;
   let _pingLoopPromise: Promise<void> | undefined = undefined;
 
@@ -128,7 +131,7 @@ export function useState<T>(
    * Connects (or reconnects) to the state websocket
    */
   async function connect(reconnect = false): Promise<void> {
-    if (_debug) {
+    if (debugStore.debugEnabled) {
       console.info(`Connecting to "${channel}" state websocket...`);
     }
 
@@ -152,7 +155,7 @@ export function useState<T>(
       try {
         await _connectWs();
       } catch (e) {
-        if (_debug) {
+        if (debugStore.debugEnabled) {
           console.error(
             `Error occurred connecting to "${channel}" state websocket`,
             e
@@ -190,7 +193,7 @@ export function useState<T>(
           _ws?.send(JSON.stringify({ pong: response.ping }));
         }
       } catch (e) {
-        if (_debug) {
+        if (debugStore.debugEnabled) {
           console.error(
             `Error parsing response from "${channel}" state websocket`,
             e
@@ -203,7 +206,7 @@ export function useState<T>(
 
     // set up close listener
     _closeListener = async (evt: CloseEvent) => {
-      if (_debug) {
+      if (debugStore.debugEnabled) {
         console.info(`State websocket "${channel}" closed`, evt);
       }
       // reconnect if we're not closing the connection on our end
@@ -215,7 +218,7 @@ export function useState<T>(
 
     // set up error handler
     _errorListener = async (evt: Event) => {
-      if (_debug) {
+      if (debugStore.debugEnabled) {
         console.error(`Error occurred on "${channel}" state websocket`, evt);
       }
       // reconnect on error
@@ -227,8 +230,10 @@ export function useState<T>(
     await refresh();
 
     // set state if state on server side is not set (i.e. if the server restarted)
-    if (_currentRawState.value.id == "" && existingRawState.id != "") {
-      await _setRawState(existingRawState);
+    if (restoreState.value) {
+      if (_currentRawState.value.id == "" && existingRawState.id != "") {
+        await _setRawState(existingRawState);
+      }
     }
 
     _startPingLoop();
@@ -325,13 +330,9 @@ export function useState<T>(
   }
 
   async function _pingLoop(taskId: Symbol) {
-    while (_pingLoopTaskId == taskId && _pingLoopDelay != null) {
-      if (_pingLoopDelay != null) {
-        await ping();
-        await sleep(_pingLoopDelay);
-      } else {
-        await sleep(DEFAULT_PING_DELAY);
-      }
+    while (_pingLoopTaskId == taskId && pingLoopDelay.value != null) {
+      await ping();
+      await sleep(pingLoopDelay.value);
     }
   }
 
@@ -340,19 +341,14 @@ export function useState<T>(
     await _pingLoopPromise;
   }
 
-  /**
-   * Sets the ping delay
-   */
-  function setPingDelay(ms: number | null) {
-    _pingLoopDelay = ms;
-  }
-
   if (autoConnect) {
     // connect when composable is loaded
     connect();
   }
 
   return {
+    restoreState,
+    pingLoopDelay,
     connect,
     disconnect,
     connected,
@@ -360,6 +356,5 @@ export function useState<T>(
     setState,
     refresh,
     ping,
-    setPingDelay,
   };
 }

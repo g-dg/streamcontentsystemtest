@@ -6,7 +6,16 @@ const router = createRouter({
     {
       name: "home",
       path: "/",
-      component: () => import("@/views/HomeView.vue"),
+      component: () => import("@/views/ControllerView.vue"),
+      meta: {
+        showHeaderFooter: false,
+      },
+    },
+    {
+      name: "controller",
+      path: "/control/:controllerType?",
+      component: () => import("@/views/ControllerView.vue"),
+      props: true,
       meta: {
         showHeaderFooter: false,
       },
@@ -15,11 +24,6 @@ const router = createRouter({
       name: "about",
       path: "/about",
       component: () => import("@/views/AboutView.vue"),
-    },
-    {
-      name: "mobileControl",
-      path: "/control/mobile",
-      component: () => import("@/components/ui/MobileControl.vue"),
     },
     {
       name: "renderer",
@@ -31,6 +35,13 @@ const router = createRouter({
         noTheme: true,
       },
     },
+    {
+      name: "404",
+      path: "/:pathMatch(.*)*",
+      redirect: {
+        name: "home"
+      },
+    }
   ],
 });
 
