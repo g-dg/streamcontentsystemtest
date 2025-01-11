@@ -119,13 +119,13 @@ impl App {
 
             Router::new()
                 .route("/", get(client_proxy_handler))
-                .route("/*path", get(client_proxy_handler))
+                .route("/{*path}", get(client_proxy_handler))
         } else {
             // Serve the static files from the client
             Router::new()
                 .route_service("/", ServeFile::new(&static_file_index))
                 .route_service(
-                    "/*path",
+                    "/{*path}",
                     ServeDir::new(&state.config.static_file_root)
                         .fallback(ServeFile::new(&static_file_index)),
                 )
@@ -140,7 +140,7 @@ impl App {
         };
 
         let router = Router::new()
-            .nest("/", client_router)
+            .merge(client_router)
             // API routes
             .nest(
                 "/api",

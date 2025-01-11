@@ -7,8 +7,8 @@ edition = "2021"
 
 [dependencies]
 argon2 = { version = "0.5.3" }
-axum = { version = "0.7.9", features = ["ws"] }
-axum-extra = { version = "0.9.6", features = ["typed-header"] }
+axum = { version = "0.8.1", features = ["ws"] }
+axum-extra = { version = "0.10.0", features = ["typed-header"] }
 chrono = { version = "0.4.39", features = ["serde"] }
 futures = { version = "0.3.31" }
 r2d2 = { version = "0.8.10" }
@@ -18,14 +18,14 @@ reqwest = { version = "0.12.12", default-features = false, features = ["http2", 
 rusqlite = { version = "0.32.1", features = ["bundled", "functions", "backup", "vtab", "array", "csvtab", "i128_blob", "serialize", "chrono", "serde_json", "uuid"] }
 sanitize-filename = { version = "0.6.0" }
 serde = { version = "1.0.217", features = ["derive"] }
-serde_json = { version = "1.0.134" }
-tokio = { version = "1.42.0", features = ["full"] }
+serde_json = { version = "1.0.135" }
+tokio = { version = "1.43.0", features = ["full"] }
 tokio-stream = { version = "0.1.17" }
 tokio-util = { version = "0.7.13" }
 tower = { version = "0.5.2", features = ["full"] }
 tower-http = { version = "0.6.2", features = ["full"] }
 webbrowser = { version = "1.0.3" }
-uuid = { version = "1.11.0", features = ["v4", "fast-rng", "serde"] }
+uuid = { version = "1.11.1", features = ["v4", "fast-rng", "serde"] }
 
 [profile.release]
 opt-level = 3

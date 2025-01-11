@@ -19,7 +19,7 @@ use super::models::CurrentState;
 
 /// State routes
 pub fn route() -> Router<Arc<AppServices>> {
-    Router::new().route("/:channel", get(handler))
+    Router::new().route("/{:channel}", get(handler))
 }
 
 /// State requests from the client
@@ -60,7 +60,7 @@ pub async fn websocket_handler(socket: WebSocket, state: Arc<AppServices>, chann
     // sends messages to the client from the message queue
     let mut send_task = tokio::spawn(async move {
         while let Some(response) = queue_recv.recv().await {
-            ws_send.send(Message::Text(response)).await.unwrap();
+            ws_send.send(Message::Text(response.into())).await.unwrap();
         }
     });
 

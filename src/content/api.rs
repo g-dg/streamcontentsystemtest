@@ -14,8 +14,8 @@ use crate::app::AppServices;
 pub fn route() -> Router<Arc<AppServices>> {
     Router::new()
         .route("/", get(list_content))
-        .route("/:filename", get(get_content))
-        .route("/:filename", put(set_content))
+        .route("/{:filename}", get(get_content))
+        .route("/{:filename}", put(set_content))
 }
 
 /// Lists all the content files and their contents
