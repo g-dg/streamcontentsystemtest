@@ -18,15 +18,17 @@ export function useState<T>(
   defaultContent: T,
   autoConnect: boolean = true,
 ) {
-  const debugStore = useDebugStore();
-
   // Taken from my Rust-Vue state system with authentication removed
+
+  const debugStore = useDebugStore();
+  const _debug = computed(() => debugStore.debugEnabled);
 
   const WS_PATH = `api/state/${encodeURIComponent(channel)}`;
   const RECONNECT_DELAY = 1000;
   const DEFAULT_PING_DELAY = 1000;
   const STATE_ID_LENGTH = 16;
   const PING_ID_LENGTH = 8;
+  const MAX_REMEMBERED_PREVIOUS_STATES = 256;
 
   let _ws: WebSocket | null = null;
 
@@ -48,6 +50,8 @@ export function useState<T>(
   let pingLoopDelay = ref<number | null>(DEFAULT_PING_DELAY);
   let _pingLoopTaskId: Symbol | undefined;
   let _pingLoopPromise: Promise<void> | undefined = undefined;
+
+  const _previousStateIds: Array<string> = [];
 
   function _waitForMessage<T>(
     extractFunction: (message: any) => T | undefined
@@ -131,7 +135,7 @@ export function useState<T>(
    * Connects (or reconnects) to the state websocket
    */
   async function connect(reconnect = false): Promise<void> {
-    if (debugStore.debugEnabled) {
+    if (_debug.value) {
       console.info(`Connecting to "${channel}" state websocket...`);
     }
 
@@ -155,7 +159,7 @@ export function useState<T>(
       try {
         await _connectWs();
       } catch (e) {
-        if (debugStore.debugEnabled) {
+        if (_debug.value) {
           console.error(
             `Error occurred connecting to "${channel}" state websocket`,
             e
@@ -183,9 +187,14 @@ export function useState<T>(
       try {
         const response = JSON.parse(evt.data);
 
-        // set state if state changed
+        // if state changed
         if (response.state !== undefined) {
-          _currentRawState.value = response.state;
+          // if we haven't seen this state yet, set it
+          if (!_previousStateIds.includes(response.state.id)) {
+            _currentRawState.value = response.state;
+            _previousStateIds.push(response.state.id);
+          }
+          _previousStateIds.splice(0, _previousStateIds.length - MAX_REMEMBERED_PREVIOUS_STATES);
         }
 
         // respond to pings
@@ -193,7 +202,7 @@ export function useState<T>(
           _ws?.send(JSON.stringify({ pong: response.ping }));
         }
       } catch (e) {
-        if (debugStore.debugEnabled) {
+        if (_debug.value) {
           console.error(
             `Error parsing response from "${channel}" state websocket`,
             e
@@ -206,7 +215,7 @@ export function useState<T>(
 
     // set up close listener
     _closeListener = async (evt: CloseEvent) => {
-      if (debugStore.debugEnabled) {
+      if (_debug.value) {
         console.info(`State websocket "${channel}" closed`, evt);
       }
       // reconnect if we're not closing the connection on our end
@@ -218,7 +227,7 @@ export function useState<T>(
 
     // set up error handler
     _errorListener = async (evt: Event) => {
-      if (debugStore.debugEnabled) {
+      if (_debug.value) {
         console.error(`Error occurred on "${channel}" state websocket`, evt);
       }
       // reconnect on error
