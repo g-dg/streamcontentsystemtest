@@ -10,6 +10,8 @@ import { uuid } from "@/helpers/random";
 
 const props = defineProps<{ displayName?: string }>();
 
+const defaultState: DisplayState = { background: false };
+
 const loading = ref(1);
 
 const configStore = useConfigStore();
@@ -25,10 +27,40 @@ const displayConfig = computed(() =>
   configStore.getDisplayConfig(props.displayName ?? "")
 );
 
+/** Maps the display state while applying config like alternate blanking and hide small text */
+function mapDisplayState(state: DisplayState): DisplayState {
+  const alternateBlanking = displayConfig.value.alternate_blanking ?? false;
+  const hideSmallText = displayConfig.value.hide_small_text ?? false;
+
+  const newState = {
+    background: state.background,
+    mainText: state.mainText,
+    subText: state.subText,
+    smallText: state.smallText,
+    song: state.song,
+    songTitle: state.songTitle,
+    attribution: state.attribution,
+  };
+
+  // if hide small text is enabled, hide the small text
+  if (hideSmallText) {
+    newState.smallText = undefined;
+  }
+
+  // if alternate blanking is enabled and nothing is showing, show alternate text
+  if (alternateBlanking) {
+    if ([newState.mainText, newState.subText, newState.smallText, newState.song, newState.songTitle, newState.attribution].every((x) => x == undefined)) {
+      newState.mainText = state.alternateText;
+    }
+  }
+
+  return newState;
+}
+
 const displayStateStore = useDisplayStateStore();
 
 const currentContent = computed<DisplayState | null>(
-  () => displayStateStore.currentState
+  () => mapDisplayState(displayStateStore.currentState)
 );
 
 const route = useRoute();
@@ -54,7 +86,7 @@ const renderDelay = computed(
 );
 
 const delayedContent = ref<DisplayState>(
-  currentContent.value ?? { background: false }
+  currentContent.value ?? defaultState
 );
 
 // schedule content update after render delay
@@ -95,27 +127,8 @@ const transitionElements = ref<Array<HTMLElement>>();
  * Returns whether the states should be treated as the same states
  */
 function isStateSame(a: DisplayState, b: DisplayState): boolean {
-  // if JSON values are the same, then they are the same
-  if (JSON.stringify(a) == JSON.stringify(b)) return true;
-
-  // if alternate blanking is enabled
-  if (displayConfig.value.alternate_blanking) {
-    // if switching between alternate text and first main text, then they are the same
-    if (a.alternateText === b.mainText && a.alternateText != undefined)
-      return true;
-    if (b.alternateText === a.mainText && b.alternateText != undefined)
-      return true;
-
-    // if switching between alternate text and small text when small text is hidden
-    if (
-      a.alternateText === b.alternateText &&
-      (displayConfig.value.hide_small_text ?? false) &&
-      (a.smallText != undefined || b.smallText != undefined)
-    )
-      return true;
-  }
-
-  return false;
+  // since we map the object in a consistent way, we can simply compare the JSON of each object
+  return (JSON.stringify(a) == JSON.stringify(b));
 }
 
 function addContentState(content: DisplayState | null) {
