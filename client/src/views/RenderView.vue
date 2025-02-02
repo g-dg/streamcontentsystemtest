@@ -31,12 +31,14 @@ const displayConfig = computed(() =>
 function mapDisplayState(state: DisplayState): DisplayState {
   const alternateBlanking = displayConfig.value.alternate_blanking ?? false;
   const hideSmallText = displayConfig.value.hide_small_text ?? false;
+  const showOptional = displayConfig.value.show_optional ?? true;
 
   const newState = {
     background: state.background,
     mainText: state.mainText,
     subText: state.subText,
     smallText: state.smallText,
+    optionalText: state.optionalText,
     song: state.song,
     songTitle: state.songTitle,
     attribution: state.attribution,
@@ -49,9 +51,14 @@ function mapDisplayState(state: DisplayState): DisplayState {
 
   // if alternate blanking is enabled and nothing is showing, show alternate text
   if (alternateBlanking) {
-    if ([newState.mainText, newState.subText, newState.smallText, newState.song, newState.songTitle, newState.attribution].every((x) => x == undefined)) {
+    if ([newState.mainText, newState.subText, newState.smallText, newState.optionalText, newState.song, newState.songTitle, newState.attribution].every((x) => x == undefined)) {
       newState.mainText = state.alternateText;
     }
+  }
+
+  // if optional text and show optional is enabled, set main text to optional
+  if (state.optionalText != undefined && showOptional) {
+    newState.mainText = state.optionalText;
   }
 
   return newState;

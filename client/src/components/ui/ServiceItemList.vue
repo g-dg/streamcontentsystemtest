@@ -210,6 +210,14 @@ watch(
             ">
           Small Text
         </button>
+        
+        <button @click="
+          serviceStore.addItem(serviceStore.textItem('optionalText', ''), true)
+          " draggable="true" @dragstart="
+            newItemDragStart($event, serviceStore.textItem('optionalText', ''))
+            ">
+          Optional Text
+        </button>
 
         <span :style="{
           visibility: serviceStore.unsavedChanges ? 'visible' : 'hidden',
@@ -273,9 +281,9 @@ watch(
 
               <em v-else-if="item.type == 'subText'"> &lt; Sub Text &gt; </em>
 
-              <em v-else-if="item.type == 'smallText'">
-                &lt; Small Text &gt;
-              </em>
+              <em v-else-if="item.type == 'smallText'"> &lt; Small Text &gt; </em>
+
+              <em v-else-if="item.type == 'optionalText'"> &lt; Optional Text &gt; </em>
 
               <em v-else> &lt; Unknown &gt; </em>
             </span>

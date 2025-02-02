@@ -156,6 +156,10 @@ Options
 					- Whether to hide the small text item
 					- Default is `false`
 					- Type: boolean
+				- `show_optional`
+					- Whether to show or hide optional text
+					- Default is `true`
+					- Type: boolean
 		- `display_default`
 			- Default display configuration when the current display is not found in the `displays` object
 			- Default is `{}`

@@ -15,6 +15,7 @@ export interface DisplayConfig {
   main_content?: boolean;
   noninteractable?: boolean;
   hide_small_text?: boolean;
+  show_optional?: boolean;
   render_delay?: number;
   fade_speed?: number;
   font_size?: string;

@@ -319,13 +319,10 @@ onUnmounted(() => removeKeypressHandler());
           </template>
           <em v-if="serviceStore.selectedItemType == 'empty'"> Empty </em>
           <em v-if="serviceStore.selectedItemType == 'blank'"> Blank </em>
-          <em v-if="serviceStore.selectedItemType == 'mainText'">
-            Main Text
-          </em>
+          <em v-if="serviceStore.selectedItemType == 'mainText'"> Main Text </em>
           <em v-if="serviceStore.selectedItemType == 'subText'"> Sub Text </em>
-          <em v-if="serviceStore.selectedItemType == 'smallText'">
-            Small Text
-          </em>
+          <em v-if="serviceStore.selectedItemType == 'smallText'"> Small Text </em>
+          <em v-if="serviceStore.selectedItemType == 'optionalText'"> Optional Text </em>
         </span>
       </span>
 
@@ -355,7 +352,7 @@ onUnmounted(() => removeKeypressHandler());
         </div>
 
         <div
-          v-if="(['mainText', 'subText', 'smallText'] as Array<string | undefined>).includes(serviceStore.selectedItemType)"
+          v-if="(['mainText', 'subText', 'smallText', 'optionalText'] as Array<string | undefined>).includes(serviceStore.selectedItemType)"
           ref="contentItemElements" :data-index="0">
           <strong style="font-size: 125%; font-weight: bold; padding-left: 0.5em">
             Text
@@ -416,7 +413,7 @@ onUnmounted(() => removeKeypressHandler());
           <button @click="clearText">Clear</button>
         </template>
 
-        <template v-if="(['mainText', 'subText', 'smallText'] as Array<string | undefined>).includes(serviceStore.selectedItemType) &&
+        <template v-if="(['mainText', 'subText', 'smallText', 'optionalText'] as Array<string | undefined>).includes(serviceStore.selectedItemType) &&
           serviceStore.selectedItem != null
         ">
           <textarea ref="textTextAreaElement" v-model="serviceStore.selectedItem.text" :rows="textLineCount"

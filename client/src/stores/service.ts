@@ -18,7 +18,7 @@ export interface ServiceData {
 /** Service item */
 export interface ServiceItem {
   id: string;
-  type: "empty" | "blank" | "song" | "mainText" | "subText" | "smallText";
+  type: "empty" | "blank" | "song" | "mainText" | "subText" | "smallText" | "optionalText";
   song?: ServiceSong;
   text?: string;
   comment?: string;
@@ -37,7 +37,7 @@ export interface ExportedServiceData {
   description?: string;
 }
 export interface ExportedServiceItem {
-  type: "empty" | "blank" | "song" | "mainText" | "subText" | "smallText";
+  type: "empty" | "blank" | "song" | "mainText" | "subText" | "smallText" | "optionalText";
   song?: ExportedServiceSong;
   text?: string;
   comment?: string;
@@ -131,7 +131,7 @@ export const useServiceStore = defineStore("service", () => {
 
   /** Creates a text item */
   function textItem(
-    type: "mainText" | "subText" | "smallText",
+    type: "mainText" | "subText" | "smallText" | "optionalText",
     text: string
   ): ServiceItem {
     return {
@@ -250,6 +250,12 @@ export const useServiceStore = defineStore("service", () => {
           smallText: selectedItem.value?.text ?? undefined,
           alternateText: alternateText.value,
         };
+      }
+      case "optionalText": {
+        return {
+          background: false,
+          optionalText: selectedItem.value?.text ?? undefined,
+        }
       }
       default: {
         return { background: false };
