@@ -28,7 +28,12 @@ const displayConfig = computed(() =>
 );
 
 /** Maps the display state while applying config like alternate blanking and hide small text */
-function mapDisplayState(state: DisplayState): DisplayState {
+function mapDisplayState(state: DisplayState | null): DisplayState {
+  if (state == null)
+    return {
+      background: false,
+    };
+
   const alternateBlanking = displayConfig.value.alternate_blanking ?? false;
   const hideSmallText = displayConfig.value.hide_small_text ?? false;
   const showOptional = displayConfig.value.show_optional ?? true;

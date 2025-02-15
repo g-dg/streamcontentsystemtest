@@ -20,9 +20,7 @@ export interface DisplayState {
 export const useDisplayStateStore = defineStore("displayState", () => {
   const DISPLAY_STATE_CHANNEL = "display";
 
-  const stateManager = useState<DisplayState>(DISPLAY_STATE_CHANNEL, {
-    background: false,
-  });
+  const stateManager = useState<DisplayState | null>(DISPLAY_STATE_CHANNEL, null);
 
   return stateManager;
 });
