@@ -18,11 +18,14 @@ const props = defineProps<{
 
 // Text shadow is built up by layering multiple shadows over eachother
 const TEXT_SHADOW_LAYERS = 8;
-const textShadow = computed(() =>
-  [...Array(TEXT_SHADOW_LAYERS).keys()]
-    .map(() => `0px 0px calc(${props.fontSize} / 4) black`)
+function generateTextShadow(color: string): string {
+  return [...Array(TEXT_SHADOW_LAYERS).keys()]
+    .map(() => `0px 0px calc(${props.fontSize} / 4) ${color}`)
     .join(",")
-);
+}
+
+const fallbackTextShadow = computed(() => generateTextShadow("#000"));
+const textShadow = computed(() => generateTextShadow(props.displayConfig.background ?? "#000"));
 </script>
 
 <template>
@@ -31,15 +34,16 @@ const textShadow = computed(() =>
     ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
     ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
   ]" :style="{
-      'font-size': fontSize,
-      'background-color':
-        content?.background ?? false ? '#000' : 'rgba(0,0,0,0)',
-      'text-shadow': textShadow,
-      'font-weight': displayConfig.bold == true ? 'bold' : 'normal',
-      'line-height': displayConfig.line_height ?? 1.25,
-    }">
-    <SmallTextRenderer v-if="!displayConfig.hide_small_text" :content="content" :display-config="displayConfig"
-      :font-size="fontSize" class="renderer-item full-size" />
+    'font-size': fontSize,
+    'background-color':
+      content?.background ?? false ? (displayConfig.background ?? '#000') : 'rgba(0,0,0,0)',
+    'color': displayConfig.foreground_color ?? '#fff',
+    'text-shadow': [fallbackTextShadow, textShadow] as any,
+    'font-weight': displayConfig.bold == true ? 'bold' : 'normal',
+    'line-height': displayConfig.line_height ?? 1.25,
+  }">
+    <SmallTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
+      class="renderer-item full-size" />
     <SubTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
       class="renderer-item full-size" />
     <MainTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
@@ -67,7 +71,12 @@ const textShadow = computed(() =>
   height: 100vh;
   overflow: hidden;
   font-family: "Ubuntu", "Liberation Sans", "Arial", sans-serif;
-  color: #fff;
+
+  :deep(::selection) {
+    text-shadow: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
 }
 
 .renderer-is-noninteractable {

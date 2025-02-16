@@ -129,6 +129,11 @@ Options
 					- Default is `transparent`
 					- Type: string
 					- This is passed to the CSS `background` property
+				- `foreground`
+					- Foreground color to use for text
+					- Default is `#fff`
+					- Type: string
+					- This is passed to the CSS `color` property
 				- `bold`
 					- Whether to default all text to bold
 					- Default is `false`

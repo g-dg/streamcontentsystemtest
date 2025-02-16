@@ -20,6 +20,7 @@ export interface DisplayConfig {
   fade_speed?: number;
   font_size?: string;
   background?: string;
+  foreground_color?: string;
   bold?: boolean;
   line_height?: number;
   alternate_blanking?: boolean;
