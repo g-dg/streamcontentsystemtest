@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 
 import {
   useServiceStore,
@@ -124,6 +124,9 @@ function drop(evt: DragEvent, index: number) {
   serviceStore.addItem(data.serviceItem, true, destIndex);
 
   draggableIndex.value = null;
+
+  nextTick(() => dragHoveredIndex.value = null);
+  requestAnimationFrame(() => dragHoveredIndex.value = null);
 }
 
 // resets drag and drop state
@@ -210,7 +213,7 @@ watch(
             ">
           Small Text
         </button>
-        
+
         <button @click="
           serviceStore.addItem(serviceStore.textItem('optionalText', ''), true)
           " draggable="true" @dragstart="
