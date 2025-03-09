@@ -188,10 +188,23 @@ watch(
 );
 
 onMounted(() => loading.value--);
+
+const rendererRootElement = ref<Element>();
+function toggleFullscreen() {
+  if (displayConfig.value.allow_fullscreen != true) return;
+
+  if (document.fullscreenElement == null) {
+    if (rendererRootElement.value?.requestFullscreen)
+      rendererRootElement.value?.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
 </script>
 
 <template>
-  <div v-if="loading == 0" class="full-size" :style="{ background: displayConfig.background ?? 'transparent' }">
+  <div v-if="loading == 0" ref="rendererRootElement" @dblclick="toggleFullscreen" class="full-size"
+    :style="{ background: displayConfig.background ?? 'transparent' }">
     <TransitionGroup name="fade">
       <div v-for="entry in transitionQueue" :key="entry.id" ref="transitionElements" class="full-size transition-fade"
         :style="{ transition: `opacity ${transitionSpeed}ms linear` }">
