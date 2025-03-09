@@ -14,6 +14,7 @@ export interface Config {
 export interface DisplayConfig {
   main_content?: boolean;
   noninteractable?: boolean;
+  allow_fullscreen?: boolean;
   hide_small_text?: boolean;
   show_optional?: boolean;
   render_delay?: number;

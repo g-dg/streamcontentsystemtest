@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 import type { DisplayState } from "@/stores/state";
 
@@ -26,10 +26,23 @@ function generateTextShadow(color: string): string {
 
 const fallbackTextShadow = computed(() => generateTextShadow("#000"));
 const textShadow = computed(() => generateTextShadow(props.displayConfig.background ?? "#000"));
+
+const rendererRootElement = ref<HtmlElement>();
+function toggleFullscreen() {
+  if (props.displayConfig.allow_fullscreen != true) return;
+
+  if (document.fullscreenElement == null) {
+    if (rendererRootElement.value.requestFullscreen)
+      rendererRootElement.value.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
 </script>
 
 <template>
-  <div :class="[
+  <div 
+    ref="rendererRootElement" :class="[
     'renderer',
     ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
     ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
@@ -41,7 +54,7 @@ const textShadow = computed(() => generateTextShadow(props.displayConfig.backgro
     'text-shadow': [fallbackTextShadow, textShadow] as any,
     'font-weight': displayConfig.bold == true ? 'bold' : 'normal',
     'line-height': displayConfig.line_height ?? 1.25,
-  }">
+  }" @dblclick="toggleFullscreen">
     <SmallTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
       class="renderer-item full-size" />
     <SubTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
