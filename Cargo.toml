@@ -1,31 +1,31 @@
 [package]
 name = "garnetdg_streamcontentsystemtest"
-version = "4.0.0"
+version = "4.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 argon2 = { version = "0.5.3" }
-axum = { version = "0.8.1", features = ["ws"] }
-axum-extra = { version = "0.10.0", features = ["typed-header"] }
-chrono = { version = "0.4.39", features = ["serde"] }
+axum = { version = "0.8.4", features = ["ws"] }
+axum-extra = { version = "0.10.1", features = ["typed-header"] }
+chrono = { version = "0.4.41", features = ["serde"] }
 futures = { version = "0.3.31" }
 r2d2 = { version = "0.8.10" }
-r2d2_sqlite = { version = "0.25.0" }
-rand = { version = "0.8.5" }
-reqwest = { version = "0.12.12", default-features = false, features = ["http2", "charset", "gzip", "brotli", "zstd", "deflate", "json", "stream", "cookies", "multipart", "rustls-tls", "rustls-tls-native-roots"] }
-rusqlite = { version = "0.32.1", features = ["bundled", "functions", "backup", "vtab", "array", "csvtab", "i128_blob", "serialize", "chrono", "serde_json", "uuid"] }
+r2d2_sqlite = { version = "0.28.0" }
+rand = { version = "0.9.1" }
+reqwest = { version = "0.12.15", default-features = false, features = ["http2", "charset", "gzip", "brotli", "zstd", "deflate", "json", "stream", "cookies", "multipart", "rustls-tls", "rustls-tls-native-roots"] }
+rusqlite = { version = "0.35.0", features = ["bundled", "functions", "backup", "vtab", "array", "csvtab", "i128_blob", "serialize", "chrono", "serde_json", "uuid"] }
 sanitize-filename = { version = "0.6.0" }
-serde = { version = "1.0.217", features = ["derive"] }
-serde_json = { version = "1.0.135" }
-tokio = { version = "1.43.0", features = ["full"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = { version = "1.0.140" }
+tokio = { version = "1.44.2", features = ["full"] }
 tokio-stream = { version = "0.1.17" }
-tokio-util = { version = "0.7.13" }
+tokio-util = { version = "0.7.15" }
 tower = { version = "0.5.2", features = ["full"] }
 tower-http = { version = "0.6.2", features = ["full"] }
-webbrowser = { version = "1.0.3" }
-uuid = { version = "1.11.1", features = ["v4", "fast-rng", "serde"] }
+webbrowser = { version = "1.0.4" }
+uuid = { version = "1.16.0", features = ["v4", "fast-rng", "serde"] }
 
 [profile.release]
 opt-level = 3
