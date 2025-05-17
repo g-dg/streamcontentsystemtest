@@ -6,26 +6,19 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-argon2 = { version = "0.5.3" }
 axum = { version = "0.8.4", features = ["ws"] }
 axum-extra = { version = "0.10.1", features = ["typed-header"] }
-chrono = { version = "0.4.41", features = ["serde"] }
 futures = { version = "0.3.31" }
-r2d2 = { version = "0.8.10" }
-r2d2_sqlite = { version = "0.28.0" }
-rand = { version = "0.9.1" }
 reqwest = { version = "0.12.15", default-features = false, features = ["http2", "charset", "gzip", "brotli", "zstd", "deflate", "json", "stream", "cookies", "multipart", "rustls-tls", "rustls-tls-native-roots"] }
-rusqlite = { version = "0.35.0", features = ["bundled", "functions", "backup", "vtab", "array", "csvtab", "i128_blob", "serialize", "chrono", "serde_json", "uuid"] }
 sanitize-filename = { version = "0.6.0" }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = { version = "1.0.140" }
-tokio = { version = "1.44.2", features = ["full"] }
+tokio = { version = "1.45.0", features = ["full"] }
 tokio-stream = { version = "0.1.17" }
 tokio-util = { version = "0.7.15" }
 tower = { version = "0.5.2", features = ["full"] }
-tower-http = { version = "0.6.2", features = ["full"] }
+tower-http = { version = "0.6.4", features = ["full"] }
 webbrowser = { version = "1.0.4" }
-uuid = { version = "1.16.0", features = ["v4", "fast-rng", "serde"] }
 
 [profile.release]
 opt-level = 3
