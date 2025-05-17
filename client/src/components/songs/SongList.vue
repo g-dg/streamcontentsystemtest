@@ -96,7 +96,7 @@ function dragEnd() {
 </script>
 
 <template>
-  <form @submit.prevent class="root" style="height: 100%; display: flex; flex-direction: column">
+  <div style="height: 100%; display: flex; flex-direction: column">
     <div style="flex: 0">
       <span style="display: inline-block">
         <button @click="songStore.loadSongs()">Reload</button>
@@ -120,7 +120,7 @@ function dragEnd() {
         </div>
       </div>
     </div>
-  </form>
+  </div>
 </template>
 
 <style lang="scss" scoped></style>

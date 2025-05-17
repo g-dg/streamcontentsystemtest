@@ -298,21 +298,9 @@ onUnmounted(() => removeKeypressHandler());
 </script>
 
 <template>
-  <form @submit.prevent class="root" style="height: 100%; display: flex; flex-direction: column">
+  <div style="height: 100%; display: flex; flex-direction: column">
     <div v-if="!readonly" style="flex: 0">
       <span style="display: inline-block">
-        <button @click="serviceStore.goToPreviousSubItem">Back</button>
-        <button @click="serviceStore.goToNextSubItem">Next</button>
-
-        &nbsp;
-
-        <button @click="serviceStore.setEmptyScreen">Empty</button>
-        <button @click="serviceStore.setBlankScreen">Blank</button>
-
-        &nbsp;
-
-        <button @click="selectAll">Clear Selection</button>
-
         <span style="margin-inline-start: 0.5em">
           <template v-if="serviceStore.selectedItemType == 'song'">
             {{ serviceStore.selectedItem?.song?.title }}
@@ -337,7 +325,8 @@ onUnmounted(() => removeKeypressHandler());
           ref="contentItemElements" :data-index="index">
           <label :for="'song_verse_enable_' + verseName">
             <input v-if="serviceStore.selectedItem?.song != undefined" v-model="serviceStore.selectedItem.song.verses"
-              :value="verseName" type="checkbox" :id="'song_verse_enable_' + verseName" :disabled="readonly" style="margin: 0 0.5em 0 1em" />
+              :value="verseName" type="checkbox" :id="'song_verse_enable_' + verseName" :disabled="readonly"
+              style="margin: 0 0.5em 0 1em" />
             <strong style="font-size: 125%; font-weight: bold; padding-right: 1em">
               {{ verseName }}
             </strong>
@@ -429,7 +418,7 @@ onUnmounted(() => removeKeypressHandler());
         </template>
       </div>
     </div>
-  </form>
+  </div>
 </template>
 
 <style lang="scss" scoped>

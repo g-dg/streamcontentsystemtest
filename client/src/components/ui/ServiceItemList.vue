@@ -173,65 +173,7 @@ watch(
 </script>
 
 <template>
-  <form @submit.prevent class="root" style="height: 100%; display: flex; flex-direction: column">
-    <div v-if="!readonly" style="flex: 0">
-      <span style="display: inline-block">
-        <button @click="loadService()">Load</button>
-        <button @click="saveService()">Save</button>
-        &nbsp;
-
-        <button @click="serviceStore.addItem(serviceStore.emptyItem(), true)" draggable="true"
-          @dragstart="newItemDragStart($event, serviceStore.emptyItem())">
-          Empty
-        </button>
-
-        <button @click="serviceStore.addItem(serviceStore.blankItem(), true)" draggable="true"
-          @dragstart="newItemDragStart($event, serviceStore.blankItem())">
-          Blank
-        </button>
-
-        <button @click="
-          serviceStore.addItem(serviceStore.textItem('mainText', ''), true)
-          " draggable="true" @dragstart="
-            newItemDragStart($event, serviceStore.textItem('mainText', ''))
-            ">
-          Main Text
-        </button>
-
-        <button @click="
-          serviceStore.addItem(serviceStore.textItem('subText', ''), true)
-          " draggable="true" @dragstart="
-            newItemDragStart($event, serviceStore.textItem('subText', ''))
-            ">
-          Sub Text
-        </button>
-
-        <button @click="
-          serviceStore.addItem(serviceStore.textItem('smallText', ''), true)
-          " draggable="true" @dragstart="
-            newItemDragStart($event, serviceStore.textItem('smallText', ''))
-            ">
-          Small Text
-        </button>
-
-        <button @click="
-          serviceStore.addItem(serviceStore.textItem('optionalText', ''), true)
-          " draggable="true" @dragstart="
-            newItemDragStart($event, serviceStore.textItem('optionalText', ''))
-            ">
-          Optional Text
-        </button>
-
-        <span :style="{
-          visibility: serviceStore.unsavedChanges ? 'visible' : 'hidden',
-        }">
-          <em><strong> Unsaved Changes! </strong></em>
-        </span>
-      </span>
-
-      <hr />
-    </div>
-
+  <div style="height: 100%; display: flex; flex-direction: column">
     <div style="flex: 1 1 auto" :style="{ height: mobileController ? 'auto' : '4lh' }">
       <div style="
           height: 100%;
@@ -304,7 +246,7 @@ watch(
         </div>
       </div>
     </div>
-  </form>
+  </div>
 </template>
 
 <style lang="scss" scoped>
