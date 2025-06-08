@@ -7,6 +7,7 @@ import {
 } from "@/stores/service";
 import { useInstanceIdStore } from "@/stores/instanceId";
 import { useDisplayStateStore } from "@/stores/state";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const props = defineProps<{
   readonly?: boolean;
@@ -43,6 +44,83 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
   evt.dataTransfer.setData("application/json", JSON.stringify(data));
   evt.dataTransfer.dropEffect = "move";
 }
+
+const displayKeyboardBlanked = ref(false);
+
+function addKeypressHandler() {
+  document.addEventListener("keydown", keypressHandler);
+}
+function removeKeypressHandler() {
+  document.removeEventListener("keydown", keypressHandler);
+}
+
+function keypressHandler(evt: KeyboardEvent) {
+  if (evt.target == document.body) {
+    if (!evt.shiftKey && !evt.ctrlKey && !evt.altKey && !evt.metaKey) {
+      switch (evt.key) {
+        case "ArrowRight":
+        case "ArrowDown":
+        case " ":
+        case "Enter":
+        case "PageDown":
+        case "n":
+          evt.preventDefault();
+          serviceStore.goToNextSubItem();
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+        case "Backspace":
+        case "PageUp":
+        case "p":
+          evt.preventDefault();
+          serviceStore.goToPreviousSubItem();
+          break;
+        case "Home":
+          evt.preventDefault();
+          serviceStore.goToFirstSubItem();
+          break;
+        case "End":
+          evt.preventDefault();
+          serviceStore.goToLastSubItem();
+          break;
+        case ".":
+        case "b":
+          evt.preventDefault();
+          if (
+            !displayKeyboardBlanked.value ||
+            serviceStore.selectedItem == null
+          ) {
+            serviceStore.setBlankScreen();
+            displayKeyboardBlanked.value = true;
+          } else {
+            serviceStore.showCurrentItem();
+            displayKeyboardBlanked.value = false;
+          }
+          break;
+        case ",":
+        case "w":
+          evt.preventDefault();
+          if (
+            !displayKeyboardBlanked.value ||
+            serviceStore.selectedItem == null
+          ) {
+            serviceStore.setEmptyScreen();
+            displayKeyboardBlanked.value = true;
+          } else {
+            serviceStore.showCurrentItem();
+            displayKeyboardBlanked.value = false;
+          }
+          break;
+      }
+      if (evt.key.length == 1) {
+        evt.preventDefault();
+      }
+    }
+  }
+}
+
+onMounted(() => addKeypressHandler());
+onUnmounted(() => removeKeypressHandler());
 
 const appFullName = __APP_NAME_FULL__;
 const appVersion = __APP_VERSION__;

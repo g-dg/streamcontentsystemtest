@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 
 import { natcasecmp } from "@/helpers/sort";
 import { useServiceStore } from "@/stores/service";
@@ -81,13 +81,6 @@ function clearText() {
 function verseIsEnabled(verse: string): boolean {
   const enabledSongVerses = serviceStore.selectedItem?.song?.verses ?? [];
   return enabledSongVerses.length == 0 || enabledSongVerses.includes(verse);
-}
-
-// enable all song verses
-function selectAll() {
-  if (serviceStore.selectedItem?.song?.verses != undefined) {
-    serviceStore.selectedItem.song.verses = [];
-  }
 }
 
 // scroll selected item into view
@@ -219,82 +212,6 @@ function setSelectedVersesFromVerseString() {
 }
 watch(() => serviceStore.selectedItem?.text, setSelectedVersesFromVerseString);
 
-const displayKeyboardBlanked = ref(false);
-
-function addKeypressHandler() {
-  document.addEventListener("keydown", keypressHandler);
-}
-function removeKeypressHandler() {
-  document.removeEventListener("keydown", keypressHandler);
-}
-
-function keypressHandler(evt: KeyboardEvent) {
-  if (evt.target == document.body) {
-    if (!evt.shiftKey && !evt.ctrlKey && !evt.altKey && !evt.metaKey) {
-      switch (evt.key) {
-        case "ArrowRight":
-        case "ArrowDown":
-        case " ":
-        case "Enter":
-        case "PageDown":
-        case "n":
-          evt.preventDefault();
-          serviceStore.goToNextSubItem();
-          break;
-        case "ArrowLeft":
-        case "ArrowUp":
-        case "Backspace":
-        case "PageUp":
-        case "p":
-          evt.preventDefault();
-          serviceStore.goToPreviousSubItem();
-          break;
-        case "Home":
-          evt.preventDefault();
-          serviceStore.goToFirstSubItem();
-          break;
-        case "End":
-          evt.preventDefault();
-          serviceStore.goToLastSubItem();
-          break;
-        case ".":
-        case "b":
-          evt.preventDefault();
-          if (
-            !displayKeyboardBlanked.value ||
-            serviceStore.selectedItem == null
-          ) {
-            serviceStore.setBlankScreen();
-            displayKeyboardBlanked.value = true;
-          } else {
-            serviceStore.showCurrentItem();
-            displayKeyboardBlanked.value = false;
-          }
-          break;
-        case ",":
-        case "w":
-          evt.preventDefault();
-          if (
-            !displayKeyboardBlanked.value ||
-            serviceStore.selectedItem == null
-          ) {
-            serviceStore.setEmptyScreen();
-            displayKeyboardBlanked.value = true;
-          } else {
-            serviceStore.showCurrentItem();
-            displayKeyboardBlanked.value = false;
-          }
-          break;
-      }
-      if (evt.key.length == 1) {
-        evt.preventDefault();
-      }
-    }
-  }
-}
-
-onMounted(() => addKeypressHandler());
-onUnmounted(() => removeKeypressHandler());
 </script>
 
 <template>
