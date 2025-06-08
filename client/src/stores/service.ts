@@ -11,8 +11,7 @@ import { useConfigStore } from "./config";
 /** Service data */
 export interface ServiceData {
   serviceItems: Array<ServiceItem>;
-  title?: string;
-  description?: string;
+  placeholders: Array<Placeholder>;
 }
 
 /** Service item */
@@ -31,10 +30,14 @@ export interface ServiceSong {
   verses: Array<string>;
 }
 
+export interface Placeholder {
+  name: string;
+  value: string;
+}
+
 export interface ExportedServiceData {
-  serviceItems: Array<ExportedServiceItem>;
-  title?: string;
-  description?: string;
+  serviceItems?: Array<ExportedServiceItem>;
+  placeholders?: Array<ExportedPlaceholder>;
 }
 export interface ExportedServiceItem {
   type: "empty" | "blank" | "song" | "mainText" | "subText" | "smallText" | "optionalText";
@@ -46,6 +49,10 @@ export interface ExportedServiceItem {
 export interface ExportedServiceSong {
   title: string;
   verses: Array<string>;
+}
+export interface ExportedPlaceholder {
+  name: string;
+  value: string;
 }
 
 /** Data for drag and drop */
@@ -67,7 +74,10 @@ export const useServiceStore = defineStore("service", () => {
   configStore.loadConfig();
 
   /** Service data */
-  const serviceData = ref<ServiceData>({ serviceItems: [] });
+  const serviceData = ref<ServiceData>({
+    serviceItems: [],
+    placeholders: [],
+  });
 
   /** Copy of service data used to detect unsaved changes */
   const savedServiceData = ref<string>(JSON.stringify(serviceData.value));
@@ -500,10 +510,8 @@ export const useServiceStore = defineStore("service", () => {
         if (!item.enabled) ret.enabled = false;
         return ret;
       }),
+      placeholders: serviceData.placeholders,
     };
-    if (serviceData.title != undefined) ret.title = serviceData.title;
-    if (serviceData.description != undefined)
-      ret.description = serviceData.description;
     return ret;
   }
 
@@ -511,7 +519,7 @@ export const useServiceStore = defineStore("service", () => {
     serviceData: ExportedServiceData
   ): ServiceData {
     let ret: ServiceData = {
-      serviceItems: serviceData.serviceItems.map((item) => {
+      serviceItems: serviceData.serviceItems?.map((item) => {
         let ret: ServiceItem = {
           id: uuid(),
           type: item.type,
@@ -527,11 +535,9 @@ export const useServiceStore = defineStore("service", () => {
         if (item.text != undefined) ret.text = item.text;
         if (item.comment != undefined) ret.comment = item.comment;
         return ret;
-      }),
+      }) ?? [],
+      placeholders: serviceData.placeholders ?? [],
     };
-    if (serviceData.title != undefined) ret.title = serviceData.title;
-    if (serviceData.description != undefined)
-      ret.description = serviceData.description;
     return ret;
   }
 

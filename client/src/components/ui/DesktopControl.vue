@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 
-import { useDisplayStateStore } from "@/stores/state";
 import { useServiceStore } from "@/stores/service";
 
 import PreviewSection from "./PreviewSection.vue";
 import SongList from "../songs/SongList.vue";
+import PlaceholderList from "./PlaceholderList.vue";
 import ServiceItemList from "./ServiceItemList.vue";
 import ServiceItemContentList from "./ServiceItemContentList.vue";
-import TitleDescriptionEditor from "./TitleDescriptionEditor.vue";
 import ControlHeader from "./ControlHeader.vue";
 
 const serviceStore = useServiceStore();
@@ -26,9 +25,6 @@ function setupUnsavedChangesHandler() {
   window.addEventListener("beforeunload", unsavedChangesHandler);
 }
 onMounted(setupUnsavedChangesHandler);
-
-const appFullName = __APP_NAME_FULL__;
-const appCopyright = __APP_COPYRIGHT__;
 </script>
 
 <template>
@@ -52,11 +48,12 @@ const appCopyright = __APP_COPYRIGHT__;
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
         <div style="flex: 1">
-          <ServiceItemList />
+          <PlaceholderList />
         </div>
-        <div style="flex: 0">
-          <hr />
-          <TitleDescriptionEditor />
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column">
+        <div style="flex: 1">
+          <ServiceItemList />
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
