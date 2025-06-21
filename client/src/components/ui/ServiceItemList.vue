@@ -18,14 +18,14 @@ function selectIndex(index: number) {
 }
 
 // data for drag and drop
-const draggableIndex = ref<number | null>(null);
+const draggableIndex = ref<number | undefined>(undefined);
 function dragHandleEnableDrag(index: number, enable: boolean) {
   if (props.mobileController) return; // don't enable drag and drop on mobile
-  draggableIndex.value = enable ? index : null;
+  draggableIndex.value = enable ? index : undefined;
 }
 watch(
   computed(() => serviceStore.serviceData.serviceItems),
-  () => (draggableIndex.value = null)
+  () => (draggableIndex.value = undefined)
 );
 
 // handles drag and drop start
@@ -51,26 +51,26 @@ function dragOver(evt: DragEvent) {
 function drop(evt: DragEvent, index: number) {
   const data = JSON.parse(
     evt.dataTransfer?.getData("application/json") ?? JSON.stringify(null)
-  ) as ServiceItemDragDropData | null;
-  if (data == null) return;
+  ) as ServiceItemDragDropData | undefined;
+  if (data == undefined) return;
   evt.preventDefault();
 
   // remove source item only if source index is provided
-  if (data.srcIndex != null) {
+  if (data.srcIndex != undefined) {
     serviceStore.removeItem(data.srcIndex);
   }
 
   // insert item at new index
   serviceStore.addItem(data.serviceItem, true, index);
 
-  draggableIndex.value = null;
+  draggableIndex.value = undefined;
 
   console.debug(JSON.parse(JSON.stringify(serviceStore.serviceData.serviceItems)));
 }
 
 // resets drag and drop state
 function dragEnd(evt: DragEvent, index: number) {
-  draggableIndex.value = null;
+  draggableIndex.value = undefined;
 }
 
 // scroll selected item into view
@@ -81,9 +81,9 @@ watch(
     if (props.mobileController) return;
     const index = serviceStore.selectedItemIndex;
     if (
-      index != null &&
+      index != undefined &&
       typeof serviceItemElements.value == "object" &&
-      serviceItemElements.value != null &&
+      serviceItemElements.value != undefined &&
       Array.isArray(serviceItemElements.value)
     ) {
       serviceItemElements.value

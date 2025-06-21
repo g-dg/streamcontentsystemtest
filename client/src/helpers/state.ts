@@ -30,16 +30,16 @@ export function useState<T>(
   const PING_ID_LENGTH = 8;
   const MAX_REMEMBERED_PREVIOUS_STATES = 256;
 
-  let _ws: WebSocket | null = null;
+  let _ws: WebSocket | undefined = undefined;
 
   const _currentRawState = shallowRef<CurrentState<T>>({
     id: "",
     content: defaultContent,
   });
 
-  let _messageListener: ((evt: MessageEvent<any>) => void) | null = null;
-  let _closeListener: ((evt: CloseEvent) => void) | null = null;
-  let _errorListener: ((evt: Event) => void) | null = null;
+  let _messageListener: ((evt: MessageEvent<any>) => void) | undefined = undefined;
+  let _closeListener: ((evt: CloseEvent) => void) | undefined = undefined;
+  let _errorListener: ((evt: Event) => void) | undefined = undefined;
 
   let _isConnecting = ref<boolean>(false);
   let _isConnected = ref<boolean>(false);
@@ -47,7 +47,7 @@ export function useState<T>(
 
   let restoreState = ref(false);
 
-  let pingLoopDelay = ref<number | null>(DEFAULT_PING_DELAY);
+  let pingLoopDelay = ref<number | undefined>(DEFAULT_PING_DELAY);
   let _pingLoopTaskId: Symbol | undefined;
   let _pingLoopPromise: Promise<void> | undefined = undefined;
 
@@ -155,7 +155,7 @@ export function useState<T>(
     _isDisconnecting.value = false;
 
     // connect
-    while (_ws == null && !_isDisconnecting.value) {
+    while (_ws == undefined && !_isDisconnecting.value) {
       try {
         await _connectWs();
       } catch (e) {
@@ -165,7 +165,7 @@ export function useState<T>(
             e
           );
         }
-        _ws = null;
+        _ws = undefined;
         await sleep(RECONNECT_DELAY);
       }
     }
@@ -174,7 +174,7 @@ export function useState<T>(
       return;
     }
 
-    if (_ws == null) {
+    if (_ws == undefined) {
       throw new Error(`Could not connect to "${channel}" state websocket`);
     }
 
@@ -263,7 +263,7 @@ export function useState<T>(
     _ws?.removeEventListener("close", _closeListener!);
     _ws?.removeEventListener("error", _errorListener!);
     _ws?.close();
-    _ws = null;
+    _ws = undefined;
   }
 
   /**
@@ -339,7 +339,7 @@ export function useState<T>(
   }
 
   async function _pingLoop(taskId: Symbol) {
-    while (_pingLoopTaskId == taskId && pingLoopDelay.value != null) {
+    while (_pingLoopTaskId == taskId && pingLoopDelay.value != undefined) {
       await ping();
       await sleep(pingLoopDelay.value);
     }

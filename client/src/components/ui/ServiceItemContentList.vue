@@ -20,9 +20,9 @@ configStore.loadConfig();
 
 const song = computed(() =>
   serviceStore.selectedItem?.type == "song" &&
-    serviceStore.selectedItem?.song?.title != null
+    serviceStore.selectedItem?.song?.title != undefined
     ? songStore.songs[serviceStore.selectedItem.song.title]
-    : null
+    : undefined
 );
 
 const songVerses = computed(() => song.value?.verses);
@@ -37,8 +37,8 @@ function scrollToTop() {
 }
 watch(() => serviceStore.selectedItem?.id, scrollToTop);
 
-const textTextAreaElement = ref<HTMLTextAreaElement | null>(null);
-const textCopyButtonElement = ref<HTMLButtonElement | null>(null);
+const textTextAreaElement = ref<HTMLTextAreaElement | undefined>(undefined);
+const textCopyButtonElement = ref<HTMLButtonElement | undefined>(undefined);
 
 const textCharCount = computed(
   () =>
@@ -90,13 +90,13 @@ watch(
   () => {
     if (props.mobileController) return;
     const itemId = serviceStore.selectedSubItemId;
-    if (itemId != null) {
+    if (itemId != undefined) {
       if (serviceStore.selectedItem?.type == "song") {
         const verseIndex = songVerseNumbersSorted.value.indexOf(itemId);
         if (
           verseIndex != -1 &&
           typeof contentItemElements.value == "object" &&
-          contentItemElements.value != null &&
+          contentItemElements.value != undefined &&
           Array.isArray(contentItemElements.value)
         ) {
           contentItemElements.value
@@ -238,7 +238,7 @@ watch(() => serviceStore.selectedItem?.text, setSelectedVersesFromVerseString);
       <div style="height: 100%; overflow: auto">
         <div ref="topScrollElement"></div>
 
-        <div v-if="songVerses != null" v-for="(verseName, index) in songVerseNumbersSorted" :key="verseName"
+        <div v-if="songVerses != undefined" v-for="(verseName, index) in songVerseNumbersSorted" :key="verseName"
           ref="contentItemElements" :data-index="index">
           <label :for="'song_verse_enable_' + verseName">
             <input v-if="serviceStore.selectedItem?.song != undefined" v-model="serviceStore.selectedItem.song.verses"
@@ -296,7 +296,7 @@ watch(() => serviceStore.selectedItem?.text, setSelectedVersesFromVerseString);
           <hr />
         </div>
 
-        <div v-if="serviceStore.selectedItem == null" style="text-align: center">
+        <div v-if="serviceStore.selectedItem == undefined" style="text-align: center">
           <em> No item is selected </em>
         </div>
       </div>
@@ -305,7 +305,7 @@ watch(() => serviceStore.selectedItem?.text, setSelectedVersesFromVerseString);
     <div v-if="!readonly" style="flex: 0">
       <hr />
 
-      <span v-if="serviceStore.selectedItem != null" style="display: inline-block">
+      <span v-if="serviceStore.selectedItem != undefined" style="display: inline-block">
         Name:
         <input v-model="serviceStore.selectedItem.comment" type="text" />
       </span>
@@ -313,14 +313,14 @@ watch(() => serviceStore.selectedItem?.text, setSelectedVersesFromVerseString);
       <div>
         <template v-if="
           serviceStore.selectedItemType == 'song' &&
-          serviceStore.selectedItem != null
+          serviceStore.selectedItem != undefined
         ">
           <input v-model="serviceStore.selectedItem.text" type="text" placeholder="Song Verses" style="width: 100%" />
           <button @click="clearText">Clear</button>
         </template>
 
         <template v-if="(['mainText', 'subText', 'smallText', 'optionalText'] as Array<string | undefined>).includes(serviceStore.selectedItemType) &&
-          serviceStore.selectedItem != null
+          serviceStore.selectedItem != undefined
         ">
           <textarea ref="textTextAreaElement" v-model="serviceStore.selectedItem.text" :rows="textLineCount"
             placeholder="Content" style="width: 100%"></textarea>

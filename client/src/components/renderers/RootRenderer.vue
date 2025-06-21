@@ -11,7 +11,7 @@ import SubTextRenderer from "@/components/renderers/SubTextRenderer.vue";
 import type { DisplayConfig } from "@/stores/config";
 
 const props = defineProps<{
-  content: DisplayState | null;
+  content: DisplayState | undefined;
   displayConfig: DisplayConfig;
   fontSize: string;
 }>();

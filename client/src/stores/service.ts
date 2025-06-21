@@ -57,8 +57,8 @@ export interface ExportedPlaceholder {
 
 /** Data for service drag and drop */
 export interface ServiceItemDragDropData {
-  srcIndex: number | null;
   serviceItem: ServiceItem;
+  srcIndex: number | undefined;
 }
 
 export interface PlaceholderDragDropData {
@@ -90,25 +90,25 @@ export const useServiceStore = defineStore("service", () => {
   );
 
   /** Selected item index */
-  const selectedItemIndex = ref<number | null>(null);
+  const selectedItemIndex = ref<number | undefined>(undefined);
   /** Selected sub item id */
-  const selectedSubItemId = ref<string | null>(null);
+  const selectedSubItemId = ref<string | undefined>(undefined);
 
   watch(
     selectedItemIndex,
-    (newIndex: number | null, oldIndex: number | null) => {
+    (newIndex: number | undefined, oldIndex: number | undefined) => {
       // unselect sub item if different item is selected
-      if (newIndex != null && newIndex != oldIndex) {
-        selectedSubItemId.value = null;
+      if (newIndex != undefined && newIndex != oldIndex) {
+        selectedSubItemId.value = undefined;
       }
     }
   );
 
   /** Currently selected item */
   const selectedItem = computed(() =>
-    selectedItemIndex.value != null
+    selectedItemIndex.value != undefined
       ? serviceData.value.serviceItems[selectedItemIndex.value]
-      : null
+      : undefined
   );
 
   const selectedItemType = computed(() => selectedItem.value?.type);
@@ -159,11 +159,11 @@ export const useServiceStore = defineStore("service", () => {
   function addItem(
     item: ServiceItem,
     select: boolean = true,
-    index: number | null = null
+    index: number | undefined = undefined
   ) {
     const insertIndex =
       index ??
-      (selectedItemIndex.value != null
+      (selectedItemIndex.value != undefined
         ? selectedItemIndex.value + 1
         : serviceData.value.serviceItems.length);
     serviceData.value.serviceItems.splice(insertIndex, 0, item);
@@ -175,11 +175,11 @@ export const useServiceStore = defineStore("service", () => {
   /** Remove item by index */
   function removeItem(index: number) {
     if (index == selectedItemIndex.value) {
-      selectedSubItemId.value = null;
-      selectedItemIndex.value = null;
+      selectedSubItemId.value = undefined;
+      selectedItemIndex.value = undefined;
     }
-    if (selectedItemIndex.value != null && index < selectedItemIndex.value) {
-      selectedSubItemId.value = null;
+    if (selectedItemIndex.value != undefined && index < selectedItemIndex.value) {
+      selectedSubItemId.value = undefined;
       selectedItemIndex.value = Math.max(0, selectedItemIndex.value - 1);
     }
     serviceData.value.serviceItems.splice(index, 1);
@@ -204,8 +204,8 @@ export const useServiceStore = defineStore("service", () => {
 
   /** Remove all items from service */
   function clearService() {
-    selectedSubItemId.value = null;
-    selectedItemIndex.value = null;
+    selectedSubItemId.value = undefined;
+    selectedItemIndex.value = undefined;
     serviceData.value.serviceItems = [];
   }
 
@@ -227,9 +227,9 @@ export const useServiceStore = defineStore("service", () => {
       }
       case "song": {
         const song =
-          selectedItem.value?.song?.title != null
+          selectedItem.value?.song?.title != undefined
             ? songStore.songs[selectedItem.value.song.title]
-            : null;
+            : undefined;
         const songVerses = song?.verses;
         const verseContent =
           (songVerses ?? {})[selectedSubItemId.value ?? ""] ?? undefined;
@@ -325,19 +325,19 @@ export const useServiceStore = defineStore("service", () => {
   });
 
   function getAdjacentEnabledSubItem(
-    itemIndex: number | null,
-    subItemId: string | null,
+    itemIndex: number | undefined,
+    subItemId: string | undefined,
     step: -1 | 1
   ): {
     item: number;
     subitem: string;
-  } | null {
+  } | undefined {
     const index = allItemList.value.findIndex(
       (testItem) => testItem.item == itemIndex && testItem.subitem == subItemId
     );
 
     if (index == -1) {
-      return null;
+      return undefined;
     }
 
     for (
@@ -351,7 +351,7 @@ export const useServiceStore = defineStore("service", () => {
       }
     }
 
-    return null;
+    return undefined;
   }
 
   async function goToNextSubItem() {
@@ -361,7 +361,7 @@ export const useServiceStore = defineStore("service", () => {
       1
     );
 
-    if (nextItem != null) {
+    if (nextItem != undefined) {
       await selectAndShowItem(nextItem.subitem, nextItem.item);
     }
   }
@@ -373,7 +373,7 @@ export const useServiceStore = defineStore("service", () => {
       -1
     );
 
-    if (previousItem != null) {
+    if (previousItem != undefined) {
       await selectAndShowItem(previousItem.subitem, previousItem.item);
     }
   }
@@ -397,7 +397,7 @@ export const useServiceStore = defineStore("service", () => {
   }
 
   async function showCurrentItem() {
-    if (selectedSubItemId.value != null && selectedItemIndex.value != null) {
+    if (selectedSubItemId.value != undefined && selectedItemIndex.value != undefined) {
       await selectAndShowItem(selectedSubItemId.value, selectedItemIndex.value);
     }
   }
@@ -420,7 +420,7 @@ export const useServiceStore = defineStore("service", () => {
           // basic validation
           if (
             typeof fileContent != "object" ||
-            fileContent == null ||
+            fileContent == undefined ||
             typeof fileContent.serviceItems != "object" ||
             !Array.isArray(fileContent.serviceItems)
           ) {
@@ -429,8 +429,8 @@ export const useServiceStore = defineStore("service", () => {
           }
 
           // unselect everything
-          selectedItemIndex.value = null;
-          selectedSubItemId.value = null;
+          selectedItemIndex.value = undefined;
+          selectedSubItemId.value = undefined;
 
           const convertedServiceData = convertImportToInternal(fileContent);
 

@@ -33,7 +33,7 @@ export const useConfigStore = defineStore("config", () => {
   /** Client config from server */
   const config = computed(() => _config.value);
 
-  let loadPromise: Promise<void> | null = null;
+  let loadPromise: Promise<void> | undefined = undefined;
 
   /** Loads config from server */
   async function _loadConfig() {
@@ -46,7 +46,7 @@ export const useConfigStore = defineStore("config", () => {
 
   /** Load config from server. If we're already loading the config, wait for it to finish */
   function loadConfig() {
-    if (loadPromise == null) {
+    if (loadPromise == undefined) {
       loadPromise = _loadConfig();
     }
     return loadPromise;

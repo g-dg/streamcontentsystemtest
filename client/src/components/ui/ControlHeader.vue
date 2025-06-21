@@ -33,7 +33,7 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
   if (evt.dataTransfer == null) return;
 
   const data: ServiceItemDragDropData = {
-    srcIndex: null,
+    srcIndex: undefined,
     serviceItem: newItem,
   };
 
@@ -84,7 +84,7 @@ function keypressHandler(evt: KeyboardEvent) {
           evt.preventDefault();
           if (
             !displayKeyboardBlanked.value ||
-            serviceStore.selectedItem == null
+            serviceStore.selectedItem == undefined
           ) {
             serviceStore.setBlankScreen();
             displayKeyboardBlanked.value = true;
@@ -98,7 +98,7 @@ function keypressHandler(evt: KeyboardEvent) {
           evt.preventDefault();
           if (
             !displayKeyboardBlanked.value ||
-            serviceStore.selectedItem == null
+            serviceStore.selectedItem == undefined
           ) {
             serviceStore.setEmptyScreen();
             displayKeyboardBlanked.value = true;

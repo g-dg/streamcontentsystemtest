@@ -20,7 +20,7 @@ export interface DisplayState {
 export const useDisplayStateStore = defineStore("displayState", () => {
   const DISPLAY_STATE_CHANNEL = "display";
 
-  const stateManager = useState<DisplayState | null>(DISPLAY_STATE_CHANNEL, null);
+  const stateManager = useState<DisplayState | undefined>(DISPLAY_STATE_CHANNEL, undefined);
 
   return stateManager;
 });
@@ -35,6 +35,7 @@ export const useOperationStateStore = defineStore("operationState", () => {
   const stateManager = useState<OperationState>(OPERATION_STATE_CHANNEL, {
     service: {
       serviceItems: [],
+      placeholders: [],
     },
   });
 

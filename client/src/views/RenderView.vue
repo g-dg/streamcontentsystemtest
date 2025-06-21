@@ -28,8 +28,8 @@ const displayConfig = computed(() =>
 );
 
 /** Maps the display state while applying config like alternate blanking and hide small text */
-function mapDisplayState(state: DisplayState | null): DisplayState {
-  if (state == null)
+function mapDisplayState(state: DisplayState | undefined): DisplayState {
+  if (state == undefined)
     return {
       background: false,
     };
@@ -71,7 +71,20 @@ function mapDisplayState(state: DisplayState | null): DisplayState {
 
 const displayStateStore = useDisplayStateStore();
 
-const currentContent = computed<DisplayState | null>(
+function resolvePlaceholderContent(displayState: DisplayState | undefined): Map<string, string> {
+  const map = new Map<string, string>();
+
+  //         __ ____            __
+  //       _/_//_/ /_____  ____/ /___
+  //     _/_//_// __/ __ \/ __  / __ \
+  //   _/_//_/ / /_/ /_/ / /_/ / /_/ /
+  //  /_//_/   \__/\____/\__,_/\____/
+  //todo: Resolve placeholder content
+
+  return map;
+}
+
+const currentContent = computed<DisplayState | undefined>(
   () => mapDisplayState(displayStateStore.currentState)
 );
 
@@ -81,10 +94,10 @@ const DEFAULT_FONT_SIZE = "5vmin";
 
 /** Font size from "font-size" query parameter or display config or default font size (whichever comes first) */
 const fontSize = computed(() => {
-  const size_raw = (route.query["font-size"] as string) ?? null;
+  const size_raw = (route.query["font-size"] as string | undefined);
   const number_size = size_raw?.match(/^\d+(\.\d+)?$/)?.[0];
-  if (number_size != null) return `${number_size}pt`;
-  if (size_raw != null && size_raw.match(/^\d+(\.\d+)?[a-z]*$/))
+  if (number_size != undefined) return `${number_size}pt`;
+  if (size_raw != undefined && size_raw.match(/^\d+(\.\d+)?[a-z]*$/))
     return size_raw;
   if (displayConfig.value?.font_size != undefined)
     return displayConfig.value?.font_size;
@@ -103,7 +116,7 @@ const delayedContent = ref<DisplayState>(
 
 // schedule content update after render delay
 watch(currentContent, (content) => {
-  if (content != null) {
+  if (content != undefined) {
     window.setTimeout(() => {
       delayedContent.value = content;
     }, renderDelay.value);
@@ -143,8 +156,8 @@ function isStateSame(a: DisplayState, b: DisplayState): boolean {
   return (JSON.stringify(a) == JSON.stringify(b));
 }
 
-function addContentState(content: DisplayState | null) {
-  if (content == null) return;
+function addContentState(content: DisplayState | undefined) {
+  if (content == undefined) return;
 
   // if we're transitioning to identical states, ignore it
   const currentLatestContent =
@@ -193,7 +206,7 @@ const rendererRootElement = ref<Element>();
 function toggleFullscreen() {
   if (displayConfig.value.allow_fullscreen != true) return;
 
-  if (document.fullscreenElement == null) {
+  if (document.fullscreenElement == undefined) {
     if (rendererRootElement.value?.requestFullscreen)
       rendererRootElement.value?.requestFullscreen();
   } else {

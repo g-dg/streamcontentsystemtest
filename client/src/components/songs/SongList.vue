@@ -68,17 +68,17 @@ const filteredSongTitles = computed(() => {
 });
 
 // drag and drop to allow dragging the song
-const draggableIndex = ref<number | null>(null);
+const draggableIndex = ref<number | undefined>(undefined);
 function dragHandleEnableDrag(index: number, enable: boolean) {
-  draggableIndex.value = enable ? index : null;
+  draggableIndex.value = enable ? index : undefined;
 }
-watch(filteredSongTitles, () => (draggableIndex.value = null));
+watch(filteredSongTitles, () => (draggableIndex.value = undefined));
 
 function dragStart(evt: DragEvent, songTitle: string) {
-  if (evt.dataTransfer == null) return;
+  if (evt.dataTransfer == undefined) return;
 
   const data: ServiceItemDragDropData = {
-    srcIndex: null,
+    srcIndex: undefined,
     serviceItem: serviceStore.songItem(songTitle, search.value),
   };
 
@@ -87,7 +87,7 @@ function dragStart(evt: DragEvent, songTitle: string) {
 }
 
 function dragEnd() {
-  draggableIndex.value = null;
+  draggableIndex.value = undefined;
 }
 </script>
 

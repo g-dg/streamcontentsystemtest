@@ -3,7 +3,7 @@
  * Each parameter is an array of the first and second string to compare
  */
 export function natcasecmp(
-  ...values: [string | null | undefined, string | null | undefined][]
+  ...values: [string | undefined | undefined, string | undefined | undefined][]
 ): number {
   for (const [a, b] of values) {
     const result = (a ?? "").localeCompare(b ?? "", undefined, {

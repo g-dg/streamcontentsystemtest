@@ -45,7 +45,7 @@ export async function api(
   if (response.ok) {
     // if response is "No Content", return nothing
     if (response.status == 204) {
-      return null;
+      return undefined;
     }
 
     // if response is ok, return the requested type

@@ -3,7 +3,7 @@ import { type DisplayConfig } from "@/stores/config";
 import { type DisplayState } from "@/stores/state";
 
 const props = defineProps<{
-  content: DisplayState | null;
+  content: DisplayState | undefined;
   displayConfig: DisplayConfig;
   fontSize: string;
 }>();
