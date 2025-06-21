@@ -21,7 +21,7 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
     __APP_NAME__: JSON.stringify("StreamSysTest"),
     __APP_NAME_FULL__: JSON.stringify(
-      "Stream Content System Test"
+      "Multi-Display Content System"
     ),
     __APP_COPYRIGHT__: JSON.stringify("by Garnet DeGelder"),
   },

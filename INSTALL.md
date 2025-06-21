@@ -26,8 +26,8 @@ Server
 		- Visit https://www.rust-lang.org/learn/get-started for installation instructions
 2. Run `cargo build --release` in the root of the project
 3. The executable can found in `target/release`
-	- `garnetdg_streamcontentsystemtest` on Linux
-	- `garnetdg_streamcontentsystemtest.exe` on Windows
+	- `garnetdg_multidisplaycontentsystem` on Linux
+	- `garnetdg_multidisplaycontentsystem.exe` on Windows
 	- You can copy this executable to any location.
 		- For configuration, see the Configuration section
 
