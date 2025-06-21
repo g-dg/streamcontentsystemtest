@@ -55,12 +55,15 @@ export interface ExportedPlaceholder {
   value: string;
 }
 
-/** Data for drag and drop */
+/** Data for service drag and drop */
 export interface ServiceItemDragDropData {
-  appInstanceId: string;
-  componentInstanceId: string | null;
   srcIndex: number | null;
   serviceItem: ServiceItem;
+}
+
+export interface PlaceholderDragDropData {
+  placeholder: Placeholder;
+  index: number;
 }
 
 /** Service store */

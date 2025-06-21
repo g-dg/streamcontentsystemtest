@@ -5,7 +5,6 @@ import {
   type ServiceItem,
   type ServiceItemDragDropData,
 } from "@/stores/service";
-import { useInstanceIdStore } from "@/stores/instanceId";
 import { useDisplayStateStore } from "@/stores/state";
 import { onMounted, onUnmounted, ref } from "vue";
 
@@ -16,7 +15,6 @@ const props = defineProps<{
 
 const serviceStore = useServiceStore();
 const displayStateStore = useDisplayStateStore();
-const instanceIdStore = useInstanceIdStore();
 
 async function loadService() {
   if (
@@ -35,8 +33,6 @@ function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
   if (evt.dataTransfer == null) return;
 
   const data: ServiceItemDragDropData = {
-    appInstanceId: instanceIdStore.appInstanceId,
-    componentInstanceId: null,
     srcIndex: null,
     serviceItem: newItem,
   };

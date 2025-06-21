@@ -3,6 +3,7 @@ import { ref } from "vue";
 
 import {
   useServiceStore,
+  type PlaceholderDragDropData,
 } from "@/stores/service";
 
 const props = defineProps<{
@@ -43,24 +44,32 @@ function dragStart(evt: DragEvent, index: number) {
     placeholder: serviceStore.serviceData.placeholders[index],
     index
   }));
+  evt.dataTransfer!.dropEffect = "move";
+}
+
+function dragEnter(evt: DragEvent) {
+  evt.preventDefault();
+}
+
+function dragOver(evt: DragEvent) {
+  evt.preventDefault();
+  evt.dataTransfer!.dropEffect = "move";
 }
 
 function drop(evt: DragEvent, index: number) {
-  const draggedData = JSON.parse(evt.dataTransfer?.getData("application/json") ?? "{}");
+  const draggedData = JSON.parse(evt.dataTransfer?.getData("application/json") ?? "{}") as PlaceholderDragDropData;
   if (draggedData.placeholder == undefined || draggedData.index == undefined) return;
   evt.preventDefault();
-  const draggedIndex = draggedData.index as number;
-  const draggedItem = draggedData.placeholder as { name: string, value: string };
+  const draggedIndex = draggedData.index;
+  const draggedItem = draggedData.placeholder;
   serviceStore.serviceData.placeholders.splice(draggedIndex, 1);
   serviceStore.serviceData.placeholders.splice(index, 0, draggedItem);
   editingPlaceholderIndex.value = index;
   console.debug(JSON.parse(JSON.stringify(serviceStore.serviceData.placeholders)))
 }
 
-const topScrollElement = ref<HTMLDivElement>();
-function scrollToTop() {
-  if (props.mobileController) return;
-  topScrollElement.value?.scrollIntoView();
+function dragEnd(evt: DragEvent) {
+  draggingIndex.value = undefined;
 }
 </script>
 
@@ -73,12 +82,10 @@ function scrollToTop() {
           display: flex;
           flex-direction: column;
         ">
-        <div ref="topScrollElement" style="flex: 0"></div>
-
         <div v-for="(item, index) in serviceStore.serviceData.placeholders" :key="item.name" style="margin-bottom: 1lh;"
           :draggable="draggingIndex == index" @dragstart="(evt) => dragStart(evt, index)"
-          @drop="(evt) => drop(evt, index)" @dragenter="(evt) => evt.preventDefault()"
-          @dragover="(evt) => evt.preventDefault()" @dragend="draggingIndex = undefined">
+          @drop="(evt) => drop(evt, index)" @dragenter="(evt) => dragEnter(evt)"
+          @dragover="(evt) => dragOver(evt)" @dragend="(evt) => dragEnd(evt)">
           <div style="display: flex;">
             <input v-if="editingPlaceholderIndex == index" v-model="item.name" placeholder="Name" style="flex: 1" />
             <div v-else style="flex: 1"> {{ item.name }} </div>
