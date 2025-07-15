@@ -1,19 +1,12 @@
 import { defineStore } from "pinia";
 
 import { useState } from "@/helpers/state";
-import type { ServiceData } from "./service";
+import { SERVICE_DATA_VERSION, type ServiceData } from "./service";
 
 /** Display state */
 export interface DisplayState {
-  background: boolean;
-  song?: string;
-  songTitle?: string;
-  attribution?: string;
-  mainText?: string;
-  subText?: string;
-  smallText?: string;
-  alternateText?: string;
-  optionalText?: string;
+  template: string;
+  placeholders: Record<string, string>;
 }
 
 /** State store */
@@ -34,8 +27,9 @@ export const useOperationStateStore = defineStore("operationState", () => {
 
   const stateManager = useState<OperationState>(OPERATION_STATE_CHANNEL, {
     service: {
-      serviceItems: [],
-      placeholders: [],
+      version: SERVICE_DATA_VERSION,
+      items: [],
+      data: [],
     },
   });
 

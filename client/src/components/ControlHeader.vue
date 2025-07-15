@@ -79,34 +79,6 @@ function keypressHandler(evt: KeyboardEvent) {
           evt.preventDefault();
           serviceStore.goToLastSubItem();
           break;
-        case ".":
-        case "b":
-          evt.preventDefault();
-          if (
-            !displayKeyboardBlanked.value ||
-            serviceStore.selectedItem == undefined
-          ) {
-            serviceStore.setBlankScreen();
-            displayKeyboardBlanked.value = true;
-          } else {
-            serviceStore.showCurrentItem();
-            displayKeyboardBlanked.value = false;
-          }
-          break;
-        case ",":
-        case "w":
-          evt.preventDefault();
-          if (
-            !displayKeyboardBlanked.value ||
-            serviceStore.selectedItem == undefined
-          ) {
-            serviceStore.setEmptyScreen();
-            displayKeyboardBlanked.value = true;
-          } else {
-            serviceStore.showCurrentItem();
-            displayKeyboardBlanked.value = false;
-          }
-          break;
       }
       if (evt.key.length == 1) {
         evt.preventDefault();
@@ -139,46 +111,9 @@ const appVersion = __APP_VERSION__;
 
     &nbsp;
 
-    <button @click="serviceStore.addItem(serviceStore.emptyItem(), true)" draggable="true"
-      @dragstart="newItemDragStart($event, serviceStore.emptyItem())">
-      Empty
-    </button>
-
-    <button @click="serviceStore.addItem(serviceStore.blankItem(), true)" draggable="true"
-      @dragstart="newItemDragStart($event, serviceStore.blankItem())">
-      Blank
-    </button>
-
-    <button @click="
-      serviceStore.addItem(serviceStore.textItem('mainText', ''), true)
-      " draggable="true" @dragstart="
-        newItemDragStart($event, serviceStore.textItem('mainText', ''))
-        ">
-      Main Text
-    </button>
-
-    <button @click="
-      serviceStore.addItem(serviceStore.textItem('subText', ''), true)
-      " draggable="true" @dragstart="
-        newItemDragStart($event, serviceStore.textItem('subText', ''))
-        ">
-      Sub Text
-    </button>
-
-    <button @click="
-      serviceStore.addItem(serviceStore.textItem('smallText', ''), true)
-      " draggable="true" @dragstart="
-        newItemDragStart($event, serviceStore.textItem('smallText', ''))
-        ">
-      Small Text
-    </button>
-
-    <button @click="
-      serviceStore.addItem(serviceStore.textItem('optionalText', ''), true)
-      " draggable="true" @dragstart="
-        newItemDragStart($event, serviceStore.textItem('optionalText', ''))
-        ">
-      Optional Text
+    <button @click="serviceStore.addItem(serviceStore.newItem(), true)" draggable="true"
+      @dragstart="newItemDragStart($event, serviceStore.newItem())">
+      Add Item
     </button>
 
     <div style="flex: 1"></div>
@@ -189,7 +124,7 @@ const appVersion = __APP_VERSION__;
       <em><strong> Unsaved Changes! </strong></em>
     </span>
 
-    &nbsp;
+    &nbsp;&nbsp;
 
     <span v-if="displayStateStore.connected">
       Connected

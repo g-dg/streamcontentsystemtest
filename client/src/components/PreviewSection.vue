@@ -3,7 +3,7 @@ import { computed } from "vue";
 
 import { useConfigStore } from "@/stores/config";
 
-import PreviewIFrame from "../renderers/PreviewIFrame.vue";
+import PreviewIFrame from "./PreviewIFrame.vue";
 
 const configStore = useConfigStore();
 
@@ -14,7 +14,7 @@ const previewDisplays = computed(() => configStore.config.preview_displays ?? []
 <template>
   <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 100%">
     <PreviewIFrame v-for="displayName in previewDisplays" :key="displayName" :displayName="displayName" border
-      style="flex: 1; min-width: 50%" />
+      style="flex: 1; min-width: 100%" />
   </div>
 </template>
 

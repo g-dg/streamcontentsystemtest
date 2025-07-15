@@ -4,7 +4,7 @@ import { useServiceStore } from "@/stores/service";
 
 import ServiceItemList from "./ServiceItemList.vue";
 import ServiceItemContentList from "./ServiceItemContentList.vue";
-import PreviewIFrame from "../renderers/PreviewIFrame.vue";
+import PreviewIFrame from "./PreviewIFrame.vue";
 
 const displayStateStore = useDisplayStateStore();
 const serviceStore = useServiceStore();

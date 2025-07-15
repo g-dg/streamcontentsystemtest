@@ -58,8 +58,7 @@ impl AppConfig {
                     String::from("{}")
                 } else {
                     panic!(
-                        "Error occurred reading config file \"{}\": {:?}",
-                        filename, err
+                        "Error occurred reading config file \"{filename}\": {err:?}"
                     )
                 }
             }

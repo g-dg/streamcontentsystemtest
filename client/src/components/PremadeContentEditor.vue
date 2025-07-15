@@ -1,25 +1,27 @@
 <script lang="ts" setup>
 import { natcasecmp } from "@/helpers/sort";
-import { useSongStore } from "@/stores/song";
+import { usePremadeContentStore } from "@/stores/premadeContent";
+import type { PlaceholderValue } from "@/stores/service";
 import { onMounted, ref, watch } from "vue";
+import PlaceholderList from "./PlaceholderList.vue";
 
-const props = defineProps<{ songTitle?: string }>();
+const props = defineProps<{ itemTitle?: string }>();
 
 const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
-const songStore = useSongStore();
+const songStore = usePremadeContentStore();
 
 const editedTitle = ref("");
-const editedVerses = ref<Array<{ name: string; content: string }>>([]);
+const editedVerses = ref<Array<{ name: string; content: Array<PlaceholderValue> }>>([]);
 const editedAttribution = ref("");
 
 function loadSongFromStore() {
   const song =
-    props.songTitle != undefined ? songStore.songs[props.songTitle] : undefined;
+    props.itemTitle != undefined ? songStore.premadeContent.items?.[props.itemTitle] : undefined;
   if (song != undefined) {
-    editedTitle.value = props.songTitle ?? "";
+    editedTitle.value = props.itemTitle ?? "";
     editedAttribution.value = song.attribution ?? "";
     const versesSorted = Object.keys(song.verses).sort((a, b) =>
       natcasecmp([a, b])
@@ -36,12 +38,12 @@ function loadSongFromStore() {
 }
 
 onMounted(loadSongFromStore);
-watch(() => props.songTitle, loadSongFromStore);
+watch(() => props.itemTitle, loadSongFromStore);
 
 function newVerse() {
   editedVerses.value.push({
     name: String(editedVerses.value.length + 1),
-    content: "",
+    content: [],
   });
 }
 
@@ -50,11 +52,11 @@ function deleteVerse(index: number) {
 }
 
 async function saveSong() {
-  if (props.songTitle != undefined) {
-    delete songStore.songs[props.songTitle];
+  if (props.itemTitle != undefined && songStore.premadeContent.items != undefined) {
+    delete songStore.premadeContent.items?.[props.itemTitle];
   }
 
-  songStore.songs[editedTitle.value] = {
+  songStore.premadeContent.items[editedTitle.value] = {
     verses: Object.fromEntries(
       editedVerses.value.map((x) => [x.name, x.content])
     ),
@@ -64,21 +66,21 @@ async function saveSong() {
         : editedAttribution.value,
   };
 
-  await songStore.saveSongs();
+  await songStore.savePremadeContent();
   emit("close");
-  await songStore.loadSongs();
+  await songStore.loadPremadeContent();
 }
 
 async function deleteSong() {
   if (!confirm("Really delete this song?")) return;
 
-  if (props.songTitle != undefined) {
-    delete songStore.songs[props.songTitle];
+  if (props.itemTitle != undefined) {
+    delete songStore.premadeContent[props.itemTitle];
 
-    await songStore.saveSongs();
+    await songStore.savePremadeContent();
   }
   emit("close");
-  await songStore.loadSongs();
+  await songStore.loadPremadeContent();
 }
 
 function cancel() {
@@ -98,8 +100,7 @@ function cancel() {
           <input v-model="verse.name" type="text" placeholder="Verse Name" style="flex: 1" />
           <button @click="deleteVerse(index)" style="flex: 0">Delete</button>
         </div>
-        <textarea v-model="verse.content" :rows="verse.content.split('\n').length + 1" placeholder="Verse Content"
-          style="width: 100%"></textarea>
+        <PlaceholderList v-model="verse.content" />
       </div>
       <button @click="newVerse">New Verse</button>
     </div>
@@ -108,7 +109,7 @@ function cancel() {
       <input v-model="editedAttribution" type="text" placeholder="Attribution" style="flex: 0; width: 100%" />
       <div>
         <button @click="saveSong">Save</button>
-        <button v-if="songTitle != undefined" @click="deleteSong">
+        <button v-if="itemTitle != undefined" @click="deleteSong">
           Delete
         </button>
         <button @click="cancel">Cancel</button>

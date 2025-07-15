@@ -4,7 +4,7 @@ import { onMounted } from "vue";
 import { useServiceStore } from "@/stores/service";
 
 import PreviewSection from "./PreviewSection.vue";
-import SongList from "../songs/SongList.vue";
+import PremadeContentList from "./PremadeContentList.vue";
 import PlaceholderList from "./PlaceholderList.vue";
 import ServiceItemList from "./ServiceItemList.vue";
 import ServiceItemContentList from "./ServiceItemContentList.vue";
@@ -42,13 +42,13 @@ onMounted(setupUnsavedChangesHandler);
         </div>
         <div style="flex: 1; display: flex; flex-direction: column">
           <div style="flex: 1">
-            <SongList />
+            <PremadeContentList />
           </div>
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">
         <div style="flex: 1">
-          <PlaceholderList />
+          <PlaceholderList v-model="serviceStore.serviceData.data" />
         </div>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column">

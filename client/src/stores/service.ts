@@ -1,56 +1,37 @@
 import { defineStore } from "pinia";
 import { computed, nextTick, ref, watch } from "vue";
 
-import { uuid } from "@/helpers/random";
 import { natcasecmp } from "@/helpers/sort";
 
-import { useSongStore } from "./song";
+import { usePremadeContentStore } from "./premadeContent";
 import { useDisplayStateStore, type DisplayState } from "./state";
 import { useConfigStore } from "./config";
 
+export const SERVICE_DATA_VERSION = 2;
+
 /** Service data */
 export interface ServiceData {
-  serviceItems: Array<ServiceItem>;
-  placeholders: Array<Placeholder>;
+  version: number;
+  items: Array<ServiceItem>;
+  data: Array<PlaceholderValue>;
 }
 
 /** Service item */
 export interface ServiceItem {
-  id: string;
-  type: "empty" | "blank" | "song" | "mainText" | "subText" | "smallText" | "optionalText";
-  song?: ServiceSong;
-  text?: string;
-  comment?: string;
-  enabled: boolean;
+  name?: string,
+  template: string;
+  data: Array<PlaceholderValue>;
+  premade?: ServicePremade;
+  notes?: string;
 }
 
 /** Service song */
-export interface ServiceSong {
-  title: string;
-  verses: Array<string>;
-}
-
-export interface Placeholder {
+export interface ServicePremade {
   name: string;
-  value: string;
+  items: Array<string>;
 }
 
-export interface ExportedServiceData {
-  serviceItems?: Array<ExportedServiceItem>;
-  placeholders?: Array<ExportedPlaceholder>;
-}
-export interface ExportedServiceItem {
-  type: "empty" | "blank" | "song" | "mainText" | "subText" | "smallText" | "optionalText";
-  song?: ExportedServiceSong;
-  text?: string;
-  comment?: string;
-  enabled?: boolean;
-}
-export interface ExportedServiceSong {
-  title: string;
-  verses: Array<string>;
-}
-export interface ExportedPlaceholder {
+export interface PlaceholderValue {
   name: string;
   value: string;
 }
@@ -62,7 +43,7 @@ export interface ServiceItemDragDropData {
 }
 
 export interface PlaceholderDragDropData {
-  placeholder: Placeholder;
+  value: PlaceholderValue;
   index: number;
 }
 
@@ -70,16 +51,17 @@ export interface PlaceholderDragDropData {
 export const useServiceStore = defineStore("service", () => {
   const displayStateStore = useDisplayStateStore();
 
-  const songStore = useSongStore();
-  songStore.loadSongs();
+  const premadeContentStore = usePremadeContentStore();
+  premadeContentStore.loadPremadeContent();
 
   const configStore = useConfigStore();
   configStore.loadConfig();
 
   /** Service data */
   const serviceData = ref<ServiceData>({
-    serviceItems: [],
-    placeholders: [],
+    version: SERVICE_DATA_VERSION,
+    items: [],
+    data: [],
   });
 
   /** Copy of service data used to detect unsaved changes */
@@ -107,51 +89,15 @@ export const useServiceStore = defineStore("service", () => {
   /** Currently selected item */
   const selectedItem = computed(() =>
     selectedItemIndex.value != undefined
-      ? serviceData.value.serviceItems[selectedItemIndex.value]
+      ? serviceData.value.items[selectedItemIndex.value]
       : undefined
   );
 
-  const selectedItemType = computed(() => selectedItem.value?.type);
-
-  /** Creates an empty item */
-  function emptyItem(): ServiceItem {
+  /** Gets a new item */
+  function newItem(): ServiceItem {
     return {
-      id: uuid(),
-      type: "empty",
-      enabled: true,
-    };
-  }
-
-  /** Creates a blank item */
-  function blankItem(): ServiceItem {
-    return {
-      id: uuid(),
-      type: "blank",
-      enabled: true,
-    };
-  }
-
-  /** Creates a song item */
-  function songItem(songTitle: string, displayTitle?: string): ServiceItem {
-    return {
-      id: uuid(),
-      type: "song",
-      song: { title: songTitle, verses: [] },
-      text: displayTitle,
-      enabled: true,
-    };
-  }
-
-  /** Creates a text item */
-  function textItem(
-    type: "mainText" | "subText" | "smallText" | "optionalText",
-    text: string
-  ): ServiceItem {
-    return {
-      id: uuid(),
-      type,
-      text,
-      enabled: true,
+      template: "",
+      data: [],
     };
   }
 
@@ -165,8 +111,8 @@ export const useServiceStore = defineStore("service", () => {
       index ??
       (selectedItemIndex.value != undefined
         ? selectedItemIndex.value + 1
-        : serviceData.value.serviceItems.length);
-    serviceData.value.serviceItems.splice(insertIndex, 0, item);
+        : serviceData.value.items.length);
+    serviceData.value.items.splice(insertIndex, 0, item);
     if (select) {
       selectedItemIndex.value = insertIndex;
     }
@@ -182,17 +128,17 @@ export const useServiceStore = defineStore("service", () => {
       selectedSubItemId.value = undefined;
       selectedItemIndex.value = Math.max(0, selectedItemIndex.value - 1);
     }
-    serviceData.value.serviceItems.splice(index, 1);
+    serviceData.value.items.splice(index, 1);
   }
 
   /** Swap item by id with relative position */
   function moveItem(index: number, direction: number) {
-    const value = serviceData.value.serviceItems[index];
-    const swapValue = serviceData.value.serviceItems[index + direction];
+    const value = serviceData.value.items[index];
+    const swapValue = serviceData.value.items[index + direction];
 
     // swap items
-    serviceData.value.serviceItems[index + direction] = value;
-    serviceData.value.serviceItems[index] = swapValue;
+    serviceData.value.items[index + direction] = value;
+    serviceData.value.items[index] = swapValue;
 
     // update selected index to move with moved item
     if (index == selectedItemIndex.value) {
@@ -206,74 +152,31 @@ export const useServiceStore = defineStore("service", () => {
   function clearService() {
     selectedSubItemId.value = undefined;
     selectedItemIndex.value = undefined;
-    serviceData.value.serviceItems = [];
+    serviceData.value.items = [];
   }
-
-  const alternateText = computed(() => serviceData.value.serviceItems[0]?.text);
 
   /** Gets the display state from the currently-selected items */
   function getState(): DisplayState {
-    switch (selectedItemType.value) {
-      case "empty": {
-        return {
-          background: false,
-          alternateText: alternateText.value,
-        };
-      }
-      case "blank": {
-        return {
-          background: false,
-        };
-      }
-      case "song": {
-        const song =
-          selectedItem.value?.song?.title != undefined
-            ? songStore.songs[selectedItem.value.song.title]
-            : undefined;
-        const songVerses = song?.verses;
-        const verseContent =
-          (songVerses ?? {})[selectedSubItemId.value ?? ""] ?? undefined;
-        const songAttribution =
-          (song?.attribution ?? "") == "" ? undefined : song?.attribution;
-        return {
-          background: true,
-          song: verseContent,
-          songTitle:
-            (selectedItem.value?.text ?? "") != ""
-              ? selectedItem.value?.text
-              : selectedItem.value?.song?.title ?? "",
-          attribution: songAttribution,
-        };
-      }
-      case "mainText": {
-        return {
-          background: false,
-          mainText: selectedItem.value?.text ?? undefined,
-        };
-      }
-      case "subText": {
-        return {
-          background: false,
-          subText: selectedItem.value?.text ?? undefined,
-        };
-      }
-      case "smallText": {
-        return {
-          background: false,
-          smallText: selectedItem.value?.text ?? undefined,
-          alternateText: alternateText.value,
-        };
-      }
-      case "optionalText": {
-        return {
-          background: false,
-          optionalText: selectedItem.value?.text ?? undefined,
-        }
-      }
-      default: {
-        return { background: false };
+    let placeholders = {};
+    if (selectedItem.value?.premade != undefined) {
+      const premadeItem = (premadeContentStore.premadeContent.items ?? {})[selectedItem.value.premade.name];
+      const premadeItemData = premadeItem.data ?? [];
+      const premadeItemPageData = (premadeItem.pages ?? {})[selectedSubItemId.value ?? ""].data ?? [];
+      placeholders = {
+        ...placeholders,
+        ...Object.fromEntries(premadeItemData.map(x => [x.name, x.value])),
+        ...Object.fromEntries(premadeItemPageData.map(x => [x.name, x.value])),
       }
     }
+    placeholders = {
+      ...placeholders,
+      ...Object.fromEntries(serviceData.value.data.map(x => [x.name, x.value])),
+      ...Object.fromEntries(selectedItem.value?.data.map(x => [x.name, x.value]) ?? []),
+    };
+    return {
+      template: selectedItem.value?.template ?? "",
+      placeholders,
+    };
   }
 
   async function selectAndShowItem(
@@ -289,36 +192,24 @@ export const useServiceStore = defineStore("service", () => {
     displayStateStore.setState(getState());
   }
 
-  function setEmptyScreen() {
-    displayStateStore.setState({
-      background: false,
-      alternateText: alternateText.value,
-    });
-  }
-  function setBlankScreen() {
-    displayStateStore.setState({
-      background: false,
-    });
-  }
-
   const allItemList = computed<
     Array<{ item: number; subitem: string; enabled: boolean }>
   >(() => {
-    return serviceData.value.serviceItems
+    return serviceData.value.items
       .map((item, index) => {
-        if (item.type == "song") {
+        if (item.premade != undefined) {
           const songVerseTitlesSorted = Object.keys(
-            songStore.songs[item.song?.title ?? ""].verses ?? {}
+            premadeContentStore.premadeContent.items?.[item.premade?.name ?? ""].pages ?? {}
           ).sort((a, b) => natcasecmp([a, b]));
           return songVerseTitlesSorted.map((verseTitle) => {
             const enabled =
-              (item.song?.verses.length == 0 ||
-                item.song?.verses.includes(verseTitle)) ??
+              (item.premade?.items.length == 0 ||
+                item.premade?.items.includes(verseTitle)) ??
               false;
             return { item: index, subitem: verseTitle, enabled };
           });
         } else {
-          return { item: index, subitem: "0", enabled: item.enabled };
+          return { item: index, subitem: "0", enabled: true };
         }
       })
       .flat();
@@ -432,7 +323,7 @@ export const useServiceStore = defineStore("service", () => {
           selectedItemIndex.value = undefined;
           selectedSubItemId.value = undefined;
 
-          const convertedServiceData = convertImportToInternal(fileContent);
+          const convertedServiceData = fileContent;
 
           // set serviceData
           serviceData.value = convertedServiceData;
@@ -468,7 +359,7 @@ export const useServiceStore = defineStore("service", () => {
         filename = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${now.getHours() < 12 ? "AM" : "PM"}.json`;
       }
 
-      const convertedServiceData = convertInternalToExport(serviceData.value);
+      const convertedServiceData = serviceData.value;
 
       // create object url
       const objectURL = URL.createObjectURL(
@@ -493,75 +384,18 @@ export const useServiceStore = defineStore("service", () => {
     }
   }
 
-  function convertInternalToExport(
-    serviceData: ServiceData
-  ): ExportedServiceData {
-    let ret: ExportedServiceData = {
-      serviceItems: serviceData.serviceItems.map((item) => {
-        let ret: ExportedServiceItem = {
-          type: item.type,
-        };
-        if (item.song != undefined) {
-          let song: ExportedServiceSong = {
-            title: item.song.title,
-            verses: item.song.verses.map((verse) => verse),
-          };
-          ret.song = song;
-        }
-        if (item.text != undefined) ret.text = item.text;
-        if (item.comment != undefined) ret.comment = item.comment;
-        if (!item.enabled) ret.enabled = false;
-        return ret;
-      }),
-      placeholders: serviceData.placeholders,
-    };
-    return ret;
-  }
-
-  function convertImportToInternal(
-    serviceData: ExportedServiceData
-  ): ServiceData {
-    let ret: ServiceData = {
-      serviceItems: serviceData.serviceItems?.map((item) => {
-        let ret: ServiceItem = {
-          id: uuid(),
-          type: item.type,
-          enabled: item.enabled ?? true,
-        };
-        if (item.song != undefined) {
-          let song: ServiceSong = {
-            title: item.song.title,
-            verses: item.song.verses.map((verse) => verse),
-          };
-          ret.song = song;
-        }
-        if (item.text != undefined) ret.text = item.text;
-        if (item.comment != undefined) ret.comment = item.comment;
-        return ret;
-      }) ?? [],
-      placeholders: serviceData.placeholders ?? [],
-    };
-    return ret;
-  }
-
   return {
     unsavedChanges,
     serviceData,
     selectedItemIndex,
     selectedSubItemId,
     selectedItem,
-    selectedItemType,
-    emptyItem,
-    blankItem,
-    songItem,
-    textItem,
+    newItem,
     addItem,
     removeItem,
     moveItem,
     clearService,
     selectAndShowItem,
-    setEmptyScreen,
-    setBlankScreen,
     goToNextSubItem,
     goToPreviousSubItem,
     goToFirstSubItem,

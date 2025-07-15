@@ -55,7 +55,7 @@ pub async fn main() {
 
 /// Opens the web browser on the local system
 fn open_browser(port: u16) -> Result<(), std::io::Error> {
-    webbrowser::open(&format!("http://localhost:{}/", port))
+    webbrowser::open(&format!("http://localhost:{port}/"))
 }
 
 /// Handles Ctrl+C or the shutdown token

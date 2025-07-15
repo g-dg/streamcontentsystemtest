@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Converts OpenLyrics2 to Multi-Display Content System version 4
+
 inputDir = "./songs"
 outputFile = "./songs.json"
 

@@ -5,15 +5,15 @@ import {
   useServiceStore,
   type ServiceItemDragDropData,
 } from "@/stores/service";
-import { useSongStore } from "@/stores/song";
+import { usePremadeContentStore } from "@/stores/premadeContent";
 
-import SongEditorModal from "./SongEditorModal.vue";
+import SongEditorModal from "./PremadeContentEditorModal.vue";
 
-const songStore = useSongStore();
+const songStore = usePremadeContentStore();
 const serviceStore = useServiceStore();
 
 function addToService(songTitle: string) {
-  serviceStore.addItem(serviceStore.songItem(songTitle, search.value), true);
+  serviceStore.addItem({ data: [], template: "", premade: { name: songTitle, items: [] } }, true);
 }
 
 const search = ref("");
@@ -34,7 +34,7 @@ const filteredSongTitles = computed(() => {
   searchText = searchText.trim();
 
   if (searchText.length == 0) {
-    return songStore.songTitlesSorted;
+    return songStore.premadeContentTitlesSorted;
   }
 
   /*
@@ -47,7 +47,7 @@ const filteredSongTitles = computed(() => {
     .split(" ")
     .filter((term) => term.trim().length > 0);
 
-  return songStore.songTitlesSorted.filter((title) =>
+  return songStore.premadeContentTitlesSorted.filter((title) =>
     searchSplit.every((searchTerm) => {
       searchTerm = searchTerm.toUpperCase();
       return title
@@ -79,7 +79,7 @@ function dragStart(evt: DragEvent, songTitle: string) {
 
   const data: ServiceItemDragDropData = {
     srcIndex: undefined,
-    serviceItem: serviceStore.songItem(songTitle, search.value),
+    serviceItem: { data: [], template: "", premade: { name: songTitle, items: [] } },
   };
 
   evt.dataTransfer.setData("application/json", JSON.stringify(data));
@@ -95,7 +95,7 @@ function dragEnd() {
   <div style="height: 100%; display: flex; flex-direction: column">
     <div style="flex: 0">
       <span style="display: inline-block">
-        <button @click="songStore.loadSongs()">Reload</button>
+        <button @click="songStore.loadPremadeContent()">Reload</button>
         <SongEditorModal />
         <input v-model="search" ref="searchBoxElement" type="search" placeholder="Search"
           @focus="searchBoxElement?.select()" />

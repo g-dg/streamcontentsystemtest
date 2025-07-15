@@ -94,7 +94,7 @@ impl App {
                     .unwrap()
                     .trim_end_matches('/');
 
-                let uri = format!("{}{}", client_uri_root, request_path_query);
+                let uri = format!("{client_uri_root}{request_path_query}");
 
                 // get resource from client server
                 if let Ok(response) = reqwest::get(uri).await {

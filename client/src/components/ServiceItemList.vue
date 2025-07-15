@@ -24,7 +24,7 @@ function dragHandleEnableDrag(index: number, enable: boolean) {
   draggableIndex.value = enable ? index : undefined;
 }
 watch(
-  computed(() => serviceStore.serviceData.serviceItems),
+  computed(() => serviceStore.serviceData.items),
   () => (draggableIndex.value = undefined)
 );
 
@@ -34,7 +34,7 @@ function dragStart(evt: DragEvent, index: number) {
 
   const data: ServiceItemDragDropData = {
     srcIndex: index,
-    serviceItem: serviceStore.serviceData.serviceItems[index],
+    serviceItem: serviceStore.serviceData.items[index],
   };
 
   evt.dataTransfer.setData("application/json", JSON.stringify(data));
@@ -65,7 +65,7 @@ function drop(evt: DragEvent, index: number) {
 
   draggableIndex.value = undefined;
 
-  console.debug(JSON.parse(JSON.stringify(serviceStore.serviceData.serviceItems)));
+  console.debug(JSON.parse(JSON.stringify(serviceStore.serviceData.items)));
 }
 
 // resets drag and drop state
@@ -107,7 +107,7 @@ watch(
         ">
         <div ref="topScrollElement" style="flex: 0"></div>
 
-        <div v-for="(item, index) in serviceStore.serviceData.serviceItems" :key="item.id" @click="selectIndex(index)"
+        <div v-for="(item, index) in serviceStore.serviceData.items" :key="index" @click="selectIndex(index)"
           style="flex: 0" ref="serviceItemElements" :data-index="index" :draggable="draggableIndex == index"
           @dragstart="dragStart($event, index)" @dragover="dragOver($event)" @drop="drop($event, index)"
           @dragend="dragEnd($event, index)">
@@ -121,7 +121,7 @@ watch(
                 Up
               </button>
 
-              <button @click.stop="serviceStore.moveItem(index, 1)" :disabled="index + 1 == serviceStore.serviceData.serviceItems.length
+              <button @click.stop="serviceStore.moveItem(index, 1)" :disabled="index + 1 == serviceStore.serviceData.items.length
                 ">
                 Dn
               </button>
@@ -132,36 +132,16 @@ watch(
             </span>
 
             <span style="font-size: 112.5%">
-              <template v-if="item.comment">
-                {{ item.comment }}
-              </template>
-
-              <template v-else-if="item.type == 'song'">
-                {{ (item.text ?? "") != "" ? item.text : item.song?.title }}
-              </template>
-
-              <em v-else-if="item.type == 'empty'"> &lt; Empty &gt; </em>
-
-              <em v-else-if="item.type == 'blank'"> &lt; Blank &gt; </em>
-
-              <em v-else-if="item.type == 'mainText'"> &lt; Main Text &gt; </em>
-
-              <em v-else-if="item.type == 'subText'"> &lt; Sub Text &gt; </em>
-
-              <em v-else-if="item.type == 'smallText'"> &lt; Small Text &gt; </em>
-
-              <em v-else-if="item.type == 'optionalText'"> &lt; Optional Text &gt; </em>
-
-              <em v-else> &lt; Unknown &gt; </em>
+              {{ (item.comment ?? "") != "" ? item.comment : item.premade?.name }}
             </span>
           </div>
         </div>
 
-        <div v-if="serviceStore.serviceData.serviceItems.length == 0" style="text-align: center">
+        <div v-if="serviceStore.serviceData.items.length == 0" style="text-align: center">
           <em> This service has no items </em>
         </div>
 
-        <div @dragover="dragOver($event)" @drop="drop($event, serviceStore.serviceData.serviceItems.length)"
+        <div @dragover="dragOver($event)" @drop="drop($event, serviceStore.serviceData.items.length)"
           style="flex: 1">
           &nbsp;
         </div>

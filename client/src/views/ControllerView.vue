@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useDisplayStateStore } from "@/stores/state";
-import DesktopControl from "../components/ui/DesktopControl.vue";
-import MobileControl from "../components/ui/MobileControl.vue";
-import { useSongStore } from "@/stores/song";
+import DesktopControl from "../components/DesktopControl.vue";
+import MobileControl from "../components/MobileControl.vue";
+import { usePremadeContentStore } from "@/stores/premadeContent";
 import { onMounted, onUnmounted, ref, watch, type PropType } from "vue";
 
 const props = defineProps({
@@ -13,13 +13,13 @@ const props = defineProps({
   }
 });
 
-const songStore = useSongStore();
+const songStore = usePremadeContentStore();
 const displayStateStore = useDisplayStateStore();
 
 displayStateStore.restoreState = true;
 onUnmounted(() => displayStateStore.restoreState = false);
 
-onMounted(() => songStore.loadSongs(false));
+onMounted(() => songStore.loadPremadeContent(false));
 
 /** Guesses whether to use the mobile display */
 function isMobile(): boolean {

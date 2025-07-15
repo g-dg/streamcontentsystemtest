@@ -1,17 +1,29 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 import {
   useServiceStore,
+  type PlaceholderValue,
   type PlaceholderDragDropData,
 } from "@/stores/service";
 
 const props = defineProps<{
   readonly?: boolean;
-  mobileController?: boolean;
 }>();
 
+const model = defineModel<Array<PlaceholderValue>>();
+
 const serviceStore = useServiceStore();
+
+const placeholders = computed<Array<PlaceholderValue>>({
+  get() {
+    return model.value ?? serviceStore.serviceData.data
+  },
+  set(newVal: Array<PlaceholderValue>) {
+    model.value = newVal;
+  }
+})
+
 
 const newPlaceholderName = ref("");
 
@@ -23,14 +35,14 @@ function getDefaultPlaceholder() {
 }
 
 function appendPlaceholder() {
-  serviceStore.serviceData.placeholders.push(getDefaultPlaceholder());
+  placeholders.value.push(getDefaultPlaceholder());
   newPlaceholderName.value = "";
 }
 
 const editingPlaceholderIndex = ref<number | undefined>(undefined);
 
 function deletePlaceholder(index: number) {
-  serviceStore.serviceData.placeholders.splice(index, 1);
+  placeholders.value.splice(index, 1);
   editingPlaceholderIndex.value = undefined;
 }
 
@@ -41,7 +53,7 @@ function lineCount(text: string): number {
 const draggingIndex = ref<number | undefined>(undefined);
 function dragStart(evt: DragEvent, index: number) {
   evt.dataTransfer?.setData("application/json", JSON.stringify({
-    placeholder: serviceStore.serviceData.placeholders[index],
+    placeholder: placeholders.value[index],
     index
   }));
   evt.dataTransfer!.dropEffect = "move";
@@ -58,14 +70,13 @@ function dragOver(evt: DragEvent) {
 
 function drop(evt: DragEvent, index: number) {
   const draggedData = JSON.parse(evt.dataTransfer?.getData("application/json") ?? "{}") as PlaceholderDragDropData;
-  if (draggedData.placeholder == undefined || draggedData.index == undefined) return;
+  if (draggedData.value == undefined || draggedData.index == undefined) return;
   evt.preventDefault();
   const draggedIndex = draggedData.index;
-  const draggedItem = draggedData.placeholder;
-  serviceStore.serviceData.placeholders.splice(draggedIndex, 1);
-  serviceStore.serviceData.placeholders.splice(index, 0, draggedItem);
+  const draggedItem = draggedData.value;
+  placeholders.value.splice(draggedIndex, 1);
+  placeholders.value.splice(index, 0, draggedItem);
   editingPlaceholderIndex.value = index;
-  console.debug(JSON.parse(JSON.stringify(serviceStore.serviceData.placeholders)))
 }
 
 function dragEnd(evt: DragEvent) {
@@ -75,17 +86,17 @@ function dragEnd(evt: DragEvent) {
 
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
-    <div style="flex: 1 1 auto" :style="{ height: mobileController ? 'auto' : '4lh' }">
+    <div style="flex: 1 1 auto; height: 4lh;">
       <div style="
           height: 100%;
           overflow: auto;
           display: flex;
           flex-direction: column;
         ">
-        <div v-for="(item, index) in serviceStore.serviceData.placeholders" :key="item.name" style="margin-bottom: 1lh;"
+        <div v-for="(item, index) in placeholders" :key="item.name" style="margin-bottom: 1lh;"
           :draggable="draggingIndex == index" @dragstart="(evt) => dragStart(evt, index)"
-          @drop="(evt) => drop(evt, index)" @dragenter="(evt) => dragEnter(evt)"
-          @dragover="(evt) => dragOver(evt)" @dragend="(evt) => dragEnd(evt)">
+          @drop="(evt) => drop(evt, index)" @dragenter="(evt) => dragEnter(evt)" @dragover="(evt) => dragOver(evt)"
+          @dragend="(evt) => dragEnd(evt)">
           <div style="display: flex;">
             <input v-if="editingPlaceholderIndex == index" v-model="item.name" placeholder="Name" style="flex: 1" />
             <div v-else style="flex: 1"> {{ item.name }} </div>
@@ -100,8 +111,8 @@ function dragEnd(evt: DragEvent) {
             style="width: 100%"></textarea>
         </div>
 
-        <div v-if="serviceStore.serviceData.placeholders.length == 0" style="text-align: center; margin-bottom: 1lh">
-          <em> This service has no placeholders </em>
+        <div v-if="placeholders.length == 0" style="text-align: center; margin-bottom: 1lh">
+          <em> &lt;no placeholders&gt; </em>
         </div>
 
         <div>

@@ -5,26 +5,23 @@ import { ConfigClient } from "@/api/config";
 
 export interface Config {
   displays?: Record<string, DisplayConfig>;
-  display_default?: DisplayConfig;
+  templates?: Record<string, Record<string, TemplateConfig>>;
+  preview_displays?: Array<string>;
   parse_selected_verses?: boolean;
   ask_service_export_filename?: boolean;
-  preview_displays?: Array<string>;
 }
 
 export interface DisplayConfig {
-  main_content?: boolean;
+  group?: string;
   noninteractable?: boolean;
   allow_fullscreen?: boolean;
-  hide_small_text?: boolean;
-  show_optional?: boolean;
   render_delay?: number;
   fade_speed?: number;
-  font_size?: string;
-  background?: string;
-  foreground_color?: string;
-  bold?: boolean;
-  line_height?: number;
-  alternate_blanking?: boolean;
+}
+
+export interface TemplateConfig {
+  template: string;
+  has_background?: boolean;
 }
 
 /** Config store */
@@ -52,10 +49,18 @@ export const useConfigStore = defineStore("config", () => {
     return loadPromise;
   }
 
-  function getDisplayConfig(displayName: string) {
+  function getDisplayConfig(displayName: string | undefined): DisplayConfig {
     return {
-      ...(config.value.display_default ?? {}),
-      ...(config.value.displays?.[displayName] ?? {}),
+      ...(config.value.displays?.[""] ?? {}),
+      ...(config.value.displays?.[displayName ?? ""] ?? {}),
+    };
+  }
+
+  function getDisplayTemplate(displayName: string | undefined, template: string | undefined): TemplateConfig {
+    const displayConfig = getDisplayConfig(displayName);
+    return config.value.templates?.[template ?? ""]?.[displayConfig?.group ?? ""] ?? {
+      template: "",
+      has_background: true,
     };
   }
 
@@ -63,5 +68,6 @@ export const useConfigStore = defineStore("config", () => {
     config,
     loadConfig,
     getDisplayConfig,
+    getDisplayTemplate,
   };
 });
