@@ -41,8 +41,8 @@ const textShadow = computed(() => generateTextShadow(props.displayConfig.backgro
     'text-shadow': [fallbackTextShadow, textShadow] as any,
     'font-weight': displayConfig.bold == true ? 'bold' : 'normal',
     'line-height': displayConfig.line_height ?? 1.25,
-    'letter-spacing': displayConfig.letter_spacing ?? 0.5,
-    'word-spacing': displayConfig.word_spacing ?? 2,
+    'letter-spacing': `${displayConfig.letter_spacing ?? 0}px`,
+    'word-spacing': `${displayConfig.word_spacing ?? 0}px`,
   }">
     <SmallTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
       class="renderer-item full-size" />
