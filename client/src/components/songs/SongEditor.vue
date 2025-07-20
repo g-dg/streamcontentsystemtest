@@ -39,8 +39,12 @@ onMounted(loadSongFromStore);
 watch(() => props.songTitle, loadSongFromStore);
 
 function newVerse() {
+  const highestVerseNumber = editedVerses.value.reduce((max, verse) => {
+    const verseNumber = Number(verse.name);
+    return Math.max(isNaN(verseNumber) ? 0 : Number(verse.name), max);
+  }, 0);
   editedVerses.value.push({
-    name: String(editedVerses.value.length + 1),
+    name: String((highestVerseNumber > 0 ? highestVerseNumber : editedVerses.value.length) + 1),
     content: "",
   });
 }
@@ -92,7 +96,7 @@ function cancel() {
     <input v-model="editedTitle" type="text" placeholder="Song Name" style="flex: 0; width: 100%" />
 
     <div style="flex: 1; overflow: auto">
-      <div v-for="(verse, index) in editedVerses" :key="verse.name">
+      <div v-for="(verse, index) in editedVerses" :key="index">
         <hr />
         <div style="display: flex">
           <input v-model="verse.name" type="text" placeholder="Verse Name" style="flex: 1" />
