@@ -24,6 +24,8 @@ export interface DisplayConfig {
   foreground_color?: string;
   bold?: boolean;
   line_height?: number;
+  letter_spacing?: number;
+  word_spacing?: number;
   alternate_blanking?: boolean;
 }
 
