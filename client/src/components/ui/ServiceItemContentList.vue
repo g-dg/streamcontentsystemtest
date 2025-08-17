@@ -5,6 +5,7 @@ import { natcasecmp } from "@/helpers/sort";
 import { useServiceStore } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
 import { useConfigStore } from "@/stores/config";
+import { NUMBER_CHARS, parseSequence, RANGE_CHARS, SEPARATOR_CHARS, SPACE_CHARS } from "@/helpers/parseSequence";
 
 const props = defineProps<{
   readonly?: boolean;
@@ -112,95 +113,30 @@ watch(
   }
 );
 
-// parses number sequence strings
-// supports positive numbers only
-// supports spaces and commas for separating numbers
-// supports dashes for specifying ranges (only ascending works)
-function parseSequence(
-  title: string,
-  maxSequenceLength: number = 65536
-): Array<string> {
-  // current number we're building (empty if no current number)
-  let currentNumber = "";
-
-  // start of sequence we're building (empty if no sequence)
-  let sequenceStart = "";
-
-  // output array
-  let output = [];
-
-  // iterate through all characters, including an undefined at the end
-  for (let i = 0; i <= title.length; i++) {
-    const c = title[i];
-
-    // if whitespace and not building number
-    if ([" "].includes(c) && currentNumber == "") {
-      // next character
-      continue;
-    }
-
-    // if a digit
-    if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(c)) {
-      // add to current number
-      currentNumber += c;
-      // next character
-      continue;
-    }
-
-    // if number is finished building
-    if ([",", "-", " ", undefined].includes(c)) {
-      // if we have a number we're building
-      if (currentNumber != "") {
-        // don't exceed max sequence length
-        if (output.length >= maxSequenceLength) throw new Error();
-        // add number to list
-        output.push(currentNumber);
-      }
-
-      // if building sequence
-      if (sequenceStart.length != 0) {
-        // parse start
-        const start = parseInt(sequenceStart);
-        // parse end
-        const end = parseInt(currentNumber);
-        // remove number that just got added
-        output.pop();
-        // create sequence
-        for (let n = start + 1; n <= end; n++) {
-          // don't exceed max sequence length
-          if (output.length >= maxSequenceLength) throw new Error();
-          // add to list
-          output.push(n.toString());
-        }
-        // reset sequence start
-        sequenceStart = "";
-      }
-
-      // if starting a sequence
-      if (["-"].includes(c)) {
-        // save the sequence start
-        sequenceStart = output[output.length - 1];
-      }
-
-      // reset current number
-      currentNumber = "";
-    }
-  }
-
-  return output;
-}
-
 // select verses based on verse string
 function setSelectedVersesFromVerseString() {
+  parseWarning.value = undefined;
+
+  if (serviceStore.selectedItem?.type != "song") return;
+
   if (!(configStore.config.parse_selected_verses ?? true)) return;
 
+  // get verses by taking anything after the last colon (:)
   const verseString = serviceStore.selectedItem?.text;
-  const versesPart =
-    /:(?<verses>[^:]+$)/.exec(verseString ?? "")?.groups?.["verses"] ?? "";
+  const versesPart = /:(?<verses>[^:]+$)/.exec(verseString ?? "")?.groups?.["verses"] ?? "";
 
-  if (!versesPart.split("").every((x) => "0123456789 ,-".includes(x))) return;
+  // ensure verse part is valid
+  if (!versesPart.split("").every((x) => [...SPACE_CHARS, ...SEPARATOR_CHARS, ...RANGE_CHARS, ...NUMBER_CHARS].includes(x))) {
+    // only warn if the verse part doesn't include letters
+    if (!/[a-zA-Z]/.test(versesPart)) {
+      parseWarning.value = "Invalid characters in song verses string";
+    }
+    return;
+  }
 
   const parsedVerses = parseSequence(versesPart);
+
+  // set verse numbers
   if (
     parsedVerses.length != 0 &&
     serviceStore.selectedItem?.song?.verses != undefined
@@ -209,8 +145,14 @@ function setSelectedVersesFromVerseString() {
       songVerseNumbersSorted.value.includes(x)
     );
   }
+
+  if (parsedVerses.some(x => !songVerseNumbersSorted.value.includes(x))) {
+    parseWarning.value = "Non-existent verses have been selected in song verses string";
+  }
 }
 watch(() => serviceStore.selectedItem?.text, setSelectedVersesFromVerseString);
+
+const parseWarning = ref<string | undefined>(undefined);
 
 </script>
 
@@ -230,6 +172,12 @@ watch(() => serviceStore.selectedItem?.text, setSelectedVersesFromVerseString);
           <em v-if="serviceStore.selectedItemType == 'optionalText'"> Optional Text </em>
         </span>
       </span>
+
+      <div v-if="parseWarning" style="background-color: #ff0; color: #000;">
+        {{ parseWarning }}
+        <br />
+        <button @click="parseWarning = undefined">Acknowledge</button>
+      </div>
 
       <hr />
     </div>

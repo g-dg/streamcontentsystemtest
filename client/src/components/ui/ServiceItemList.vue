@@ -21,27 +21,6 @@ function selectIndex(index: number) {
   serviceStore.selectedItemIndex = index;
 }
 
-async function loadService() {
-  if (
-    !serviceStore.unsavedChanges ||
-    confirm("There are unsaved changes. Really load service?")
-  ) {
-    await serviceStore.importService();
-    scrollToTop();
-  }
-}
-
-async function saveService() {
-  await serviceStore.exportService();
-  scrollToTop();
-}
-
-const topScrollElement = ref<HTMLDivElement>();
-function scrollToTop() {
-  if (props.mobileController) return;
-  topScrollElement.value?.scrollIntoView();
-}
-
 // data for drag and drop
 
 // used to detect drag and drop between different component instances
