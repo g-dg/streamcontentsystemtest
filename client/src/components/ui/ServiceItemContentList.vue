@@ -125,10 +125,12 @@ function setSelectedVersesFromVerseString() {
   const verseString = serviceStore.selectedItem?.text;
   const versesPart = /:(?<verses>[^:]+$)/.exec(verseString ?? "")?.groups?.["verses"] ?? "";
 
+  // only warn if the verse part doesn't include letters
+  const showParseWarnings = !/[a-zA-Z]/.test(versesPart);
+
   // ensure verse part is valid
   if (!versesPart.split("").every((x) => [...SPACE_CHARS, ...SEPARATOR_CHARS, ...RANGE_CHARS, ...NUMBER_CHARS].includes(x))) {
-    // only warn if the verse part doesn't include letters
-    if (!/[a-zA-Z]/.test(versesPart)) {
+    if (showParseWarnings) {
       parseWarning.value = "Invalid characters in song verses string";
     }
     return;
@@ -137,13 +139,16 @@ function setSelectedVersesFromVerseString() {
   const parsedVerses = parseSequence(versesPart);
 
   // set verse numbers
-  if (
-    parsedVerses.length != 0 &&
-    serviceStore.selectedItem?.song?.verses != undefined
-  ) {
-    serviceStore.selectedItem.song.verses = parsedVerses.filter((x) =>
-      songVerseNumbersSorted.value.includes(x)
-    );
+  if (parsedVerses.length != 0) {
+    if (serviceStore.selectedItem?.song?.verses != undefined) {
+      serviceStore.selectedItem.song.verses = parsedVerses.filter((x) =>
+        songVerseNumbersSorted.value.includes(x)
+      );
+    }
+  } else {
+    if (versesPart.trim().length > 0) {
+      parseWarning.value = "Failed to parse verses";
+    }
   }
 
   if (parsedVerses.some(x => !songVerseNumbersSorted.value.includes(x))) {
