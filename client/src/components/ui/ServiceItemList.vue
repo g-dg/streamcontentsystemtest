@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 
 import {
   useServiceStore,
-  type ServiceItem,
   type ServiceItemDragDropData,
 } from "@/stores/service";
-import { useInstanceIdStore } from "@/stores/instanceId";
-import { uuid } from "@/helpers/random";
 
 const props = defineProps<{
   readonly?: boolean;
@@ -15,16 +12,12 @@ const props = defineProps<{
 }>();
 
 const serviceStore = useServiceStore();
-const instanceIdStore = useInstanceIdStore();
 
 function selectIndex(index: number) {
   serviceStore.selectedItemIndex = index;
 }
 
 // data for drag and drop
-
-// used to detect drag and drop between different component instances
-const instanceId = uuid();
 
 const draggableIndex = ref<number | null>(null);
 function dragHandleEnableDrag(index: number, enable: boolean) {
@@ -36,44 +29,22 @@ watch(
   () => (draggableIndex.value = null)
 );
 
-// index of the currently hovered item
-const dragHoveredIndex = ref<number | null>(null);
-
 // handles drag and drop start
 function dragStart(evt: DragEvent, index: number) {
   if (evt.dataTransfer == null) return;
 
   const data: ServiceItemDragDropData = {
-    appInstanceId: instanceIdStore.appInstanceId,
-    componentInstanceId: instanceId,
     srcIndex: index,
     serviceItem: serviceStore.serviceData.serviceItems[index],
   };
 
   evt.dataTransfer.setData("application/json", JSON.stringify(data));
   evt.dataTransfer.dropEffect = "move";
-
-  dragHoveredIndex.value = index;
 }
 
-// handles showing drop area for dragged item
-//TODO: find a way to clear if dragged out of the component and cancelled.
-function dragOver(evt: DragEvent, index: number) {
-  const dataString = evt.dataTransfer?.getData("application/json");
-
-  // Chromium has the data as an empty string
-  const data =
-    dataString != undefined && dataString != ""
-      ? (JSON.parse(dataString) as ServiceItemDragDropData)
-      : null;
-
-  if (data != null && data.appInstanceId != instanceIdStore.appInstanceId)
-    return;
-
+function dragOver(evt: DragEvent) {
   evt.preventDefault();
   evt.dataTransfer!.dropEffect = "move";
-
-  dragHoveredIndex.value = index;
 }
 
 // handles drop of item
@@ -83,49 +54,22 @@ function drop(evt: DragEvent, index: number) {
     evt.dataTransfer?.getData("application/json") ?? JSON.stringify(null)
   ) as ServiceItemDragDropData | null;
 
-  dragHoveredIndex.value = null;
-
-  // return if instance id is incorrect since it may cause inconsistencies
   if (data == null) return;
 
-  let destIndex = index;
-
-  // remove source item only if source index is provided and instance id matches
-  if (data.srcIndex != null && data.componentInstanceId == instanceId) {
+  // if source index is provided, move
+  if (data.srcIndex != null) {
     serviceStore.removeItem(data.srcIndex);
-    // update destination index if the item was removed before the source index
-    if (destIndex > data.srcIndex) {
-      destIndex = Math.max(destIndex - 1, 0);
-    }
+    serviceStore.addItem(data.serviceItem, true, Math.min(index, serviceStore.serviceData.serviceItems.length));
+  } else {
+    serviceStore.addItem(data.serviceItem, true, index);
   }
 
-  // insert item at new index
-  serviceStore.addItem(data.serviceItem, true, destIndex);
-
   draggableIndex.value = null;
-
-  nextTick(() => dragHoveredIndex.value = null);
-  requestAnimationFrame(() => dragHoveredIndex.value = null);
 }
 
 // resets drag and drop state
-function dragEnd(evt: DragEvent, index: number) {
-  dragHoveredIndex.value = null;
+function dragEnd() {
   draggableIndex.value = null;
-}
-
-function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
-  if (evt.dataTransfer == null) return;
-
-  const data: ServiceItemDragDropData = {
-    appInstanceId: instanceIdStore.appInstanceId,
-    componentInstanceId: null,
-    srcIndex: null,
-    serviceItem: newItem,
-  };
-
-  evt.dataTransfer.setData("application/json", JSON.stringify(data));
-  evt.dataTransfer.dropEffect = "move";
 }
 
 // scroll selected item into view
@@ -164,10 +108,8 @@ watch(
 
         <div v-for="(item, index) in serviceStore.serviceData.serviceItems" :key="item.id" @click="selectIndex(index)"
           style="flex: 0" ref="serviceItemElements" :data-index="index" :draggable="draggableIndex == index"
-          @dragstart="dragStart($event, index)" @dragover="dragOver($event, index)" @drop="drop($event, index)"
-          @dragend="dragEnd($event, index)">
-          <div v-if="dragHoveredIndex != null && dragHoveredIndex == index" style="height: 2lh"></div>
-
+          @dragstart="dragStart($event, index)" @dragover="dragOver($event)" @drop="drop($event, index)"
+          @dragend="dragEnd()">
           <div :class="{
             'selected-item': serviceStore.selectedItemIndex == index,
           }" style="padding: 0.5lh 0">
@@ -218,9 +160,8 @@ watch(
           <em> This service has no items </em>
         </div>
 
-        <div @dragover="
-          dragOver($event, serviceStore.serviceData.serviceItems.length)
-          " @drop="drop($event, serviceStore.serviceData.serviceItems.length)" style="flex: 1">
+        <div @dragover="dragOver($event)" @drop="drop($event, serviceStore.serviceData.serviceItems.length)"
+          style="flex: 1;">
           &nbsp;
         </div>
       </div>

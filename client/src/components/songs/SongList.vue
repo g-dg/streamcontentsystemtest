@@ -6,13 +6,11 @@ import {
   type ServiceItemDragDropData,
 } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
-import { useInstanceIdStore } from "@/stores/instanceId";
 
 import SongEditorModal from "./SongEditorModal.vue";
 
 const songStore = useSongStore();
 const serviceStore = useServiceStore();
-const instanceIdStore = useInstanceIdStore();
 
 function addToService(songTitle: string) {
   serviceStore.addItem(serviceStore.songItem(songTitle, search.value), true);
@@ -80,8 +78,6 @@ function dragStart(evt: DragEvent, songTitle: string) {
   if (evt.dataTransfer == null) return;
 
   const data: ServiceItemDragDropData = {
-    appInstanceId: instanceIdStore.appInstanceId,
-    componentInstanceId: null,
     srcIndex: null,
     serviceItem: serviceStore.songItem(songTitle, search.value),
   };
