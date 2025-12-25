@@ -25,13 +25,13 @@ export function parseSequence(
 		const c = title[i];
 
 		// if whitespace and not building number
-		if (SPACE_CHARS.includes(c) && currentNumber == "") {
+		if (SPACE_CHARS.includes(c ?? "") && currentNumber == "") {
 			// next character
 			continue;
 		}
 
 		// if a digit
-		if (NUMBER_CHARS.includes(c)) {
+		if (NUMBER_CHARS.includes(c ?? "")) {
 			// add to current number
 			currentNumber += c;
 			// next character
@@ -68,9 +68,9 @@ export function parseSequence(
 			}
 
 			// if starting a sequence
-			if (RANGE_CHARS.includes(c)) {
+			if (RANGE_CHARS.includes(c ?? "")) {
 				// save the sequence start
-				sequenceStart = output[output.length - 1];
+				sequenceStart = output[output.length - 1] ?? "";
 			}
 
 			// reset current number

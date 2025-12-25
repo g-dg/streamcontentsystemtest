@@ -26,7 +26,7 @@ function loadSongFromStore() {
     );
     editedVerses.value = versesSorted.map((x) => ({
       name: x,
-      content: song.verses[x],
+      content: song.verses[x] ?? "",
     }));
   } else {
     editedTitle.value = "";

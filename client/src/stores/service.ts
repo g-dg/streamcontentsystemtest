@@ -175,6 +175,9 @@ export const useServiceStore = defineStore("service", () => {
     const value = serviceData.value.serviceItems[index];
     const swapValue = serviceData.value.serviceItems[index + direction];
 
+    if (value == undefined || swapValue == undefined)
+      return;
+
     // swap items
     serviceData.value.serviceItems[index + direction] = value;
     serviceData.value.serviceItems[index] = swapValue;
@@ -293,7 +296,7 @@ export const useServiceStore = defineStore("service", () => {
       .map((item, index) => {
         if (item.type == "song") {
           const songVerseTitlesSorted = Object.keys(
-            songStore.songs[item.song?.title ?? ""].verses ?? {}
+            songStore.songs[item.song?.title ?? ""]?.verses ?? {}
           ).sort((a, b) => natcasecmp([a, b]));
           return songVerseTitlesSorted.map((verseTitle) => {
             const enabled =
@@ -330,7 +333,7 @@ export const useServiceStore = defineStore("service", () => {
       i >= 0 && i < allItemList.value.length;
       i += step
     ) {
-      const item = allItemList.value[i];
+      const item = allItemList.value[i]!;
       if (item.enabled) {
         return item;
       }
@@ -398,7 +401,7 @@ export const useServiceStore = defineStore("service", () => {
       importFileInput.addEventListener("change", async () => {
         try {
           const rawFileContent =
-            (await importFileInput.files?.[0].text()) ?? "{}";
+            (await importFileInput.files?.[0]?.text()) ?? "{}";
 
           const fileContent = JSON.parse(rawFileContent);
 

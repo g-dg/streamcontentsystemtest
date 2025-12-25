@@ -33,6 +33,9 @@ watch(
 function dragStart(evt: DragEvent, index: number) {
   if (evt.dataTransfer == null) return;
 
+  if (serviceStore.serviceData.serviceItems[index] == undefined)
+    return;
+
   const data: ServiceItemDragDropData = {
     srcIndex: index,
     serviceItem: serviceStore.serviceData.serviceItems[index],
