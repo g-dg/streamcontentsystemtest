@@ -25,7 +25,7 @@ export const useSongStore = defineStore("song", () => {
 
   /** Load songs from server */
   function loadSongs(force = false): Promise<void> {
-    if (songLoadingPromise == null) {
+    if (songLoadingPromise == null || force) {
       songLoadingPromise = loadSongsAsync(force);
     }
     return songLoadingPromise;

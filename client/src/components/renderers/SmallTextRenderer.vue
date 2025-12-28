@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { type DisplayConfig } from "@/stores/config";
+import { type Config, type DisplayConfig } from "@/stores/config";
 import { type DisplayState } from "@/stores/state";
 
 const props = defineProps<{
   content: DisplayState | null;
   displayConfig: DisplayConfig;
+  config: Config;
   fontSize: string;
+  padding: number;
 }>();
 </script>
 
@@ -18,9 +20,7 @@ const props = defineProps<{
     <div class="text" :style="{
       'font-size': `calc(${fontSize} * 0.75)`,
       padding: `calc(${fontSize} / 4)`,
-    }">
-      {{ content.smallText }}
-    </div>
+    }">{{ content.smallText }}</div>
   </div>
 </template>
 

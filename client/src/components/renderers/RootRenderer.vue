@@ -7,13 +7,16 @@ import MainTextRenderer from "@/components/renderers/MainTextRenderer.vue";
 import SmallTextRenderer from "@/components/renderers/SmallTextRenderer.vue";
 import SongRenderer from "@/components/renderers/SongRenderer.vue";
 import SongTitleRenderer from "@/components/renderers/SongTitleRenderer.vue";
+import SongAttributionRenderer from "@/components/renderers/SongAttributionRenderer.vue";
 import SubTextRenderer from "@/components/renderers/SubTextRenderer.vue";
-import type { DisplayConfig } from "@/stores/config";
+import type { Config, DisplayConfig } from "@/stores/config";
 
 const props = defineProps<{
   content: DisplayState | null;
   displayConfig: DisplayConfig;
+  config: Config;
   fontSize: string;
+  padding: number;
 }>();
 
 // Text shadow is built up by layering multiple shadows over eachother
@@ -41,19 +44,21 @@ const textShadow = computed(() => generateTextShadow(props.displayConfig.backgro
     'text-shadow': [fallbackTextShadow, textShadow] as any,
     'font-weight': displayConfig.bold == true ? 'bold' : 'normal',
     'line-height': displayConfig.line_height ?? 1.25,
-    'letter-spacing': `${displayConfig.letter_spacing ?? 0}px`,
-    'word-spacing': `${displayConfig.word_spacing ?? 0}px`,
+    'letter-spacing': `${(displayConfig.letter_spacing ?? 0) / 16}em`,
+    'word-spacing': `${(displayConfig.word_spacing ?? 0) / 16}em`,
   }">
-    <SmallTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
-      class="renderer-item full-size" />
-    <SubTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
-      class="renderer-item full-size" />
-    <MainTextRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
-      class="renderer-item full-size" />
-    <SongTitleRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
-      class="renderer-item full-size" />
-    <SongRenderer :content="content" :display-config="displayConfig" :font-size="fontSize"
-      class="renderer-item full-size" />
+    <SmallTextRenderer :content="content" :config="config" :display-config="displayConfig" :font-size="fontSize"
+      :padding="padding" class="renderer-item full-size" />
+    <SubTextRenderer :content="content" :config="config" :display-config="displayConfig" :font-size="fontSize"
+      :padding="padding" class="renderer-item full-size" />
+    <MainTextRenderer :content="content" :config="config" :display-config="displayConfig" :font-size="fontSize"
+      :padding="padding" class="renderer-item full-size" />
+    <SongAttributionRenderer :content="content" :config="config" :display-config="displayConfig" :font-size="fontSize"
+      :padding="padding" class="renderer-item full-size" />
+    <SongTitleRenderer :content="content" :config="config" :display-config="displayConfig" :font-size="fontSize"
+      :padding="padding" class="renderer-item full-size" />
+    <SongRenderer :content="content" :config="config" :display-config="displayConfig" :font-size="fontSize"
+      :padding="padding" class="renderer-item full-size" />
   </div>
 </template>
 

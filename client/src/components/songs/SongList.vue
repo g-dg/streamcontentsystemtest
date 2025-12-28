@@ -95,7 +95,7 @@ function dragEnd() {
   <div style="height: 100%; display: flex; flex-direction: column">
     <div style="flex: 0">
       <span style="display: inline-block">
-        <button @click="songStore.loadSongs()">Reload</button>
+        <button @click="songStore.loadSongs(true)">Reload</button>
         <SongEditorModal />
         <input v-model="search" ref="searchBoxElement" type="search" placeholder="Search"
           @focus="searchBoxElement?.select()" />

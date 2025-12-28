@@ -27,6 +27,10 @@ export interface DisplayConfig {
   letter_spacing?: number;
   word_spacing?: number;
   alternate_blanking?: boolean;
+  attribution_prefix?: string;
+  attribution_suffix?: string;
+  attribution_font_percent?: number;
+  padding?: number;
 }
 
 /** Config store */

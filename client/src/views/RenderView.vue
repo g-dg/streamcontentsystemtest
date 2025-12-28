@@ -91,6 +91,10 @@ const fontSize = computed(() => {
   return DEFAULT_FONT_SIZE;
 });
 
+const padding = computed(() =>
+  displayConfig.value.padding ?? 3.5
+);
+
 const DEFAULT_RENDER_DELAY = 0;
 /** Render delay from display config */
 const renderDelay = computed(
@@ -208,7 +212,8 @@ function toggleFullscreen() {
     <TransitionGroup name="fade">
       <div v-for="entry in transitionQueue" :key="entry.id" ref="transitionElements" class="full-size transition-fade"
         :style="{ transition: `opacity ${transitionSpeed}ms linear` }">
-        <RootRenderer :content="entry.content" :display-config="displayConfig" :font-size="fontSize" />
+        <RootRenderer :content="entry.content" :config="configStore.config" :display-config="displayConfig"
+          :font-size="fontSize" :padding="padding" />
       </div>
     </TransitionGroup>
   </div>

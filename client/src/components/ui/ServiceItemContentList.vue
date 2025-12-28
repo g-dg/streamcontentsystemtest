@@ -73,8 +73,9 @@ function copyText() {
 }
 
 function clearText() {
-  if (serviceStore.selectedItemIndex != undefined && serviceStore.serviceData.serviceItems[serviceStore.selectedItemIndex] != undefined)
-    serviceStore.serviceData.serviceItems[serviceStore.selectedItemIndex]!.text = "";
+  if (serviceStore.selectedItemIndex != undefined)
+    serviceStore.serviceData.serviceItems[serviceStore.selectedItemIndex]!.text =
+      "";
 }
 
 // checks if a particular verse is enabled

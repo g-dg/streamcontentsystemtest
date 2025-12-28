@@ -172,11 +172,8 @@ export const useServiceStore = defineStore("service", () => {
 
   /** Swap item by id with relative position */
   function moveItem(index: number, direction: number) {
-    const value = serviceData.value.serviceItems[index];
-    const swapValue = serviceData.value.serviceItems[index + direction];
-
-    if (value == undefined || swapValue == undefined)
-      return;
+    const value = serviceData.value.serviceItems[index]!;
+    const swapValue = serviceData.value.serviceItems[index + direction]!;
 
     // swap items
     serviceData.value.serviceItems[index + direction] = value;

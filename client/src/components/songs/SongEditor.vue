@@ -109,7 +109,7 @@ function cancel() {
     </div>
 
     <div style="flex: 0; padding-top: 1lh; text-align: right">
-      <input v-model="editedAttribution" type="text" placeholder="Attribution" style="flex: 0; width: 100%" />
+      <textarea v-model="editedAttribution" placeholder="Attribution" :rows="Math.min(editedAttribution.split('\n').length + 1, 10)" style="flex: 0; width: 100%"></textarea>
       <div>
         <button @click="saveSong">Save</button>
         <button v-if="songTitle != undefined" @click="deleteSong">

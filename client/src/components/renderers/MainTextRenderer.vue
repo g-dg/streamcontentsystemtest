@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { type DisplayConfig } from "@/stores/config";
+import { type Config, type DisplayConfig } from "@/stores/config";
 import { type DisplayState } from "@/stores/state";
 
 const props = defineProps<{
   content: DisplayState | null;
   displayConfig: DisplayConfig;
+  config: Config;
   fontSize: string;
+  padding: number;
 }>();
 </script>
 
@@ -14,16 +16,19 @@ const props = defineProps<{
     'renderer',
     ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
     ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
-  ]">
+  ]" :style="{ padding: `${padding}vh ${padding}vw` }">
     <div style="
         display: flex;
         flex-direction: column;
         align-items: center;
         width: 100%;
       ">
-      <div class="text" :style="{ padding: `calc(${fontSize} / 4)` }">
-        {{ content.mainText }}
-      </div>
+      <div class="text" :style="{
+        padding: `calc(${fontSize} / 4)`,
+        maxHeight: `calc(100vh - (${padding}vh * 2))`,
+        maxWidth: `calc(100vw - (${padding}vw * 2))`
+      }">
+        {{ content.mainText }}</div>
     </div>
   </div>
 </template>
@@ -34,7 +39,6 @@ const props = defineProps<{
   height: 100vh;
   display: flex;
   align-items: center;
-  padding: 3.5vh 3.5vw;
   overflow: auto;
 }
 
@@ -45,8 +49,6 @@ const props = defineProps<{
 .text {
   text-align: left;
   white-space: pre-wrap;
-  max-height: calc(100vh - 7vh);
-  max-width: calc(100vw - 7vw);
   font-weight: bold;
   overflow: auto;
 }
