@@ -88,23 +88,13 @@ watch(
       serviceItemElements.value != null &&
       Array.isArray(serviceItemElements.value)
     ) {
-      serviceItemElements.value
-        .find((x) => parseInt(x.getAttribute("data-index") ?? "") == index - 1)
-        ?.scrollIntoView({
-          block: "nearest",
-        });
-
-      serviceItemElements.value
-        .find((x) => parseInt(x.getAttribute("data-index") ?? "") == index + 1)
-        ?.scrollIntoView({
-          block: "nearest",
-        });
-
-      serviceItemElements.value
-        .find((x) => parseInt(x.getAttribute("data-index") ?? "") == index)
-        ?.scrollIntoView({
-          block: "nearest",
-        });
+      for (let i of [-1, 1, 0]) {
+        serviceItemElements.value
+          .find((x) => parseInt(x.getAttribute("data-index") ?? "") == index + i)
+          ?.scrollIntoView({
+            block: "nearest",
+          });
+      }
     }
   }
 );
