@@ -89,6 +89,18 @@ watch(
       Array.isArray(serviceItemElements.value)
     ) {
       serviceItemElements.value
+        .find((x) => parseInt(x.getAttribute("data-index") ?? "") == index - 1)
+        ?.scrollIntoView({
+          block: "nearest",
+        });
+
+      serviceItemElements.value
+        .find((x) => parseInt(x.getAttribute("data-index") ?? "") == index + 1)
+        ?.scrollIntoView({
+          block: "nearest",
+        });
+
+      serviceItemElements.value
         .find((x) => parseInt(x.getAttribute("data-index") ?? "") == index)
         ?.scrollIntoView({
           block: "nearest",
