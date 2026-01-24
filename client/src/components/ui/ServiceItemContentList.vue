@@ -100,13 +100,13 @@ watch(
           contentItemElements.value != null &&
           Array.isArray(contentItemElements.value)
         ) {
-          contentItemElements.value
-            .find(
-              (x) => parseInt(x.getAttribute("data-index") ?? "") == verseIndex
-            )
-            ?.scrollIntoView({
-              block: "nearest",
-            });
+          for (let i of [-1, 1, 0]) {
+            contentItemElements.value
+              .find((x) => parseInt(x.getAttribute("data-index") ?? "") == verseIndex + i)
+              ?.scrollIntoView({
+                block: "nearest",
+              });
+          }
         }
       }
     }
