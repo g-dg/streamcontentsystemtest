@@ -15,7 +15,7 @@ const modalOpen = ref(false);
       {{ songTitle != undefined ? "Edit" : "Create" }}
     </button>
     <ModalDialog v-model="modalOpen">
-      <div style="height: 50vh">
+      <div style="height: 66.667vh">
         <SongEditor :songTitle="songTitle" @close="modalOpen = false" />
       </div>
     </ModalDialog>
