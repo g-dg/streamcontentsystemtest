@@ -38,13 +38,13 @@ function loadSongFromStore() {
 onMounted(loadSongFromStore);
 watch(() => props.songTitle, loadSongFromStore);
 
-function newVerse() {
+function newVerse(index: number) {
   const highestVerseNumber = editedVerses.value.reduce((max, verse) => {
     const verseNumber = Number(verse.name);
     return Math.max(isNaN(verseNumber) ? 0 : Number(verse.name), max);
   }, 0);
-  editedVerses.value.push({
-    name: String((highestVerseNumber > 0 ? highestVerseNumber : editedVerses.value.length) + 1),
+  editedVerses.value.splice(index, 0, {
+    name: (highestVerseNumber > 0 ? String(highestVerseNumber + 1) : ""),
     content: "",
   });
 }
@@ -97,21 +97,24 @@ function cancel() {
     <input v-model="editedTitle" type="text" placeholder="Song Name" style="flex: 0; width: 100%" />
 
     <div style="flex: 1; overflow: auto">
-      <div v-for="(verse, index) in editedVerses" :key="index">
-        <hr />
+      <button @click="newVerse(0)" style="flex: 0">New Verse</button>
+      <div v-for="(verse, index) in editedVerses" :key="index" style="margin: 2em 0">
         <div style="display: flex">
-          <input v-model="verse.name" type="text" placeholder="Verse Name" style="flex: 1" />
+          <input v-model="verse.name" type="text" placeholder="Verse Name" style="flex: 1; font-size: 125%" />
           <button @click="deleteVerse(index)" style="flex: 0">Delete</button>
         </div>
         <textarea v-model="verse.content" :rows="verse.content.split('\n').length + 1" placeholder="Verse Content"
           style="width: 100%"></textarea>
-        Lines: {{ verse.content.split("\n").length }}
+        <div>
+          <span style="font-size: 80%">Lines: {{ verse.content.split("\n").length }}</span>
+          <button @click="newVerse(index + 1)" style="flex: 0; margin: 0 0.5em">New Verse</button>
+        </div>
       </div>
-      <button @click="newVerse">New Verse</button>
     </div>
 
     <div style="flex: 0; padding-top: 1lh; text-align: right">
-      <textarea v-model="editedAttribution" placeholder="Attribution" :rows="Math.min(editedAttribution.split('\n').length + 1, 10)" style="flex: 0; width: 100%"></textarea>
+      <textarea v-model="editedAttribution" placeholder="Attribution"
+        :rows="Math.min(editedAttribution.split('\n').length + 1, 10)" style="flex: 0; width: 100%"></textarea>
       <div>
         <button @click="saveSong">Save</button>
         <button v-if="songTitle != undefined" @click="deleteSong">
