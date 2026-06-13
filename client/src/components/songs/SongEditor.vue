@@ -74,13 +74,14 @@ async function saveSong() {
 }
 
 async function deleteSong() {
-  if (!confirm("Really delete this song?")) return;
+  if (props.songTitle == undefined) return;
 
-  if (props.songTitle != undefined) {
-    delete songStore.songs[props.songTitle];
+  if (!confirm(`Really delete this song?\n\n${props.songTitle}`)) return;
 
-    await songStore.saveSongs();
-  }
+  delete songStore.songs[props.songTitle];
+
+  await songStore.saveSongs();
+
   emit("close");
   await songStore.loadSongs();
 }
