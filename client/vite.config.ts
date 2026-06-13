@@ -28,7 +28,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        compact: true,
+        minify: true,
         entryFileNames: "assets/[hash].js",
         chunkFileNames: "assets/[hash].js",
         assetFileNames: "assets/[hash].[ext]",
