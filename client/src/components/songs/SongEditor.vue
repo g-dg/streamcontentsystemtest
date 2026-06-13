@@ -104,6 +104,7 @@ function cancel() {
         </div>
         <textarea v-model="verse.content" :rows="verse.content.split('\n').length + 1" placeholder="Verse Content"
           style="width: 100%"></textarea>
+        Lines: {{ verse.content.split("\n").length }}
       </div>
       <button @click="newVerse">New Verse</button>
     </div>
