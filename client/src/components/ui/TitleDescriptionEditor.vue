@@ -78,7 +78,7 @@ function clearDescription() {
     </button>
     <button @click="clearTitle">Clear</button>
 
-    Chars: {{ titleCharCount }}
+    Characters: {{ titleCharCount }}
 
     <textarea v-model="serviceStore.serviceData.description" ref="descriptionTextArea" :rows="descriptionLineShownCount"
       style="width: 100%" placeholder="Description"></textarea>
@@ -88,9 +88,7 @@ function clearDescription() {
     </button>
     <button @click="clearDescription">Clear</button>
 
-    Chars: {{ descriptionCharCount }} Lines: {{ descriptionLineCount }} Longest
-    Line:
-    {{ descriptionLongestLine }}
+    Characters: {{ descriptionCharCount }}, Lines: {{ descriptionLineCount }}, Longest Line: {{ descriptionLongestLine }}
   </div>
 </template>
 

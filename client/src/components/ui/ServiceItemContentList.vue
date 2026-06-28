@@ -283,8 +283,7 @@ const parseWarning = ref<string | undefined>(undefined);
           </button>
           <button @click="clearText">Clear</button>
 
-          Chars: {{ textCharCount }} Lines: {{ textLineCount }} Longest Line:
-          {{ textLongestLine }}
+          Characters: {{ textCharCount }}, Lines: {{ textLineCount }}, Longest Line: {{ textLongestLine }}
         </template>
       </div>
     </div>
