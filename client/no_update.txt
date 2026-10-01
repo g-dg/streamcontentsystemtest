@@ -1,0 +1,5 @@
+@vue/test-utils: 2.4
+jsdom: 29
+npm-run-all2: 8
+typescript: 6
+vitest: 4

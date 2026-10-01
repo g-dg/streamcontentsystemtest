@@ -12,24 +12,27 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "pinia": "^3.0.4",
-    "vue": "^3.5.39",
-    "vue-router": "^5.1.0"
+    "pinia": "^4.0.3",
+    "vue": "^3.5.43",
+    "vue-router": "^5.3.1"
   },
   "devDependencies": {
-    "@tsconfig/node26": "^26.0.0",
-    "@types/jsdom": "^28.0.3",
-    "@types/node": "^26.1.1",
-    "@vitejs/plugin-vue": "^6.0.7",
+    "@tsconfig/node24": "^24.0.5",
+    "@types/jsdom": "^30.0.0",
+    "@types/node": "^26.6.3",
+    "@vitejs/plugin-vue": "^6.0.9",
     "@vitejs/plugin-vue-jsx": "^5.1.6",
-    "@vue/test-utils": "^2.4.11",
+    "@vue/test-utils": "~2.4.11",
     "@vue/tsconfig": "^0.9.1",
     "jsdom": "^29.1.1",
-    "npm-run-all2": "^9.0.2",
-    "sass-embedded": "^1.100.0",
+    "npm-run-all2": "^8.0.4",
+    "sass-embedded": "^1.105.1",
     "typescript": "~6.0.3",
-    "vite": "^8.1.4",
-    "vitest": "^4.1.10",
-    "vue-tsc": "^3.3.7"
+    "vite": "^8.3.1",
+    "vitest": "^4.1.11",
+    "vue-tsc": "^3.3.11"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }
