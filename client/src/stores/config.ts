@@ -7,7 +7,6 @@ export interface Config {
   displays?: Record<string, DisplayConfig>;
   display_default?: DisplayConfig;
   parse_selected_verses?: boolean;
-  ask_service_export_filename?: boolean;
   preview_displays?: Array<string>;
 }
 

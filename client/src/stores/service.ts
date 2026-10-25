@@ -64,6 +64,8 @@ export const useServiceStore = defineStore("service", () => {
   const configStore = useConfigStore();
   configStore.loadConfig();
 
+  const serviceName = ref<string>();
+
   /** Service data */
   const serviceData = ref<ServiceData>({ serviceItems: [] });
 
@@ -388,93 +390,50 @@ export const useServiceStore = defineStore("service", () => {
   }
 
   /** Import service from file */
-  async function importService() {
+  function importService(rawFileContent: string) {
     try {
-      // create file dialog
-      const importFileInput = document.createElement("input");
-      importFileInput.setAttribute("type", "file");
+      const fileContent = JSON.parse(rawFileContent);
 
-      // handle file selection
-      importFileInput.addEventListener("change", async () => {
-        try {
-          const rawFileContent =
-            (await importFileInput.files?.[0]?.text()) ?? "{}";
+      // basic validation
+      if (
+        typeof fileContent != "object" ||
+        fileContent == null ||
+        typeof fileContent.serviceItems != "object" ||
+        !Array.isArray(fileContent.serviceItems)
+      ) {
+        alert("Invalid file format");
+        return;
+      }
 
-          const fileContent = JSON.parse(rawFileContent);
+      // unselect everything
+      selectedItemIndex.value = null;
+      selectedSubItemId.value = null;
 
-          // basic validation
-          if (
-            typeof fileContent != "object" ||
-            fileContent == null ||
-            typeof fileContent.serviceItems != "object" ||
-            !Array.isArray(fileContent.serviceItems)
-          ) {
-            alert("Invalid file format");
-            return;
-          }
+      const convertedServiceData = convertImportToInternal(fileContent);
 
-          // unselect everything
-          selectedItemIndex.value = null;
-          selectedSubItemId.value = null;
-
-          const convertedServiceData = convertImportToInternal(fileContent);
-
-          // set serviceData
-          serviceData.value = convertedServiceData;
-          savedServiceData.value = JSON.stringify(serviceData.value);
-        } catch (e) {
-          console.error(e);
-          alert(
-            "An error occurred importing the file. (Is it a valid format?)"
-          );
-        }
-      });
-
-      // open file dialog
-      importFileInput.click();
+      // set serviceData
+      serviceData.value = convertedServiceData;
+      savedServiceData.value = JSON.stringify(serviceData.value);
     } catch (e) {
       console.error(e);
-      alert("An error occurred preparing for file import.");
+      alert(
+        "An error occurred importing the file. (Is it a valid format?)"
+      );
     }
   }
 
   /** Export service to file */
-  async function exportService() {
+  function exportService(): string {
     try {
-      let filename = "";
-      if (configStore.config.ask_service_export_filename ?? false) {
-        // ask filename
-        filename = prompt("Enter filename") ?? "";
-      }
+      const newSavedService = JSON.stringify(serviceData.value);
+      const exportedService = JSON.stringify(convertInternalToExport(serviceData.value));
 
-      if (filename == "") {
-        // build filename if empty
-        const now = new Date();
-        filename = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${now.getHours() < 12 ? "AM" : "PM"}.json`;
-      }
-
-      const convertedServiceData = convertInternalToExport(serviceData.value);
-
-      // create object url
-      const objectURL = URL.createObjectURL(
-        new Blob([JSON.stringify(convertedServiceData)], {
-          type: "application/json",
-        })
-      );
-
-      // create link
-      const fileLink = document.createElement("a");
-      fileLink.setAttribute("href", objectURL);
-      fileLink.setAttribute("download", filename);
-      fileLink.click();
-
-      savedServiceData.value = JSON.stringify(serviceData.value);
-
-      // schedule object url revocation
-      window.setTimeout(() => URL.revokeObjectURL(objectURL), 1000 * 60 * 60);
+      savedServiceData.value = newSavedService;
+      return exportedService
     } catch (e) {
       console.error(e);
-      alert("An error occurred exporting the file.");
+      alert("An error occurred exporting the service.");
+      throw e;
     }
   }
 
@@ -535,6 +494,7 @@ export const useServiceStore = defineStore("service", () => {
 
   return {
     unsavedChanges,
+    serviceName,
     serviceData,
     selectedItemIndex,
     selectedSubItemId,

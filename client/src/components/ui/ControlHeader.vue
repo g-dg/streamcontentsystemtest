@@ -7,6 +7,7 @@ import {
 } from "@/stores/service";
 import { useDisplayStateStore } from "@/stores/state";
 import { onMounted, onUnmounted, ref } from "vue";
+import ShowSelector from "./ShowSelector.vue";
 
 const props = defineProps<{
   readonly?: boolean;
@@ -15,19 +16,6 @@ const props = defineProps<{
 
 const serviceStore = useServiceStore();
 const displayStateStore = useDisplayStateStore();
-
-async function loadService() {
-  if (
-    !serviceStore.unsavedChanges ||
-    confirm("There are unsaved changes. Really load service?")
-  ) {
-    await serviceStore.importService();
-  }
-}
-
-async function saveService() {
-  await serviceStore.exportService();
-}
 
 function newItemDragStart(evt: DragEvent, newItem: ServiceItem) {
   if (evt.dataTransfer == null) return;
@@ -129,8 +117,7 @@ const appVersion = __APP_VERSION__;
     </RouterLink>
     &nbsp;
 
-    <button @click="loadService()">Load</button>
-    <button @click="saveService()">Save</button>
+    <ShowSelector />
 
     &nbsp;
 

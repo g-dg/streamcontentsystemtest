@@ -5,6 +5,7 @@ import { useServiceStore } from "@/stores/service";
 import ServiceItemList from "./ServiceItemList.vue";
 import ServiceItemContentList from "./ServiceItemContentList.vue";
 import PreviewIFrame from "../renderers/PreviewIFrame.vue";
+import ShowSelector from "./ShowSelector.vue";
 
 const displayStateStore = useDisplayStateStore();
 const serviceStore = useServiceStore();
@@ -24,7 +25,7 @@ const appCopyright = __APP_COPYRIGHT__;
       </strong>
     </div>
     <div style="display: flex">
-      <button @click="serviceStore.importService">Load</button>
+      <ShowSelector :allowSave="false" />
       <div style="flex: 1"></div>
       <button @click="serviceStore.setEmptyScreen">Empty</button>
       <button @click="serviceStore.setBlankScreen">Blank</button>

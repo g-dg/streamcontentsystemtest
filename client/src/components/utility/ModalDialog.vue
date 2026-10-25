@@ -1,9 +1,20 @@
 <script lang="ts" setup>
 const model = defineModel<boolean>();
+const props = defineProps({
+  persistent: {
+    type: Boolean,
+    default: false,
+  }
+});
+
+function backgroundClicked() {
+  if (!props.persistent)
+    model.value = false;
+}
 </script>
 
 <template>
-  <div v-if="model" class="modal-background" @click="model = false">
+  <div v-if="model" class="modal-background" @click="backgroundClicked">
     <div class="modal" @click.stop>
       <div class="modal-content">
         <slot></slot>

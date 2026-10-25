@@ -6,6 +6,7 @@ pub mod client_options;
 pub mod config;
 pub mod content;
 pub mod helpers;
+pub mod shows;
 pub mod state;
 
 use std::time::Duration;

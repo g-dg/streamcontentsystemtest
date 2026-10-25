@@ -27,6 +27,10 @@ pub struct AppConfig {
     #[serde(default = "default_content_directory")]
     pub content_directory: String,
 
+    /// Directory served by shows endpoint
+    #[serde(default = "default_show_directory")]
+    pub show_directory: String,
+
     /// Client static file root
     #[serde(default = "default_static_file_root")]
     pub static_file_root: String,
@@ -86,6 +90,9 @@ fn default_client_proxy_url() -> Option<String> {
 }
 fn default_content_directory() -> String {
     String::from("./content")
+}
+fn default_show_directory() -> String {
+    String::from("./shows")
 }
 fn default_static_file_root() -> String {
     String::from("./client/dist/")
