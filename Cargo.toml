@@ -12,13 +12,13 @@ futures = { version = "0.3.34" }
 reqwest = { version = "0.13.5", default-features = false, features = ["http2", "charset", "gzip", "brotli", "zstd", "deflate", "json", "stream", "cookies", "multipart"] }
 sanitize-filename = { version = "0.6.0" }
 serde = { version = "1.0.229", features = ["derive"] }
-serde_json = { version = "1.0.151" }
-tokio = { version = "1.53.1", features = ["full"] }
+serde_json = { version = "1.0.154" }
+tokio = { version = "1.54.1", features = ["full"] }
 tokio-stream = { version = "0.1.19" }
-tokio-util = { version = "0.7.19" }
+tokio-util = { version = "0.7.20" }
 tower = { version = "0.5.3", features = ["full"] }
 tower-http = { version = "0.7.1", features = ["full"] }
-webbrowser = { version = "1.2.4" }
+webbrowser = { version = "1.2.5" }
 
 [profile.release]
 opt-level = 3
