@@ -29,6 +29,8 @@ function generateTextShadow(color: string): string {
 
 const fallbackTextShadow = computed(() => generateTextShadow("#000"));
 const textShadow = computed(() => generateTextShadow(props.displayConfig.background ?? "#000"));
+
+const showTextShadow = computed(() => (props.content?.background ?? false) && (props.displayConfig.background == undefined || props.displayConfig.background == "transparent"));
 </script>
 
 <template>
@@ -41,7 +43,7 @@ const textShadow = computed(() => generateTextShadow(props.displayConfig.backgro
     'background-color':
       content?.background ?? false ? (displayConfig.background ?? '#000') : 'rgba(0,0,0,0)',
     'color': displayConfig.foreground_color ?? '#fff',
-    'text-shadow': [fallbackTextShadow, textShadow] as any,
+    'text-shadow': showTextShadow ? ([fallbackTextShadow, textShadow] as any) : [],
     'font-weight': displayConfig.bold == true ? 'bold' : 'normal',
     'line-height': displayConfig.line_height ?? 1.25,
     'letter-spacing': `${(displayConfig.letter_spacing ?? 0) / 16}em`,
