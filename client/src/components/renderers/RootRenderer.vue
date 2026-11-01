@@ -30,7 +30,7 @@ function generateTextShadow(color: string): string {
 const fallbackTextShadow = computed(() => generateTextShadow("#000"));
 const textShadow = computed(() => generateTextShadow(props.displayConfig.background ?? "#000"));
 
-const showTextShadow = computed(() => (props.content?.background ?? false) && (props.displayConfig.background == undefined || props.displayConfig.background == "transparent"));
+const showTextShadow = computed(() => !(props.content?.background ?? false) && (props.displayConfig.background == undefined || props.displayConfig.background == "transparent"));
 </script>
 
 <template>
