@@ -18,6 +18,8 @@ function sanitizeHtml(html: string, sanitizeImport: boolean): string {
 
 	const clean = DOMPurify.sanitize(dirty);
 
+	DOMPurify.removeHook("beforeSanitizeElements");
+
 	const formatted = clean
 		.replaceAll("<br/>", "<br>")
 		.replaceAll("<br />", "<br>")

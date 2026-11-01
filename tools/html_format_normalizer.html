@@ -62,6 +62,7 @@
 					});
 
 					DOMPurify.addHook("beforeSanitizeElements", (node) => {
+						console.debug(node);
 						if (node.nodeName == "P") {
 							node.replaceWith(...node.childNodes, document.createElement("br"));
 						} else if (node.nodeName == "#text") {
@@ -70,6 +71,8 @@
 					});
 
 					const clean = DOMPurify.sanitize(dirty);
+
+					DOMPurify.removeHook("beforeSanitizeElements");
 
 					const formatted = clean.split("<br>").map(x => x.trim()).join("\n");
 					return formatted;
