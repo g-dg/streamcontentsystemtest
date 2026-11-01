@@ -95,7 +95,7 @@ function cancel() {
 
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
-    <input v-model="editedTitle" type="text" placeholder="Song Name" style="flex: 0; width: 100%" />
+    <input v-model="editedTitle" type="text" placeholder="Song Name" style="flex: 0; width: 100%; font-size: 125%" />
 
     <div style="flex: 1; overflow: auto">
       <button @click="newVerse(0)" style="flex: 0">New Verse</button>
