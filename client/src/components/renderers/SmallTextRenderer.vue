@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { sanitizeHtmlForRender } from "@/helpers/html";
 import { type Config, type DisplayConfig } from "@/stores/config";
 import { type DisplayState } from "@/stores/state";
 
@@ -17,10 +18,14 @@ const props = defineProps<{
     ...(displayConfig.main_content ? ['renderer-is-main-content'] : []),
     ...(displayConfig.noninteractable ? ['renderer-is-noninteractable'] : []),
   ]">
-    <div class="text" :style="{
-      'font-size': `calc(${fontSize} * 0.75)`,
-      padding: `calc(${fontSize} / 4)`,
-    }">{{ content.smallText }}</div>
+    <div
+      v-html="sanitizeHtmlForRender(content.smallText)"
+      class="text"
+      :style="{
+        'font-size': `calc(${fontSize} * 0.75)`,
+        padding: `calc(${fontSize} / 4)`,
+      }"
+    ></div>
   </div>
 </template>
 

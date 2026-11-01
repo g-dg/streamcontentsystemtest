@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="icon" href="data:," />
+	<meta name="color-scheme" content="dark light" />
+	<title>Garnet DeGelder's Stream Content Text To Html Converter</title>
+	<style>
+		main {
+			display: flex;
+
+			&[v-cloak] {
+				display: none;
+			}
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+	</style>
+</head>
+<body style="margin: 0; padding: 0;">
+	<main v-cloak id="app" style="width: 100vw; height: 100vh; flex-direction: column; padding: 0.25em;">
+		<textarea v-model="pastedContent"
+			placeholder="Paste songs.json content here then save the output below as the new content"
+			style="flex: 1 1 0px; margin: 0.25em;"></textarea>
+		<textarea :value="processedContent" readonly style="flex: 1 1 0px; margin: 0.25em;"></textarea>
+	</main>
+
+	<script type="module">
+		import { computed, createApp, ref } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+		createApp({
+			setup() {
+				const pastedContent = ref("");
+
+				function textToHtml(input) {
+					const el = document.createElement("div");
+					el.innerText = input;
+					return el.innerHTML.replaceAll("<br>", "\n");
+				}
+
+				const processedContent = computed(() => {
+					try {
+						const input = JSON.parse(pastedContent.value);
+
+						const output = Object.fromEntries(
+							Object.entries(input).map(([name, content]) => [
+								textToHtml(name),
+								{
+									verses: Object.fromEntries(
+										Object.entries(content.verses).map(([verseName, verseContent]) => [
+											textToHtml(verseName),
+											textToHtml(verseContent)
+										])
+									),
+									attribution: content.attribution != undefined ? textToHtml(content.attribution) : undefined,
+								}
+							])
+						);
+
+						return JSON.stringify(output);
+					} catch {
+						return "";
+					}
+				});
+
+				return {
+					pastedContent,
+					processedContent,
+				}
+			}
+		}).mount("#app")
+	</script>
+</body>
+</html>

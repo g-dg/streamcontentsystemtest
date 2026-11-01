@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { sanitizeHtmlForRender } from "@/helpers/html";
 import { type Config, type DisplayConfig } from "@/stores/config";
 import { type DisplayState } from "@/stores/state";
 import { computed } from "vue";
@@ -27,7 +28,13 @@ const attribution = computed(() => props.content?.attribution != undefined ? `${
       marginLeft: `calc(50vw - ${padding}vw)`
     }">
       <div style="height: 1lh"></div>
-      <div class="text" :style="{ fontSize: `${displayConfig.attribution_font_percent}%` }">{{ attribution }}</div>
+      <div
+        v-html="sanitizeHtmlForRender(attribution ?? '')"
+        class="text"
+        :style="{
+          fontSize: `${displayConfig.attribution_font_percent}%`
+        }"
+      ></div>
     </div>
   </div>
 </template>

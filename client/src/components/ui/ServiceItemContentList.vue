@@ -6,6 +6,7 @@ import { useServiceStore } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
 import { useConfigStore } from "@/stores/config";
 import { NUMBER_CHARS, parseSequence, RANGE_CHARS, SEPARATOR_CHARS, SPACE_CHARS } from "@/helpers/parseSequence";
+import { sanitizeHtmlForRender } from "@/helpers/html";
 
 const props = defineProps<{
   readonly?: boolean;
@@ -201,12 +202,16 @@ const parseWarning = ref<string | undefined>(undefined);
               {{ verseName }}
             </strong>
           </label>
-          <pre @click="serviceStore.selectAndShowItem(verseName)" :class="{
+          <div :class="{
             'service-item': true,
             'selected-service-item':
               serviceStore.selectedSubItemId === verseName,
             'service-item-disabled': !verseIsEnabled(verseName),
-          }">{{ songVerses[verseName] }}</pre>
+          }">
+            <div v-html="sanitizeHtmlForRender(songVerses[verseName])"
+              @click="serviceStore.selectAndShowItem(verseName)">
+            </div>
+          </div>
           <hr style="margin-bottom: 1em" />
         </div>
 
@@ -216,10 +221,14 @@ const parseWarning = ref<string | undefined>(undefined);
           <strong style="font-size: 125%; font-weight: bold; padding-left: 0.5em">
             Text
           </strong>
-          <pre @click="serviceStore.selectAndShowItem('0')" :class="{
+          <div @click="serviceStore.selectAndShowItem('0')" :class="{
             'service-item': true,
             'selected-service-item': serviceStore.selectedSubItemId === '0',
-          }">{{ serviceStore.selectedItem?.text }}</pre>
+          }">
+            <div
+              v-html="serviceStore.selectedItem?.text != undefined ? sanitizeHtmlForRender(serviceStore.selectedItem?.text) : ''">
+            </div>
+          </div>
           <hr />
         </div>
 
@@ -293,7 +302,7 @@ const parseWarning = ref<string | undefined>(undefined);
 <style lang="scss" scoped>
 .service-item {
   border: 1px rgba(var(--fg), 0.5) solid;
-  padding: 1em;
+  padding: 0.5em;
   min-height: 10lh;
   display: flex;
   flex-direction: column;

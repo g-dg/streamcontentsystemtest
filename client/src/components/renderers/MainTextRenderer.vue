@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { sanitizeHtmlForRender } from "@/helpers/html";
 import { type Config, type DisplayConfig } from "@/stores/config";
 import { type DisplayState } from "@/stores/state";
 
@@ -23,12 +24,15 @@ const props = defineProps<{
         align-items: center;
         width: 100%;
       ">
-      <div class="text" :style="{
-        padding: `calc(${fontSize} / 4)`,
-        maxHeight: `calc(100vh - (${padding}vh * 2))`,
-        maxWidth: `calc(100vw - (${padding}vw * 2))`
-      }">
-        {{ content.mainText }}</div>
+      <div
+        v-html="sanitizeHtmlForRender(content.mainText)"
+        class="text"
+        :style="{
+          padding: `calc(${fontSize} / 4)`,
+          maxHeight: `calc(100vh - (${padding}vh * 2))`,
+          maxWidth: `calc(100vw - (${padding}vw * 2))`
+        }"
+      ></div>
     </div>
   </div>
 </template>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="icon" href="data:," />
+	<meta name="color-scheme" content="dark light" />
+	<title>Garnet DeGelder's HTML Format Normalizer</title>
+	<style>
+		main {
+			display: flex;
+
+			&[v-cloak] {
+				display: none;
+			}
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+	</style>
+</head>
+<body style="margin: 0; padding: 0;">
+	<main v-cloak id="app" style="width: 100vw; height: 100vh; flex-direction: column; padding: 0.25em;">
+		<textarea v-model="pastedHtml" @paste.prevent="handlePaste" placeholder="Paste HTML here"
+			style="flex: 1 1 0px; margin: 0.25em;"></textarea>
+		<div style="flex: 1 1 0px; display: flex;">
+			<textarea :value="processedHtml" readonly style="flex: 1 1 0px; margin: 0.25em;"></textarea>
+			<div style="flex: 1 1 0px; border: 1px currentColor solid; overflow: auto; margin: 0.25em;">
+				<div style="position: relative;">
+					<div style="position: absolute;">
+						<pre v-html="processedHtml"></pre>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script type="module">
+		import { computed, createApp, ref } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+		import DOMPurify from "https://unpkg.com/dompurify@3/dist/purify.es.mjs"
+
+		createApp({
+			setup() {
+				const pastedHtml = ref("");
+
+				function handlePaste(evt) {
+					const html = evt.clipboardData.getData("text/html");
+					if (html != "") {
+						pastedHtml.value = html;
+					} else {
+						pastedHtml.value = evt.clipboardData.getData("text/plain");
+					}
+				}
+
+				const processedHtml = computed(() => {
+					const dirty = pastedHtml.value;
+
+					DOMPurify.setConfig({
+						ALLOWED_TAGS: ["b", "strong", "i", "em", "u", "strike", "s", "sub", "sup", "a", "p", "br", "pre", "code"],
+						ALLOWED_ATTR: ['href'],
+					});
+
+					DOMPurify.addHook("beforeSanitizeElements", (node) => {
+						if (node.nodeName == "P") {
+							node.replaceWith(...node.childNodes, document.createElement("br"));
+						} else if (node.nodeName == "#text") {
+							node.nodeValue = node.nodeValue.replaceAll("\n", " ");
+						}
+					});
+
+					const clean = DOMPurify.sanitize(dirty);
+
+					const formatted = clean.split("<br>").map(x => x.trim()).join("\n");
+					return formatted;
+				});
+
+				return {
+					pastedHtml,
+					handlePaste,
+					processedHtml,
+				}
+			}
+		}).mount("#app")
+	</script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { sanitizeHtmlForRender } from "@/helpers/html";
 import { natcasecmp } from "@/helpers/sort";
 import { useSongStore } from "@/stores/song";
 import { onMounted, ref, watch } from "vue";
@@ -103,8 +104,12 @@ function cancel() {
           <input v-model="verse.name" type="text" placeholder="Verse Name" style="flex: 1; font-size: 125%" />
           <button @click="deleteVerse(index)" style="flex: 0">Delete</button>
         </div>
-        <textarea v-model="verse.content" :rows="verse.content.split('\n').length + 1" placeholder="Verse Content"
-          style="width: 100%"></textarea>
+        <div style="width: 100%; display: flex;">
+          <textarea v-model="verse.content" :rows="verse.content.split('\n').length + 1" placeholder="Verse Content"
+            style="flex: 1;"></textarea>
+          <div v-html="sanitizeHtmlForRender(verse.content)"
+            style="flex: 1; white-space: pre-wrap; padding: 0.5em; border: 1px rgba(var(--fg)) solid;"></div>
+        </div>
         <div>
           <span style="font-size: 80%">Lines: {{ verse.content.split("\n").length }}</span>
           <button @click="newVerse(index + 1)" style="flex: 0; margin: 0 0.5em">New Verse</button>
