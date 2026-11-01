@@ -6,7 +6,7 @@ import { useServiceStore } from "@/stores/service";
 import { useSongStore } from "@/stores/song";
 import { useConfigStore } from "@/stores/config";
 import { NUMBER_CHARS, parseSequence, RANGE_CHARS, SEPARATOR_CHARS, SPACE_CHARS } from "@/helpers/parseSequence";
-import { sanitizeHtmlForRender } from "@/helpers/html";
+import { getCachedSanitizedHtmlForRender } from "@/helpers/html";
 
 const props = defineProps<{
   readonly?: boolean;
@@ -208,7 +208,7 @@ const parseWarning = ref<string | undefined>(undefined);
               serviceStore.selectedSubItemId === verseName,
             'service-item-disabled': !verseIsEnabled(verseName),
           }">
-            <div v-html="sanitizeHtmlForRender(songVerses[verseName])"
+            <div v-html="getCachedSanitizedHtmlForRender(songVerses[verseName])"
               @click="serviceStore.selectAndShowItem(verseName)">
             </div>
           </div>
@@ -226,7 +226,7 @@ const parseWarning = ref<string | undefined>(undefined);
             'selected-service-item': serviceStore.selectedSubItemId === '0',
           }">
             <div
-              v-html="serviceStore.selectedItem?.text != undefined ? sanitizeHtmlForRender(serviceStore.selectedItem?.text) : ''">
+              v-html="serviceStore.selectedItem?.text != undefined ? getCachedSanitizedHtmlForRender(serviceStore.selectedItem?.text) : ''">
             </div>
           </div>
           <hr />

@@ -46,3 +46,21 @@ export function htmlToText(input: string): string {
 	el.innerHTML = sanitizeHtmlForRender(input);
 	return el.innerText;
 }
+
+
+const MAX_SANITIZED_HTML_FOR_RENDER_CACHE_ENTRIES = 4096;
+const sanitizedHtmlCacheForRender = new Map();
+export function getCachedSanitizedHtmlForRender(dirty: string): string {
+  const existingEntry = sanitizedHtmlCacheForRender.get(dirty);
+  if (existingEntry != undefined) {
+    return existingEntry;
+  }
+
+  if (sanitizedHtmlCacheForRender.size >= MAX_SANITIZED_HTML_FOR_RENDER_CACHE_ENTRIES) {
+    sanitizedHtmlCacheForRender.clear();
+  }
+  
+  const clean = sanitizeHtmlForRender(dirty);
+  sanitizedHtmlCacheForRender.set(dirty, clean);
+  return clean;
+}

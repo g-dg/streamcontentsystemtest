@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { sanitizeHtmlForRender } from "@/helpers/html";
+import { getCachedSanitizedHtmlForRender } from "@/helpers/html";
 import { natcasecmp } from "@/helpers/sort";
 import { useSongStore } from "@/stores/song";
 import { onMounted, ref, watch } from "vue";
@@ -107,7 +107,7 @@ function cancel() {
         <div style="width: 100%; display: flex;">
           <textarea v-model="verse.content" :rows="verse.content.split('\n').length + 1" placeholder="Verse Content"
             style="flex: 1;"></textarea>
-          <div v-html="sanitizeHtmlForRender(verse.content)"
+          <div v-html="getCachedSanitizedHtmlForRender(verse.content)"
             style="flex: 1; white-space: pre-wrap; padding: 0.5em; border: 1px rgba(var(--fg)) solid;"></div>
         </div>
         <div>
